@@ -1,0 +1,107 @@
+{% extends 'layouts/main.html' %}
+{% block title %}Connections Add{% endblock %}
+{% block content %}
+<form action="connections" method="post">
+<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+    <div class="card">
+        <div class="header">
+            <h2>Add Connection</h2>
+        </div>
+        <div class="body">
+            <div id="wizard_horizontal" role="application" class="wizard clearfix">
+                <div class="steps clearfix">
+                  <ul role="tablist">
+                    <li role="tab" {% if action=='add' %} class="first current" aria-disabled="false" aria-selected="true" {% else %} class="disabled" aria-disabled="true" {% endif %}>
+                      <a id="wizard_horizontal-t-0" href="#wizard_horizontal-h-0" aria-controls="wizard_horizontal-p-0">
+                        <span class="current-info audible">current step: </span>
+                        <span class="number">1.</span> First Step</a>
+                    </li>
+                    <li role="tab" {% if action=='add2' %} class="second current" aria-disabled="false" aria-selected="true" {% else %} class="disabled"  aria-disabled="true" {% endif %}>
+                      <a id="wizard_horizontal-t-1" href="#wizard_horizontal-h-1" aria-controls="wizard_horizontal-p-1">
+                        <span class="number">2.</span> Second Step</a>
+                    </li>
+                  </ul>
+                </div>
+                <div class="content clearfix">
+
+                <h2 id="wizard_horizontal-h-0" tabindex="-1" class="title current">First Step</h2>
+                <section id="wizard_horizontal-p-0" role="tabpanel" aria-labelledby="wizard_horizontal-h-0" class="body current" aria-hidden="false" {% if action=='add2' %} style="display: none;" {% endif %}>
+                    <p>
+                        Please select which of the following markets you wish to trade:</p><br>
+                        <div class="form-group">
+                            <div>
+                                <input name="market" type="radio" id="rad1" value="crypto" class="radio-col-green" checked="">
+                                <label style="font-size:15px" for="rad1">Crypto</label>
+                            </div>
+                            <div>
+                                <input name="market" type="radio" id="rad2" value="forex" class="radio-col-red">
+                                <label style="font-size:15px" for="rad2">Forex</label>
+                            </div>
+                            <div>
+                                <input name="market" type="radio" id="rad3" value="stocks" class="radio-col-blue">
+                                <label style="font-size:15px" for="rad3">Stocks</label>
+                            </div>
+                        </div>
+                </section>
+
+                <h2 id="wizard_horizontal-h-1" tabindex="-1" class="title">Second Step</h2>
+                <section id="wizard_horizontal-p-1" role="tabpanel" aria-labelledby="wizard_horizontal-h-1" class="body" aria-hidden="true" {% if action=='add' %} style="display: none;" {% endif %}>
+                {% if market=='crypto' %}
+                    <div>
+                        Select the exchange you wish to connect to:
+                        <select name="exchSel" onchange="val()" class="form-control" style="display:inline;width:fit-content" id="exSel">
+                          {% for i in range(0, len) %}
+                          <option value='{{exch[i]}}'>{{exch[i]}}</option>
+                          {% endfor %}
+                        </select>
+                    </div>
+                    <div id='info'></div>
+                    <script>
+                    // Post Request when selector changes to exchange. Gets Exchange info via action=info
+                    function val() {
+                        d = document.getElementById("exSel").value;
+                        var xhr = new XMLHttpRequest();
+                        xhr.open("POST", '/connections', true);
+                        //Send the proper header information along with the request
+                        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+                        xhr.onreadystatechange = function() { // Call a function when the state changes.
+                            if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
+                                document.getElementById('info').innerHTML = xhr.response;
+                            }
+                        }
+                        xhr.send('action=info&ex=' + d)
+                    }
+                    </script>
+                {% endif %}
+                {% if market=='forex' %}
+                    <div class="form-group">
+                          <label>Connection string to ZeroMQ server:</label>
+                          <div class="form-line">
+                              <input type="text" class="form-control" placeholder="Connection string">
+                          </div>
+                      </div>
+                {% endif %}
+                </section>
+            </div>
+            <div class="actions clearfix">
+              <ul role="menu" aria-label="Pagination">
+                <li aria-hidden="false" aria-disabled="false">
+                  {% if action=='add' %}
+                  <button name="action" value="add2" type="submit" class="btn bg-teal waves-effect">Next</button>
+                  {% endif %}
+                  {% if action=='add2' %}
+                  <input type="hidden" value="{{ market }}" name="market"/>
+                  <button name="action" value="fin" type="submit" class="btn bg-teal waves-effect">Finish</button>
+                  {% endif %}
+                </li>
+                <li aria-hidden="true" style="display: none;">
+                  <a href="#finish" role="menuitem" class="waves-effect">Finish</a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+    </div>
+</div>
+</form>
+{% endblock %}

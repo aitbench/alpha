@@ -1,0 +1,68 @@
+{% extends 'layouts/main.html' %}
+{% block title %}Nuggets Add{% endblock %}
+{% block content %}
+<form method="post">
+<div class="row clearfix">
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        <div class="card">
+            <div class="header">
+                <h2>
+                    Add Nugget
+                </h2>
+            </div>
+            <div class="body">
+                <div class="row clearfix">
+                    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                        <div>
+                            <label>Sample</label><br>
+                            <select name="sample" class="form-control" style="display:inline;width:fit-content">
+                              {% for sample in samples %}
+                              <option value='{{sample['id']}}'>{{sample['con']}} {{sample['timeframe']}}
+                                {{sample['symb']}} {{sample['from']}} - {{sample['to']}}</option>
+                              {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-6">
+                        <div>
+                              <label>Independant Enrichments</label><br>
+                              <select name="indie" class="form-control" style="display:inline;width:fit-content">
+                              {% for enrich in enrichments %}
+                              <option value='{{enrich}}'>{{enrich}}</option>
+                              {% endfor %}
+                              </select>
+                        </div>
+                    </div>
+                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-6">
+                        <div>
+                              <label>Dependant Enrichment</label><br>
+                              <select name="depen" class="form-control" style="display:inline;width:fit-content">
+                              {% for dkey,depen in depens.items() %}
+                              <option value='{{dkey}}'>{{depen}}</option>
+                              {% endfor %}
+                              </select>
+                        </div>
+                    </div>
+                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-6">
+                        <div>
+                              <label>NaN Handling</label><br>
+                              <select name="nana" class="form-control" style="display:inline;width:fit-content">
+                              {% for nkey,nana in nanas.items() %}
+                              <option value='{{nkey}}'>{{nana}}</option>
+                              {% endfor %}
+                              </select>
+                        </div>
+                    </div>
+                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-6" style="margin-top:20px">
+                        <button type="submit" name="action" value="fin" class="btn bg-green btn-lg waves-effect waves-float">Create</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</form>
+{% endblock %}
+
+{% block footer %}
+{% endblock %}

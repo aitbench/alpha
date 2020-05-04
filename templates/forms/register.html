@@ -1,0 +1,61 @@
+{% extends 'layouts/basic.html' %}
+{% block title %}Register{% endblock %}
+{% block content %}
+<body class="signup-page">
+    <div class="signup-box">
+        <div class="logo">
+            <a href="{{ url_for('home') }}">AI Trading Bench</b></a>
+            <small>Predicting the wave</small>
+        </div>
+        <div class="card">
+            <div class="body">
+                <form id="sign_up" method="POST">
+                  {{ form.csrf_token }}
+                    <div class="msg">Register a new membership</div>
+                    <div class="input-group">
+                        <span class="input-group-addon">
+                            <i class="material-icons">person</i>
+                        </span>
+                        <div class="form-line">
+                            {{ form.name(class_ = 'form-control first-input', placeholder = form.name.label.text, required = true, autofocus = true) }}
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <span class="input-group-addon">
+                            <i class="material-icons">email</i>
+                        </span>
+                        <div class="form-line">
+                            {{ form.email(class_ = 'form-control', placeholder = form.email.label.text, required = true) }}
+                          </div>
+                    </div>
+                    <div class="input-group">
+                        <span class="input-group-addon">
+                            <i class="material-icons">lock</i>
+                        </span>
+                        <div class="form-line">
+                            {{ form.password(class_ = 'form-control', placeholder = form.password.label.text, required = true) }}
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <span class="input-group-addon">
+                            <i class="material-icons">lock</i>
+                        </span>
+                        <div class="form-line">
+                            {{ form.confirm(class_ = 'form-control last-input', placeholder = form.confirm.label.text, required = true) }}
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <input type="checkbox" name="terms" id="terms" class="filled-in chk-col-pink">
+                        <label for="terms">I read and agree to the <a href="javascript:void(0);">terms of usage</a>.</label>
+                    </div>
+                    <button class="btn btn-block btn-lg bg-pink waves-effect" type="submit">Register</button>
+
+                    <div class="m-t-25 m-b--5 align-center">
+                        <a href="{{ url_for('login') }}">You already have a membership?</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+{% endblock %}

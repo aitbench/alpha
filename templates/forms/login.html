@@ -1,0 +1,52 @@
+{% extends 'layouts/basic.html' %}
+{% block title %}Login{% endblock %}
+{% block content %}
+<body class="login-page">
+    <div class="login-box">
+        <div class="logo">
+            <a href="javascript:void(0);">AI Trading Bench</a>
+            <small>Predicting the wave</small>
+        </div>
+        <div class="card">
+            <div class="body">
+                <form id="sign_in" method="POST">
+                  {{ form.csrf_token }}
+                  <div class="input-group">
+                    <span class="input-group-addon">
+                        <i class="material-icons">person</i>
+                    </span>
+                    <div class="form-line">
+                      {{ form.name(class_ = 'form-control first-input', placeholder = form.name.label.text, required = true, autofocus = true) }}
+                    </div>
+                  </div>
+                  <div class="input-group">
+                    <span class="input-group-addon">
+                        <i class="material-icons">lock</i>
+                    </span>
+                    <div class="form-line">
+                      {{ form.password(class_ = 'form-control last-input', placeholder = form.password.label.text, required = true) }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-8 p-t-5">
+                        <input type="checkbox" name="rememberme" id="rememberme" class="filled-in chk-col-pink">
+                        <label for="rememberme">Remember Me</label>
+                    </div>
+                    <div class="col-xs-4">
+                        <button class="btn btn-block bg-pink waves-effect" type="submit">SIGN IN</button>
+                    </div>
+                </div>
+                <div class="row m-t-15 m-b--20">
+                    <div class="col-xs-6">
+                        <a href="{{ url_for('register') }}">Register</a>
+                    </div>
+                    <div class="col-xs-6 align-right">
+                        <a href="{{ url_for('forgot') }}">Forgot Password?</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+{% endblock %}

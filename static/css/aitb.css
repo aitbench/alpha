@@ -1,0 +1,11 @@
+.sidebar .menu .list .ml-menu li.active a.toggled:not(.menu-toggle):before {
+    content: '';
+}
+
+.sidebar .menu .list .ml-menu li.active a.toggled:not(.menu-toggle) {
+    margin-left: 0px;
+}
+
+.block-header-wit-add {
+    margin-bottom: 50px;
+}

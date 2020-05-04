@@ -1,0 +1,66 @@
+{% extends 'layouts/main.html' %}
+{% block title %}Home{% endblock %}
+{% block content %}
+
+<div class="block-header">
+    <h2>
+        DATA
+        <small>Summary of currently held data</small>
+    </h2>
+</div>
+
+<div class="row" href="/connections">
+    <a href="/connections">
+        <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+            <div class="info-box-3 bg-blue hover-expand-effect hover-zoom-effect">
+                <div class="icon">
+                    <i class="material-icons">device_hub</i>
+                </div>
+                <div class="content">
+                    <div class="text">CONNECTIONS</div>
+                    <div class="number">{{dataCounts['con']}}</div>
+                </div>
+            </div>
+        </div>
+    </a>
+    <a href="/data">
+        <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+            <div class="info-box-3 bg-green hover-expand-effect hover-zoom-effect">
+                <div class="icon">
+                    <i class="material-icons">layers</i>
+                </div>
+                <div class="content">
+                    <div class="text">DATA</div>
+                    <div class="number">{{dataCounts['data']}}</div>
+                </div>
+            </div>
+        </div>
+    </a>
+    <a href="/data">
+        <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+            <div class="info-box-3 bg-orange hover-expand-effect hover-zoom-effect">
+                <div class="icon">
+                    <i class="material-icons">bar_chart</i>
+                </div>
+                <div class="content">
+                    <div class="text">SAMPLES</div>
+                    <div class="number">{{dataCounts['samples']}}</div>
+                </div>
+            </div>
+        </div>
+    </a>
+    <a href="/observe">
+        <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+            <div class="info-box-3 bg-red hover-expand-effect hover-zoom-effect">
+                <div class="icon">
+                    <i class="material-icons">developer_board</i>
+                </div>
+                <div class="content">
+                    <div class="text">NUGGETS</div>
+                    <div class="number">{{dataCounts['nuggets']}}</div>
+                </div>
+            </div>
+        </div>
+    </a>
+</div>
+{% endblock %}

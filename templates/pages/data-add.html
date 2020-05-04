@@ -1,0 +1,97 @@
+{% extends 'layouts/main.html' %}
+{% block title %}Data Add{% endblock %}
+{% block content %}
+<form action="data" method="post">
+<div class="row clearfix">
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        <div class="card">
+            <div class="header">
+                <h2>
+                    Add Data
+                </h2>
+            </div>
+            <div class="body">
+                <div class="row clearfix">
+                    <div class="col-lg-2 col-md-2 col-sm-3 col-xs-6">
+                        <div>
+                            <label>Connection</label>
+                            <select name="conSel" onchange="evalCon()" class="form-control" style="display:inline;width:fit-content" id="conSel">
+                              <option value='NANANANA'>Select Connection</option>
+                              {% for con in cons %}
+                              <option value='{{con}}'>{{con}}</option>
+                              {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <script>
+                        // Post Request when selector changes to exchange. Gets Exchange info via action=info
+                        function evalCon() {
+                            d = document.getElementById("conSel").value;
+                            if(d!='NANANANA'){
+                                var xhr = new XMLHttpRequest();
+                                xhr.open("POST", '/data', true);
+                                //Send the proper header information along with the request
+                                xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+                                xhr.onreadystatechange = function() { // Call a function when the state changes.
+                                    if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
+                                        document.getElementById('quoteSel').innerHTML = xhr.response;
+                                    }
+                                }
+                                xhr.send('action=gitquotes&con=' + d)
+                            }
+                        }
+                    </script>
+                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-6">
+                        <div>
+                              <label>Quote</label><br>
+                              <select name="quoteSel" onchange="evalquote()" class="form-control" style="display:inline;width:fit-content" id="quoteSel">
+                              </select>
+                        </div>
+                    </div>
+                    <script>
+                        // Post Request when selector changes to exchange. Gets Exchange info via action=info
+                        function evalquote() {
+                            c = document.getElementById("conSel").value;
+                            d = document.getElementById("quoteSel").value;
+                            if(d!='NANANANA' && c!='NANANANA'){
+                                var bxhr = new XMLHttpRequest();
+                                bxhr.open("POST", '/data', true);
+                                //Send the proper header information along with the request
+                                bxhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+                                bxhr.onreadystatechange = function() { // Call a function when the state changes.
+                                    if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
+                                        document.getElementById('symbSel').innerHTML = bxhr.response;
+                                    }
+                                }
+                                bxhr.send('action=gitpairs&con=' + c +'&quote=' + d)
+                            }
+                        }
+                    </script>
+                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-6">
+                        <div>
+                              <label>Pair</label><br>
+                              <select name="symbSel" class="form-control" style="display:inline;width:fit-content" id="symbSel">
+                              </select>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                      <label>Date</label>
+                      <div class="form-group">
+                          <div class="form-line">
+                              <input name="start" type="text" class="datepicker form-control" placeholder="Please choose a date..." data-dtp="dtp_RW8sf">
+                          </div>
+                      </div>
+                    </div>
+                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-1" style="margin-top:20px">
+                        <button type="submit" name="action" value="fin" class="btn bg-green btn-lg waves-effect waves-float">Create</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</form>
+{% endblock %}
+
+{% block footer %}
+{% endblock %}

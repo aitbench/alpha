@@ -1,0 +1,3 @@
+enname: Stats
+riches: beta, correl, linearreg, linearreg_angle, linearreg_intercept, linearreg_slope, stddev, tsf, var
+total: 9

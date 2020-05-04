@@ -1,0 +1,74 @@
+{% extends 'layouts/main.html' %}
+{% block title %}Enrichments{% endblock %}
+{% block content %}
+
+<div class="block-header block-header-wit-add">
+  <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6" style="padding-left:0px">
+  <h2>
+    ENRICHMENTS
+    <small>Create your own custom enrichments (Independant Variables in ML)</small>
+  </h2>
+  </div>
+  <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+  <div class="align-right" >
+    <form action="alchemy-enrich" method="post">
+      <button name="action" value="add" type="submit" class="btn bg-green waves-effect waves-float">
+        <i class="material-icons">add</i>
+      </button>
+    </form>
+  </div>
+  </div>
+</div>
+<div class="row">
+  {% for enrich in enriches %}
+  <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+    <div class="card">
+      <div class="header bg-pink">
+        <h2>
+          {{ enrich['enname'] }}
+        </h2>
+        <ul class="header-dropdown m-r--5">
+          <form class="inform" method="post" id="{{ enrich['enname'] }}">
+            <li class="dropdown">
+              <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                <i class="material-icons">more_vert</i>
+              </a>
+              <ul class="dropdown-menu pull-right">
+                <input type="hidden" name="action" value="delete"/>
+                <input type="hidden" name="enname" value="{{ enrich['enname'] }}"/>
+                <li><a href="javascript:void(0);" onClick="document.forms['{{ enrich['enname'] }}'].submit();" class=" waves-effect waves-block">
+                  <i class="material-icons" style="color:red !important">delete_forever</i>Delete</a></li>
+                </ul>
+              </li>
+            </form>
+          </ul>
+        </div>
+        <div class="body" style="padding-top:0px; padding-bottom:0px">
+          <!-- Nav tabs -->
+          <ul class="nav nav-tabs tab-nav-right" role="tablist">
+              <li role="presentation" class="active">
+                  <a href="#info_only_icon_title_{{enrich['enname']}}" data-toggle="tab" aria-expanded="true">
+                      <i class="material-icons">home</i>
+                  </a>
+              </li>
+              <li role="presentation" class="">
+                  <a href="#abilities_only_icon_title_{{enrich['enname']}}" data-toggle="tab" aria-expanded="false">
+                      <i class="material-icons">settings_input_component</i>
+                  </a>
+              </li>
+          </ul>
+          <!-- Tab panes -->
+          <div class="tab-content">
+              <div role="tabpanel" class="tab-pane fade active in" id="info_only_icon_title_{{enrich['enname']}}">
+                <b>Total Items: </b> {{ enrich['total'] }}<br>
+              </div>
+              <div role="tabpanel" class="tab-pane fade" id="abilities_only_icon_title_{{enrich['enname']}}">
+                <b>Items: </b> {{ enrich['riches'] }}<br>
+              </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  {% endfor %}
+</div>
+{% endblock %}

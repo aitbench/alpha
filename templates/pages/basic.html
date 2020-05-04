@@ -1,0 +1,56 @@
+{% extends 'layouts/main.html' %}
+{% block title %}Data{% endblock %}
+{% block content %}
+
+<div class="block-header block-header-wit-add">
+  <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6" style="padding-left:0px">
+  <h2>
+    BASIC
+    <small>BLAHBLAH</small>
+  </h2>
+  </div>
+  <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+  <div class="align-right" >
+    <form action="data" method="post">
+      <button name="action" value="add" type="submit" class="btn bg-green waves-effect waves-float">
+        <i class="material-icons">add</i>
+      </button>
+    </form>
+  </div>
+  </div>
+</div>
+<div class="row">
+  {% for item in basics %}
+  <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+    <div class="card">
+      <div class="header bg-orange">
+        <h2>
+          {{ basic['symb'] }}
+          <small> on <b style="text-transform: uppercase;">{{ basic['con'] }}</b> connection</small>
+        </h2>
+        <ul class="header-dropdown m-r--5">
+          <form action="data" class="inform" method="post" id="{{basic['id']}}">
+            <li class="dropdown">
+              <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                <i class="material-icons">more_vert</i>
+              </a>
+              <ul class="dropdown-menu pull-right">
+                <input type="hidden" name="action" value="delete-sample"/>
+                <input type="hidden" name="id" value="{{basic['id']}}"/>
+                <li><a href="javascript:void(0);" onClick="document.forms['{{basic['id']}}'].submit();" class=" waves-effect waves-block">
+                  <i class="material-icons" style="color:red !important">delete_forever</i>Delete</a></li>
+                </ul>
+              </li>
+            </form>
+          </ul>
+        </div>
+        <div class="body">
+            <b>From: </b> {{basic['from']}}<br>
+            <b>To: </b> {{basic['to']}}<br>
+            <b>Timeframe: </b> {{basic['timeframe']}}<br>
+        </div>
+      </div>
+    </div>
+  {% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,42 @@
+{% extends 'layouts/main.html' %}
+{% block title %}Enrichment Add{% endblock %}
+{% block content %}
+
+<form method="POST">
+<div class="row clearfix">
+  <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+    <div class="card">
+      <div class="header">
+        <h2>
+          Select your enrichments
+        </h2>
+      </div>
+      <div class="body">
+        <select name="enriches" id="optgroup" class="ms" multiple="multiple" style="position: absolute; left: -9999px;">
+          {% for key, value in enlist.items() %}
+          <optgroup label="{{ key }}">
+            {% for idx,item in value.items() %}
+            <option value="{{ idx }}">{{ item }}</option>
+            {% endfor %}
+            {% endfor %}
+          </select>
+          <hr>
+          <label>Name</label>
+          <div class="form-group">
+            <div class="form-line">
+              <input name="enname" type="text" class="form-control" placeholder="Enter name">
+            </div>
+          </div>
+          <button type="submit" name="action" value="fin" class="btn bg-green btn-lg waves-effect waves-float">Create</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>
+{% endblock %}
+
+{% block footer %}
+<script>
+$('#optgroup').multiSelect({ selectableOptgroup: true });
+</script>
+{% endblock %}

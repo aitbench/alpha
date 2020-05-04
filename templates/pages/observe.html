@@ -1,0 +1,60 @@
+{% extends 'layouts/main.html' %}
+{% block title %}Observatorium{% endblock %}
+{% block content %}
+
+{% if div is defined %}
+{% autoescape false %}
+<div class="row clearfix">
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        <div class="card">
+            <div class="header">
+                <h2>
+                    Results
+                </h2>
+            </div>
+            <div class="body">
+                <div class="row clearfix">
+                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                      {{ div }}{{ script }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endautoescape %}
+{% endif %}
+<form method="post">
+<div class="row clearfix">
+    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+        <div class="card">
+            <div class="header">
+                <h2>
+                    Select nugget for observations
+                </h2>
+            </div>
+            <div class="body">
+                <div class="row clearfix">
+                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                        <div>
+                            <select name="nugget" class="form-control" style="display:inline;width:100%">
+                              {% for nugget in nuggets %}
+                              <option {% if selected == nugget['id'] %} selected {% endif %}
+                              value='{{nugget['id']}}'>{{nugget['con']}} {{nugget['timeframe']}}
+                                {{nugget['symb']}} {{nugget['from']}} - {{nugget['to']}} I(X):{{nugget['indi']}} D(y):{{nugget['depen']}}</option>
+                              {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 align-right">
+                        <button type="submit" name="action" value="viewNug" class="btn bg-green btn-lg waves-effect waves-float">View</button>
+                        <button type="submit" name="action" value="viewCorr" class="btn bg-orange btn-lg waves-effect waves-float">Correlations</button>
+                        <button type="submit" name="action" value="viewFeat" class="btn bg-blue btn-lg waves-effect waves-float">Features</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</form>
+{% endblock %}

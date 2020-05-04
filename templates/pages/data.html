@@ -1,0 +1,244 @@
+{% extends 'layouts/main.html' %}
+{% block title %}Data{% endblock %}
+{% block content %}
+
+<div class="block-header block-header-wit-add">
+  <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6" style="padding-left:0px">
+  <h2>
+    DATA
+    <small>Data held in database</small>
+  </h2>
+  </div>
+  <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+  <div class="align-right" >
+    <form action="data" method="post">
+      <button name="action" value="add" type="submit" class="btn bg-green waves-effect waves-float">
+        <i class="material-icons">add</i>
+      </button>
+    </form>
+  </div>
+  </div>
+</div>
+<div class="row">
+  {% for da in data %}
+  <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+    <div class="card">
+      <div class="header bg-green">
+        <h2>
+          {{ da['symb'] }}
+          <small> on <b style="text-transform: uppercase;">{{ da['con'] }}</b> connection</small>
+        </h2>
+        <ul class="header-dropdown m-r--5">
+          <li>
+            <div class="switch">
+              <label><input id="{{da['id']}}_dataSwitch" onChange="onData('{{da['id']}}')" type="checkbox" {% if da['enabled'] %} checked {% endif %}><span class="lever switch-col-red"></span></label>
+            </div>
+          </li>
+          <form action="data" class="inform" method="post" id="{{da['id']}}">
+            <li class="dropdown">
+              <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                <i class="material-icons">more_vert</i>
+              </a>
+              <ul class="dropdown-menu pull-right">
+                <input type="hidden" name="action" value="delete"/>
+                <input type="hidden" name="id" value="{{da['id']}}"/>
+                <li><a href="javascript:void(0);" onClick="document.forms['{{da['id']}}'].submit();" class=" waves-effect waves-block">
+                  <i class="material-icons" style="color:red !important">delete_forever</i>Delete</a></li>
+                </ul>
+              </li>
+            </form>
+            <script>
+              function onData(id) {
+                  d = document.getElementById(id.concat("_dataSwitch")).checked;
+                  var xhr = new XMLHttpRequest();
+                  //console.log(d)
+                  xhr.open("POST", '/data', true);
+                  //Send the proper header information along with the request
+                  xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+                  xhr.send('action=enable&status='+d+'&id='+id)
+              }
+            </script>
+          </ul>
+        </div>
+        <div class="body" style="padding-top:0px; padding-bottom:0px">
+          <!-- Nav tabs -->
+          <ul class="nav nav-tabs tab-nav-right" role="tablist">
+            <li role="presentation" class="active">
+              <a href="#info_only_icon_title_{{da['id']}}" data-toggle="tab" aria-expanded="true">
+                <i class="material-icons">home</i>
+              </a>
+            </li>
+            <li role="presentation" class="">
+              <a href="#view_only_icon_title_{{da['id']}}" data-toggle="tab" aria-expanded="false">
+                <i class="material-icons">remove_red_eye</i>
+              </a>
+            </li>
+            <li role="presentation" class="">
+              <a href="#sample_only_icon_title_{{da['id']}}" data-toggle="tab" aria-expanded="false">
+                <i class="material-icons">create</i>
+              </a>
+            </li>
+          </ul>
+          <!-- Tab panes -->
+          <div class="tab-content">
+            <div role="tabpanel" class="tab-pane fade active in" id="info_only_icon_title_{{da['id']}}">
+              <b>Id:</b> {{da['id']}}<br>
+              <b>Connection:</b> {{da['con']}}<br>
+              <b>MaxBars:</b> {{da['maxbars']}}<br>
+              <b>Agressive Download:</b> {{da['aggro']}}<br>
+              <b>First Date on Exchange:</b> {{ da['first'] }}<br>
+              <b>Requested Start Date:</b> {{ da['start'] }}<br>
+              <b>Available Last Date:</b> {{ da['end'] }}<br>
+              <b>Count:</b> {{da['count']}}<br>
+            </div>
+            <div role="tabpanel" class="tab-pane fade" id="view_only_icon_title_{{da['id']}}">
+              <label> Head</label>
+              <table class="table table-striped">
+                <tr>
+                  <td>Date:</td><td>{{ da['head'][0] }}</td>
+                </tr>
+                <tr>
+                  <td>Open:</td><td>{{ da['head'][1] }}</td>
+                </tr>
+                <tr>
+                  <td>High:</td><td>{{ da['head'][2] }}</td>
+                </tr>
+                <tr>
+                  <td>Low:</td><td>{{ da['head'][3] }}</td>
+                </tr>
+                <tr>
+                  <td>Close:</td><td>{{ da['head'][4] }}</td>
+                </tr>
+                <tr>
+                  <td>Volume:</td><td>{{ da['head'][5] }}</td>
+                </tr>
+              </table>
+              <label> Tail</label>
+              <table class="table table-striped">
+                <tr>
+                  <td>Date:</td><td>{{ da['tail'][0] }}</td>
+                </tr>
+                <tr>
+                  <td>Open:</td><td>{{ da['tail'][1] }}</td>
+                </tr>
+                <tr>
+                  <td>High:</td><td>{{ da['tail'][2] }}</td>
+                </tr>
+                <tr>
+                  <td>Low:</td><td>{{ da['tail'][3] }}</td>
+                </tr>
+                <tr>
+                  <td>Close:</td><td>{{ da['tail'][4] }}</td>
+                </tr>
+                <tr>
+                  <td>Volume:</td><td>{{ da['tail'][5] }}</td>
+                </tr>
+              </table>
+            </div>
+            <div role="tabpanel" class="tab-pane fade" id="sample_only_icon_title_{{da['id']}}">
+              <form action="data" method="post">
+                <input type="hidden" name="data" value="{{ da['id'] }}">
+                <div>
+                <label>Type:</label>
+                <select name="selection" id="typeSel" onchange="showHideDates()" class="form-control" style="display:inline;width:fit-content">
+                  <option value='custom'>Custom</option>
+                  <option value='1M'>1 Month</option>
+                  <option value='3M'>3 Months</option>
+                  <option value='6M'>6 Months</option>
+                  <option value='1Y'>1 Year</option>
+                  <option value='2Y'>2 Years</option>
+                  <option value='5Y'>5 Years</option>
+                </select><br><hr>
+                <script>
+                  // Post Request when selector changes to exchange. Gets Exchange info via action=info
+                  function showHideDates() {
+                      d = document.getElementById("typeSel").value;
+                      if(d=='custom'){
+                        console.log(d)
+                        document.getElementById("fDate").style.display = "block"
+                        document.getElementById("tDate").style.display = "block"
+                      }
+                      else{
+                        document.getElementById("fDate").style.display = "none"
+                        document.getElementById("tDate").style.display = "none"
+                      }
+                  }
+                </script>
+                </div>
+                <div id="fDate" class="form-group">
+                  <label>From Date</label>
+                  <div class="form-line">
+                    <input name="fromdate" type="text" class="datepicker form-control" placeholder="Please choose a date..." data-dtp="dtp_RW8sf">
+                  </div>
+                </div>
+                <div id="tDate" class="form-group">
+                  <label>To Date</label>
+                  <div class="form-line">
+                    <input name="todate" type="text" class="datepicker form-control" placeholder="Please choose a date..." data-dtp="dtp_RW8sf">
+                  </div>
+                </div>
+                <label>Timeframe</label>
+                  <select name="timeframe" class="form-control" style="display:inline;width:fit-content" id="timeSel">
+                    <option value='3T'>3m</option>
+                    <option value='5T'>5m</option>
+                    <option value='10T'>10m</option>
+                    <option value='30T'>30m</option>
+                    <option value='1H'>1h</option>
+                    <option value='6H'>6h</option>
+                    <option value='12H'>12h</option>
+                    <option value='1D'>1d</option>
+                </select><br><hr>
+                <div class="align-right">
+                  <button type="submit" name="action" value="sample" class="btn bg-green btn-lg waves-effect waves-float">Sample</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+</div>
+{% if samples %}
+<div class="block-header">
+  <h2>
+    SAMPLES
+    <small>Samples created from above data held in feathers on disk</small>
+  </h2>
+</div>
+<div class="row">
+  {% for sample in samples %}
+  <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+    <div class="card">
+      <div class="header bg-orange">
+        <h2>
+          {{ sample['symb'] }}
+          <small> on <b style="text-transform: uppercase;">{{ sample['con'] }}</b> connection</small>
+        </h2>
+        <ul class="header-dropdown m-r--5">
+          <form action="data" class="inform" method="post" id="{{sample['id']}}">
+            <li class="dropdown">
+              <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                <i class="material-icons">more_vert</i>
+              </a>
+              <ul class="dropdown-menu pull-right">
+                <input type="hidden" name="action" value="delete-sample"/>
+                <input type="hidden" name="id" value="{{sample['id']}}"/>
+                <li><a href="javascript:void(0);" onClick="document.forms['{{sample['id']}}'].submit();" class=" waves-effect waves-block">
+                  <i class="material-icons" style="color:red !important">delete_forever</i>Delete</a></li>
+                </ul>
+              </li>
+            </form>
+          </ul>
+        </div>
+        <div class="body">
+            <b>From: </b> {{sample['from']}}<br>
+            <b>To: </b> {{sample['to']}}<br>
+            <b>Timeframe: </b> {{sample['timeframe']}}<br>
+        </div>
+      </div>
+    </div>
+  {% endfor %}
+</div>
+{% endif %}
+{% endblock %}

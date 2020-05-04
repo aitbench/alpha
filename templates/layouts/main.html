@@ -1,0 +1,387 @@
+<!doctype html>
+<head>
+	<meta charset="utf-8">
+	<title>{% block title %}{% endblock %}</title>
+
+	<!-- meta -->
+	<meta name="description" content="">
+	<meta name="author" content="">
+	<meta name="viewport" content="width=device-width,initial-scale=1">
+	<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+	<!-- /meta -->
+
+	<!-- styles -->
+	<!-- Favicon-->
+	<link rel="icon" href="static/favicon.ico" type="image/x-icon">
+	<!-- Google Fonts -->
+	<link href="https://fonts.googleapis.com/css?family=Roboto:400,700&subset=latin,cyrillic-ext" rel="stylesheet" type="text/css">
+	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" type="text/css">
+	<!-- Bootstrap Core Css -->
+	<link href="static/plugins/bootstrap/css/bootstrap.css" rel="stylesheet">
+	<!-- Waves Effect Css -->
+	<link href="static/plugins/node-waves/waves.css" rel="stylesheet" />
+	<!-- Animation Css -->
+	<link href="static/plugins/animate-css/animate.css" rel="stylesheet" />
+  <!-- Multi Select Css -->
+  <link href="static/plugins/multi-select/css/multi-select.css" rel="stylesheet">
+	<!-- Bootstrap Material Datetime Picker Css -->
+	<link href="static/plugins/bootstrap-material-datetimepicker/css/bootstrap-material-datetimepicker.css" rel="stylesheet" />
+	<!-- Bootstrap DatePicker Css -->
+	<link href="static/plugins/bootstrap-datepicker/css/bootstrap-datepicker.css" rel="stylesheet" />
+	<!-- Wait Me Css -->
+	<link href="static/plugins/waitme/waitMe.css" rel="stylesheet" />
+	<!-- Bootstrap Select Css -->
+	<link href="static/plugins/bootstrap-select/css/bootstrap-select.css" rel="stylesheet" />
+	<!-- Custom Css -->
+	<link href="static/css/style.css" rel="stylesheet"/>
+	<!-- AdminBSB Themes. You can choose a theme from css/themes instead of get all themes -->
+	<link href="static/css/themes/all-themes.css" rel="stylesheet" />
+	<!-- AITB overrides -->
+	<link href="static/css/aitb.css" rel="stylesheet" />
+</head>
+<body class="theme-red">
+	<!-- Page Loader -->
+	<div class="page-loader-wrapper">
+		<div class="loader">
+			<div class="preloader">
+				<div class="spinner-layer pl-red">
+					<div class="circle-clipper left">
+						<div class="circle"></div>
+					</div>
+					<div class="circle-clipper right">
+						<div class="circle"></div>
+					</div>
+				</div>
+			</div>
+			<p>Please wait...</p>
+		</div>
+	</div>
+	<!-- #END# Page Loader -->
+	<!-- Overlay For Sidebars -->
+	<div class="overlay"></div>
+	<!-- #END# Overlay For Sidebars -->
+	<!-- Top Bar -->
+	<nav class="navbar">
+		<div class="container-fluid">
+			<div class="navbar-header">
+				<a href="javascript:void(0);" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse" aria-expanded="false"></a>
+				<a href="javascript:void(0);" class="bars"></a>
+				<a class="navbar-brand" href="/">AI Trader Bench</a>
+			</div>
+			<div class="collapse navbar-collapse" id="navbar-collapse">
+				<ul class="nav navbar-nav navbar-right">
+					<!-- Notifications -->
+					<li class="dropdown">
+						<a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button">
+							<i class="material-icons">notifications</i>
+							<span class="label-count">7</span>
+						</a>
+						<ul class="dropdown-menu">
+							<li class="header">ALERTS</li>
+							<li class="body">
+								<ul class="menu">
+									<li>
+										<a href="javascript:void(0);">
+											<div class="icon-circle bg-light-green">
+												<i class="material-icons">person_add</i>
+											</div>
+											<div class="menu-info">
+												<h4>12 new members joined</h4>
+												<p>
+													<i class="material-icons">access_time</i> 14 mins ago
+												</p>
+											</div>
+										</a>
+									</li>
+								</ul>
+							</li>
+							<li class="footer">
+								<a href="javascript:void(0);">View All Notifications</a>
+							</li>
+						</ul>
+					</li>
+					<!-- #END# Notifications -->
+					<!-- Tasks -->
+					<li class="dropdown">
+						<a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button">
+							<i class="material-icons">directions_walk</i>
+							<span class="label-count">9</span>
+						</a>
+						<ul class="dropdown-menu">
+							<li class="header">RUNNERS</li>
+							<li class="body">
+								<ul class="menu tasks">
+									<li>
+										<a href="javascript:void(0);">
+											<h4>
+												Footer display issue
+												<small>32%</small>
+											</h4>
+											<div class="progress">
+												<div class="progress-bar bg-pink" role="progressbar" aria-valuenow="85" aria-valuemin="0" aria-valuemax="100" style="width: 32%">
+												</div>
+											</div>
+										</a>
+									</li>
+								</ul>
+							</li>
+							<li class="footer">
+								<a href="javascript:void(0);">View All Tasks</a>
+							</li>
+						</ul>
+					</li>
+					<!-- #END# Tasks -->
+					<li class="pull-right"><a href="javascript:void(0);" class="js-right-sidebar" data-close="true"><i class="material-icons">more_vert</i></a></li>
+				</ul>
+			</div>
+		</div>
+	</nav>
+	<!-- #Top Bar -->
+	<section>
+		<!-- Left Sidebar -->
+		<aside id="leftsidebar" class="sidebar">
+			<!-- Menu -->
+			<div class="menu">
+				<ul class="list">
+					<li class="header">MAIN NAVIGATION</li>
+					<li {% if request.endpoint == 'home' %} class="active" {% endif %}>
+						<a href="/">
+							<i class="material-icons">home</i>
+							<span>Home</span>
+						</a>
+					</li>
+					<li {% if request.endpoint == 'connections' %} class="active" {% endif %}>
+						<a href="/connections">
+							<i class="material-icons">device_hub</i>
+							<span>Connections</span>
+						</a>
+					</li>
+					<li {% if request.endpoint == 'data' %} class="active" {% endif %}>
+						<a href="/data">
+							<i class="material-icons">layers</i>
+							<span>Data</span>
+						</a>
+					</li>
+					<li {% if request.endpoint == 'alchemynugs' or request.endpoint == 'alchemyenrich' %} class="active" {% endif %}>
+            <a href="javascript:void(0);" class="menu-toggle waves-effect waves-block">
+                <i class="material-icons">spa</i>
+                <span>Alchemy</span>
+            </a>
+            <ul class="ml-menu">
+                <li {% if request.endpoint == 'alchemyenrich' %} class="active" {% endif %}>
+                    <a href="/alchemy-enrich" class="waves-effect waves-block">Enrichments</a>
+                </li>
+                <li {% if request.endpoint == 'alchemynugs' %} class="active" {% endif %}>
+                    <a href="/alchemy-nugs" class="waves-effect waves-block">Nuggets</a>
+                </li>
+            </ul>
+        	</li>
+					<li {% if request.endpoint == 'observe' %} class="active" {% endif %}>
+						<a href="/observe">
+							<i class="material-icons">remove_red_eye</i>
+							<span>Observatorium</span>
+						</a>
+					</li>
+					<li {% if request.endpoint == 'ai' %} class="active" {% endif %}>
+						<a href="/ai">
+							<i class="material-icons">memory</i>
+							<span>AI</span>
+						</a>
+					</li>
+					<li {% if request.endpoint == 'sentiment' %} class="active" {% endif %}>
+						<a href="/sentiment">
+							<i class="material-icons">sentiment_satisfied</i>
+							<span>Sentiment</span>
+						</a>
+					</li>
+					<li {% if request.endpoint == 'backt' %} class="active" {% endif %}>
+						<a href="/backtest">
+							<i class="material-icons">directions_run</i>
+							<span>Backtest</span>
+						</a>
+					</li>
+					<li {% if request.endpoint == 'trading' %} class="active" {% endif %}>
+						<a href="/trading">
+							<i class="material-icons">business_center</i>
+							<span>Trading</span>
+						</a>
+					</li>
+					<li {% if request.endpoint == 'ops' %} class="active" {% endif %}>
+						<a href="/ops">
+							<i class="material-icons">settings</i>
+							<span>Operations</span>
+						</a>
+					</li>
+					<li {% if request.endpoint == 'changelogs' %} class="active" {% endif %}>
+						<a href="/changelogs">
+							<i class="material-icons">update</i>
+							<span>Changelogs</span>
+						</a>
+					</li>
+				</ul>
+			</div>
+			<!-- #Menu -->
+			<!-- Footer -->
+			<div class="legal">
+				<div class="copyright">
+					&copy; 2020 <a href="https://github.com/aitbench/alpa">AITBench</a>.<b>Alpha Version: </b> 0.0.5
+				</div>
+			</div>
+			<!-- #Footer -->
+		</aside>
+		<!-- #END# Left Sidebar -->
+		<!-- Right Sidebar -->
+		<aside id="rightsidebar" class="right-sidebar">
+			<ul class="nav nav-tabs tab-nav-right" role="tablist">
+				<li role="presentation" class="active"><a href="#skins" data-toggle="tab">SKINS</a></li>
+				<li role="presentation"><a href="#settings" data-toggle="tab">SETTINGS</a></li>
+			</ul>
+			<div class="tab-content">
+				<div role="tabpanel" class="tab-pane fade in active in active" id="skins">
+					<ul class="demo-choose-skin">
+						<li data-theme="red" class="active">
+							<div class="red"></div>
+							<span>Red</span>
+						</li>
+						<li data-theme="pink">
+							<div class="pink"></div>
+							<span>Pink</span>
+						</li>
+						<li data-theme="purple">
+							<div class="purple"></div>
+							<span>Purple</span>
+						</li>
+						<li data-theme="deep-purple">
+							<div class="deep-purple"></div>
+							<span>Deep Purple</span>
+						</li>
+						<li data-theme="indigo">
+							<div class="indigo"></div>
+							<span>Indigo</span>
+						</li>
+						<li data-theme="blue">
+							<div class="blue"></div>
+							<span>Blue</span>
+						</li>
+						<li data-theme="light-blue">
+							<div class="light-blue"></div>
+							<span>Light Blue</span>
+						</li>
+						<li data-theme="cyan">
+							<div class="cyan"></div>
+							<span>Cyan</span>
+						</li>
+						<li data-theme="teal">
+							<div class="teal"></div>
+							<span>Teal</span>
+						</li>
+						<li data-theme="green">
+							<div class="green"></div>
+							<span>Green</span>
+						</li>
+						<li data-theme="light-green">
+							<div class="light-green"></div>
+							<span>Light Green</span>
+						</li>
+						<li data-theme="lime">
+							<div class="lime"></div>
+							<span>Lime</span>
+						</li>
+						<li data-theme="yellow">
+							<div class="yellow"></div>
+							<span>Yellow</span>
+						</li>
+						<li data-theme="amber">
+							<div class="amber"></div>
+							<span>Amber</span>
+						</li>
+						<li data-theme="orange">
+							<div class="orange"></div>
+							<span>Orange</span>
+						</li>
+						<li data-theme="deep-orange">
+							<div class="deep-orange"></div>
+							<span>Deep Orange</span>
+						</li>
+						<li data-theme="brown">
+							<div class="brown"></div>
+							<span>Brown</span>
+						</li>
+						<li data-theme="grey">
+							<div class="grey"></div>
+							<span>Grey</span>
+						</li>
+						<li data-theme="blue-grey">
+							<div class="blue-grey"></div>
+							<span>Blue Grey</span>
+						</li>
+						<li data-theme="black">
+							<div class="black"></div>
+							<span>Black</span>
+						</li>
+					</ul>
+				</div>
+				<div role="tabpanel" class="tab-pane fade" id="settings">
+					<div class="demo-settings">
+						<p>Auto Update</p>
+						<ul class="setting-list">
+							<li>
+								<span>Alerts</span>
+								<div class="switch">
+									<label><input id="autoAlerts" type="checkbox" checked><span class="lever"></span></label>
+								</div>
+							</li>
+							<li>
+								<span>Runners</span>
+								<div class="switch">
+									<label><input id="autoRunners" type="checkbox"><span class="lever"></span></label>
+								</div>
+							</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+		</aside>
+		<!-- #END# Right Sidebar -->
+	</section>
+
+	<section class="content">
+		<div class="container-fluid">
+			{% block content %}{% endblock %}
+		</div>
+	</section>
+
+	<!-- Jquery Core Js -->
+	<script src="static/plugins/jquery/jquery.min.js"></script>
+	<!-- Bootstrap Core Js -->
+	<script src="static/plugins/bootstrap/js/bootstrap.js"></script>
+	<!-- Select Plugin Js -->
+	<script src="static/plugins/bootstrap-select/js/bootstrap-select.js"></script>
+	<!-- Slimscroll Plugin Js -->
+	<script src="static/plugins/jquery-slimscroll/jquery.slimscroll.js"></script>
+	<!-- Waves Effect Plugin Js -->
+	<script src="static/plugins/node-waves/waves.js"></script>
+	<!-- Autosize Plugin Js -->
+	<script src="static/plugins/autosize/autosize.js"></script>
+	<!-- Moment Plugin Js -->
+	<script src="static/plugins/momentjs/moment.js"></script>
+  <!-- Multi Select Plugin Js -->
+	<script src="static/plugins/multi-select/js/jquery.multi-select.js"></script>
+	<!-- Bootstrap Material Datetime Picker Plugin Js -->
+	<script src="static/plugins/bootstrap-material-datetimepicker/js/bootstrap-material-datetimepicker.js"></script>
+	<!-- Bootstrap Datepicker Plugin Js -->
+	<script src="static/plugins/bootstrap-datepicker/js/bootstrap-datepicker.js"></script>
+	<!-- Wait Me Plugin Js -->
+	<script src="static/plugins/waitme/waitMe.js"></script>
+	<!-- Custom Js -->
+	<script src="static/js/admin.js"></script>
+	<script src="static/js/pages/forms/basic-form-elements.js"></script>
+	<!-- Demo Js -->
+	<script src="static/js/demo.js"></script>
+	<!-- Bokeh -->
+	<script src="https://cdn.bokeh.org/bokeh/release/bokeh-2.0.2.min.js"></script>
+	<script src="https://cdn.bokeh.org/bokeh/release/bokeh-widgets-2.0.2.min.js"></script>
+	<script src="https://cdn.bokeh.org/bokeh/release/bokeh-tables-2.0.2.min.js"></script>
+	{% block footer %}{% endblock %}
+</body>
+</html>
