@@ -4,7 +4,7 @@ AI Trader Bench Alpha. Currently just downloads the data and nuggets it to visua
 
 ## Requirements
 ```pip
-pip install -r req.txt
+pip install -r requirements.txt
 ```
 
 ## Run
