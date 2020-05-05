@@ -48,4 +48,4 @@ tzlocal==2.0.0
 urllib3==1.25.9
 Werkzeug==1.0.1
 WTForms==2.3.1
-yarl==1.1.0
+yarl==1.4.2
