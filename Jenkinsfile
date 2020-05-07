@@ -33,10 +33,22 @@ pipeline {
     stage('Push to AITBench') {
       steps {
         sh '''
-          comment=$(git log --pretty=format:"%s")
+          comment=$(git log --pretty=format:"%s" -1)
           echo $comment
           cp -r * $HOME/repos/alpha
           cp -r .gitignore $HOME/repos/alpha
+          cd $HOME/repos/alpha
+        '''
+      }
+    }
+
+    stage('Push to DeepTradeAI') {
+      steps {
+        sh '''
+          comment=$(git log --pretty=format:"%s" -1)
+          echo $comment
+          cp -r * $HOME/repos/frontend
+          cp -r .gitignore $HOME/repos/frontend
           cd $HOME/repos/alpha
         '''
       }
