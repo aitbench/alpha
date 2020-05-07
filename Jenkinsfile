@@ -38,6 +38,9 @@ pipeline {
           cp -r * $HOME/repos/alpha
           cp -r .gitignore $HOME/repos/alpha
           cd $HOME/repos/alpha
+          git add .
+          git commit -m "$comment"
+          git push
         '''
       }
     }
