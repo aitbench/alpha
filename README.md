@@ -1,6 +1,6 @@
 # AITB
 
-AI Trader Bench Alpha. Currently just downloads the data and nuggets it to visualize it.
+AI Trader Bench Alpha. Currently just downloads the data and nuggets it to visualize it. Build path is now active.
 
 ## Requirements
 ```pip
