@@ -18,6 +18,8 @@ from sqlalchemy.ext.declarative import declarative_base
 # Dataframes
 import pandas as pd
 import numpy as np
+# Parser for is_date
+from dateutil.parser import parse
 
 
 class Helper(Basic):
@@ -293,31 +295,57 @@ class Helper(Basic):
         df.to_feather(self.nuggetDataPath + nfile)
 
     def uploadData(self, fname, id):
-        # print(fname,file=sys.stderr)
+        # Split file into extension and filename
         nada, ext = os.path.splitext(fname)
         ffname = os.path.join(self.tmpPath, fname)
-        df = pd.DataFrame()
+        updf = pd.DataFrame()
         if ext == '.csv':
-            df = pd.read_csv(ffname)
+            updf = pd.read_csv(ffname)
         if ext == '.feather':
-            df = pd.read_feather(ffname)
+            updf = pd.read_feather(ffname)
         if ext == '.parquet':
-            df = pd.read_parquet(ffname)
+            updf = pd.read_parquet(ffname, engine='fastparquet')
         if ext == '.pickle':
-            df = pd.read_pickle(ffname)
-        # df.reset_index(inplace=True)
-        # print(df.index.astype(np.int64)/1000000,file=sys.stderr)
-        print(df.index.astype(int) / 1000000, file=sys.stderr)
+            updf = pd.read_pickle(ffname)
+        # Test for created index
+        if updf.index[0] == 0:
+            for col in updf.columns:
+                # Test column automatically for date
+                if type(updf[col][0]) is pd.Timestamp:
+                    # Set column as datetime and make it an index
+                    updf[col] = pd.to_datetime(updf[col])
+                    updf.set_index(col, inplace=True)
+                    break
+                elif is_date(updf[col][0]):
+                    # Set column as datetime and make it an index
+                    updf[col] = pd.to_datetime(updf[col])
+                    updf.set_index(col, inplace=True)
+                    break
+        # print(updf.index.astype(int)/1000000,file=sys.stderr)
         success = False
-        if 'open' in df.columns:
+        if 'open' in updf.columns:
             success = True
-            for index, dr in df.iterrows():
+            for index, dr in updf.iterrows():
                 sqlins = 'INSERT OR IGNORE INTO ' + id + ' VALUES (' + str(index.value / 1000000) + ',' + str(dr['open']) + ',' + str(dr['high']) + ',' + str(dr['low']) + ',' + str(dr['close']) + ',' + str(dr['volume']) + ')'
-                # print(sqlins,file=sys.stderr)
                 self.db.session.execute(sqlins)
-        if 'Open' in df.columns:
+        if 'Open' in updf.columns:
             success = True
-            for index, dr in df.iterrows():
+            for index, dr in updf.iterrows():
                 sqlins = 'INSERT OR IGNORE INTO ' + id + ' VALUES (' + str(index.value / 1000000) + ',' + str(dr['Open']) + ',' + str(dr['High']) + ',' + str(dr['Low']) + ',' + str(dr['Close']) + ',' + str(dr['Volume']) + ')'
-                # self.db.session.execute(sqlins)
+                self.db.session.execute(sqlins)
         return success
+
+
+def is_date(string, fuzzy=True):
+    """
+    Return whether the string can be interpreted as a date.
+
+    :param string: str, string to check for date
+    :param fuzzy: bool, ignore unknown tokens in string if True
+    """
+    try:
+        parse(string, fuzzy=fuzzy)
+        return True
+
+    except ValueError:
+        return False

@@ -140,7 +140,10 @@ dmypy.json
 !/data/samples/.keep
 /data/nuggets/*
 !/data/nuggets/.keep
-*.db
+
+# SQLite default instance
+/data/*.db
+/data/*.db-journal
 
 # AI-TB temp
 /tmp/run/*
