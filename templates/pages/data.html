@@ -78,6 +78,11 @@
                 <i class="material-icons">create</i>
               </a>
             </li>
+            <li role="presentation" class="">
+              <a href="#upload_only_icon_title_{{da['id']}}" data-toggle="tab" aria-expanded="false">
+                <i class="material-icons">file_upload</i>
+              </a>
+            </li>
           </ul>
           <!-- Tab panes -->
           <div class="tab-content">
@@ -140,7 +145,7 @@
                 <input type="hidden" name="data" value="{{ da['id'] }}">
                 <div>
                 <label>Type:</label>
-                <select name="selection" id="typeSel" onchange="showHideDates()" class="form-control" style="display:inline;width:fit-content">
+                <select name="selection" id="typeSel_{{ da['id'] }}" onchange="showHideDates()" class="form-control" style="display:inline;width:fit-content">
                   <option value='custom'>Custom</option>
                   <option value='1M'>1 Month</option>
                   <option value='3M'>3 Months</option>
@@ -165,20 +170,20 @@
                   }
                 </script>
                 </div>
-                <div id="fDate" class="form-group">
+                <div id="fDate_{{ da['id'] }}" class="form-group">
                   <label>From Date</label>
                   <div class="form-line">
                     <input name="fromdate" type="text" class="datepicker form-control" placeholder="Please choose a date..." data-dtp="dtp_RW8sf">
                   </div>
                 </div>
-                <div id="tDate" class="form-group">
+                <div id="tDate_{{ da['id'] }}" class="form-group">
                   <label>To Date</label>
                   <div class="form-line">
                     <input name="todate" type="text" class="datepicker form-control" placeholder="Please choose a date..." data-dtp="dtp_RW8sf">
                   </div>
                 </div>
                 <label>Timeframe</label>
-                  <select name="timeframe" class="form-control" style="display:inline;width:fit-content" id="timeSel">
+                  <select name="timeframe" class="form-control" style="display:inline;width:fit-content" id="timeSel_{{ da['id'] }}">
                     <option value='3T'>3m</option>
                     <option value='5T'>5m</option>
                     <option value='10T'>10m</option>
@@ -193,6 +198,19 @@
                 </div>
               </form>
             </div>
+            <div role="tabpanel" class="tab-pane fade" id="upload_only_icon_title_{{da['id']}}">
+              <form action="/data" id="frmFileUpload_{{ da['id'] }}" class="dropzone dz-clickable" method="post" enctype="multipart/form-data">
+                <input type="hidden" name="action" value="upload"/>
+                <input type="hidden" name="id" value="{{ da['id'] }}"/>
+                  <div class="dz-message">
+                      <div class="drag-icon-cph">
+                          <i class="material-icons">touch_app</i>
+                      </div>
+                      <h3>Drop files here or click to upload.</h3>
+                  </div>
+              </form>
+            </div>
+            <!-- End of tab content -->
           </div>
         </div>
       </div>

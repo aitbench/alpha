@@ -84,7 +84,7 @@ class Enrichment():
                    'cdlhangingman': 'Hanging Man',
                    'cdlharami': 'Harami Pattern',
                    'cdlharamicross': 'Harami Cross Pattern',
-                   'cdlhighwave': 'High-Wave Candle',
+                   'cdlHighwave': 'High-Wave Candle',
                    'cdlhikkake': 'Hikkake Pattern',
                    'cdlhikkakemod': 'Modified Hikkake Pattern',
                    'cdlhomingpigeon': 'Homing Pigeon',
@@ -139,376 +139,376 @@ class Enrichment():
     def addIndi(self, enrich, endf):
         # Overlays
         if enrich == 'bbands':
-            bbup, bbmid, bblow = ta.BBANDS(endf['close'], timeperiod=5, nbdevup=2, nbdevdn=2, matype=0)
+            bbup, bbmid, bblow = ta.BBANDS(endf['Close'], timeperiod=5, nbdevup=2, nbdevdn=2, matype=0)
             endf.insert(0, column='bblow', value=bblow)
             endf.insert(0, column='bbmid', value=bbmid)
             endf.insert(0, column='bbup', value=bbup)
             return endf
         if enrich == 'mama':
-            mama, fama = ta.MAMA(endf['close'])
+            mama, fama = ta.MAMA(endf['Close'])
             endf.insert(0, column='fama', value=fama)
             endf.insert(0, column='mama', value=mama)
             return endf
         if enrich == 'dema':
-            endf.insert(0, column='dema', value=ta.DEMA(endf['close'], timeperiod=30))
+            endf.insert(0, column='dema', value=ta.DEMA(endf['Close'], timeperiod=30))
             return endf
         if enrich == 'ema':
-            endf.insert(0, column='ema', value=ta.EMA(endf['close'], timeperiod=30))  # Unstable period
+            endf.insert(0, column='ema', value=ta.EMA(endf['Close'], timeperiod=30))  # Unstable period
             return endf
         if enrich == 'ht_trendline':
-            endf.insert(0, column='ht_trendline', value=ta.HT_TRENDLINE(endf['close']))  # Unstable period
+            endf.insert(0, column='ht_trendline', value=ta.HT_TRENDLINE(endf['Close']))  # Unstable period
             return endf
         if enrich == 'kama':
-            endf.insert(0, column='kama', value=ta.KAMA(endf['close'], timeperiod=30))  # Unstable period
+            endf.insert(0, column='kama', value=ta.KAMA(endf['Close'], timeperiod=30))  # Unstable period
             return endf
         if enrich == 'ma':
-            endf.insert(0, column='ma', value=ta.MA(endf['close'], timeperiod=30, matype=0))
+            endf.insert(0, column='ma', value=ta.MA(endf['Close'], timeperiod=30, matype=0))
             return endf
         if enrich == 'midpoint':
-            endf.insert(0, column='midpoint', value=ta.MIDPOINT(endf['close'], timeperiod=14))
+            endf.insert(0, column='midpoint', value=ta.MIDPOINT(endf['Close'], timeperiod=14))
             return endf
         if enrich == 'midprice':
-            endf.insert(0, column='midprice', value=ta.MIDPRICE(endf['high'], endf['low'], timeperiod=14))
+            endf.insert(0, column='midprice', value=ta.MIDPRICE(endf['High'], endf['Low'], timeperiod=14))
             return endf
         if enrich == 'sar':
-            endf.insert(0, column='sar', value=ta.SAR(endf['high'], endf['low'], acceleration=0, maximum=0))
+            endf.insert(0, column='sar', value=ta.SAR(endf['High'], endf['Low'], acceleration=0, maximum=0))
             return endf
         if enrich == 'sarext':
-            endf.insert(0, column='sarext', value=ta.SAREXT(endf['high'], endf['low'], startvalue=0, offsetonreverse=0, accelerationinitlong=0, accelerationlong=0, accelerationmaxlong=0, accelerationinitshort=0, accelerationshort=0, accelerationmaxshort=0))
+            endf.insert(0, column='sarext', value=ta.SAREXT(endf['High'], endf['Low'], startvalue=0, offsetonreverse=0, accelerationinitlong=0, accelerationlong=0, accelerationmaxlong=0, accelerationinitshort=0, accelerationshort=0, accelerationmaxshort=0))
             return endf
         if enrich == 'sma':
-            endf.insert(0, column='sma', value=ta.SMA(endf['close'], timeperiod=30))
+            endf.insert(0, column='sma', value=ta.SMA(endf['Close'], timeperiod=30))
             return endf
         if enrich == 't3':
-            endf.insert(0, column='t3', value=ta.T3(endf['close'], timeperiod=5, vfactor=0))  # Unstable period
+            endf.insert(0, column='t3', value=ta.T3(endf['Close'], timeperiod=5, vfactor=0))  # Unstable period
             return endf
         if enrich == 'tema':
-            endf.insert(0, column='tema', value=ta.TEMA(endf['close'], timeperiod=30))
+            endf.insert(0, column='tema', value=ta.TEMA(endf['Close'], timeperiod=30))
             return endf
         if enrich == 'trima':
-            endf.insert(0, column='trima', value=ta.TRIMA(endf['close'], timeperiod=30))
+            endf.insert(0, column='trima', value=ta.TRIMA(endf['Close'], timeperiod=30))
             return endf
         if enrich == 'wma':
-            endf.insert(0, column='wma', value=ta.WMA(endf['close'], timeperiod=30))
+            endf.insert(0, column='wma', value=ta.WMA(endf['Close'], timeperiod=30))
             return endf
 
         # Momentum
         if enrich == 'adx':
-            endf.insert(0, column='adx', value=ta.ADX(endf['high'], endf['low'], endf['close'], timeperiod=14))
+            endf.insert(0, column='adx', value=ta.ADX(endf['High'], endf['Low'], endf['Close'], timeperiod=14))
             return endf
         if enrich == 'adxr':
-            endf.insert(0, column='adxr', value=ta.ADXR(endf['high'], endf['low'], endf['close'], timeperiod=14))
+            endf.insert(0, column='adxr', value=ta.ADXR(endf['High'], endf['Low'], endf['Close'], timeperiod=14))
             return endf
         if enrich == 'apo':
-            endf.insert(0, column='apo', value=ta.APO(endf['close'], fastperiod=12, slowperiod=26, matype=0))
+            endf.insert(0, column='apo', value=ta.APO(endf['Close'], fastperiod=12, slowperiod=26, matype=0))
             return endf
         if enrich == 'aroonosc':
-            endf.insert(0, column='aroonosc', value=ta.AROONOSC(endf['high'], endf['low'], timeperiod=14))
+            endf.insert(0, column='aroonosc', value=ta.AROONOSC(endf['High'], endf['Low'], timeperiod=14))
             return endf
         if enrich == 'aroon':
-            aroondown, aroonup = ta.AROON(endf['high'], endf['low'], timeperiod=14)
+            aroondown, aroonup = ta.AROON(endf['High'], endf['Low'], timeperiod=14)
             endf.insert(0, column='aroonup', value=aroonup)
             endf.insert(0, column='aroondown', value=aroondown)
             return endf
         if enrich == 'bop':
-            endf.insert(0, column='bop', value=ta.BOP(endf['open'], endf['high'], endf['low'], endf['close']))
+            endf.insert(0, column='bop', value=ta.BOP(endf['Open'], endf['High'], endf['Low'], endf['Close']))
             return endf
         if enrich == 'cci':
-            endf.insert(0, column='cci', value=ta.CCI(endf['high'], endf['low'], endf['close'], timeperiod=14))
+            endf.insert(0, column='cci', value=ta.CCI(endf['High'], endf['Low'], endf['Close'], timeperiod=14))
             return endf
         if enrich == 'cmo':
-            endf.insert(0, column='cmo', value=ta.CMO(endf['close'], timeperiod=14))
+            endf.insert(0, column='cmo', value=ta.CMO(endf['Close'], timeperiod=14))
             return endf
         if enrich == 'dx':
-            endf.insert(0, column='dx', value=ta.DX(endf['high'], endf['low'], endf['close'], timeperiod=14))
+            endf.insert(0, column='dx', value=ta.DX(endf['High'], endf['Low'], endf['Close'], timeperiod=14))
             return endf
         if enrich == 'macd':
-            macd, macdsignal, macdhist = ta.MACD(endf['close'], fastperiod=12, slowperiod=26, signalperiod=9)
+            macd, macdsignal, macdhist = ta.MACD(endf['Close'], fastperiod=12, slowperiod=26, signalperiod=9)
             endf.insert(0, column='macd', value=macd)
             endf.insert(0, column='macdsignal', value=macdsignal)
             endf.insert(0, column='macdhist', value=macdhist)
             return endf
         if enrich == 'mfi':
-            endf.insert(0, column='mfi', value=ta.MFI(endf['high'], endf['low'], endf['close'], endf['volume'], timeperiod=14))
+            endf.insert(0, column='mfi', value=ta.MFI(endf['High'], endf['Low'], endf['Close'], endf['Volume'], timeperiod=14))
             return endf
         if enrich == 'mom':
-            endf.insert(0, column='mom', value=ta.MOM(endf['close'], timeperiod=10))
+            endf.insert(0, column='mom', value=ta.MOM(endf['Close'], timeperiod=10))
             return endf
         if enrich == 'ppo':
-            endf.insert(0, column='ppo', value=ta.PPO(endf['close'], fastperiod=12, slowperiod=26, matype=0))
+            endf.insert(0, column='ppo', value=ta.PPO(endf['Close'], fastperiod=12, slowperiod=26, matype=0))
             return endf
         if enrich == 'roc':
-            endf.insert(0, column='roc', value=ta.ROC(endf['close'], timeperiod=10))
+            endf.insert(0, column='roc', value=ta.ROC(endf['Close'], timeperiod=10))
             return endf
         if enrich == 'rocp':
-            endf.insert(0, column='rocp', value=ta.ROCP(endf['close'], timeperiod=10))
+            endf.insert(0, column='rocp', value=ta.ROCP(endf['Close'], timeperiod=10))
             return endf
         if enrich == 'rsi':
-            endf.insert(0, column='rsi', value=ta.RSI(endf['close'], timeperiod=14))
+            endf.insert(0, column='rsi', value=ta.RSI(endf['Close'], timeperiod=14))
             return endf
         if enrich == 'stoch':
-            slowk, slowd = ta.STOCH(endf['high'], endf['low'], endf['close'], fastk_period=5, slowk_period=3, slowk_matype=0, slowd_period=3, slowd_matype=0)
+            slowk, slowd = ta.STOCH(endf['High'], endf['Low'], endf['Close'], fastk_period=5, slowk_period=3, slowk_matype=0, slowd_period=3, slowd_matype=0)
             endf.insert(0, column='slowk', value=slowk)
             endf.insert(0, column='slowd', value=slowd)
             return endf
         if enrich == 'trix':
-            endf.insert(0, column='trix', value=ta.TRIX(endf['close'], timeperiod=30))
+            endf.insert(0, column='trix', value=ta.TRIX(endf['Close'], timeperiod=30))
             return endf
         if enrich == 'ultosc':
-            endf.insert(0, column='ultosc', value=ta.ULTOSC(endf['high'], endf['low'], endf['close'], timeperiod1=7, timeperiod2=14, timeperiod3=28))
+            endf.insert(0, column='ultosc', value=ta.ULTOSC(endf['High'], endf['Low'], endf['Close'], timeperiod1=7, timeperiod2=14, timeperiod3=28))
             return endf
         if enrich == 'willr':
-            endf.insert(0, column='willr', value=ta.WILLR(endf['high'], endf['low'], endf['close'], timeperiod=14))
+            endf.insert(0, column='willr', value=ta.WILLR(endf['High'], endf['Low'], endf['Close'], timeperiod=14))
             return endf
 
         # Volume
         if enrich == 'ad':
-            endf.insert(0, column='ad', value=ta.AD(endf['high'], endf['low'], endf['close'], endf['volume']))
+            endf.insert(0, column='ad', value=ta.AD(endf['High'], endf['Low'], endf['Close'], endf['Volume']))
             return endf
         if enrich == 'adosc':
-            endf.insert(0, column='adosc', value=ta.ADOSC(endf['high'], endf['low'], endf['close'], endf['volume'], fastperiod=3, slowperiod=10))
+            endf.insert(0, column='adosc', value=ta.ADOSC(endf['High'], endf['Low'], endf['Close'], endf['Volume'], fastperiod=3, slowperiod=10))
             return endf
         if enrich == 'obv':
-            endf.insert(0, column='obv', value=ta.OBV(endf['close'], endf['volume']))
+            endf.insert(0, column='obv', value=ta.OBV(endf['Close'], endf['Volume']))
             return endf
 
         # Volitility
         if enrich == 'atr':
-            endf.insert(0, column='atr', value=ta.ATR(endf['high'], endf['low'], endf['close'], timeperiod=14))
+            endf.insert(0, column='atr', value=ta.ATR(endf['High'], endf['Low'], endf['Close'], timeperiod=14))
             return endf
         if enrich == 'natr':
-            endf.insert(0, column='natr', value=ta.NATR(endf['high'], endf['low'], endf['close'], timeperiod=14))
+            endf.insert(0, column='natr', value=ta.NATR(endf['High'], endf['Low'], endf['Close'], timeperiod=14))
             return endf
         if enrich == 'trange':
-            endf.insert(0, column='trange', value=ta.TRANGE(endf['high'], endf['low'], endf['close']))
+            endf.insert(0, column='trange', value=ta.TRANGE(endf['High'], endf['Low'], endf['Close']))
             return endf
 
         # Pattern
         if enrich == 'cdl2crows':
-            endf.insert(0, column='cdl2crows', value=ta.CDL2CROWS(endf['open'], endf['high'], endf['low'], endf['close']))
+            endf.insert(0, column='cdl2crows', value=ta.CDL2CROWS(endf['Open'], endf['High'], endf['Low'], endf['Close']))
             return endf
         if enrich == 'cdl3blackcrows':
-            endf.insert(0, column='cdl3blackcrows', value=ta.CDL3BLACKCROWS(endf['open'], endf['high'], endf['low'], endf['close']))
+            endf.insert(0, column='cdl3blackcrows', value=ta.CDL3BLACKCROWS(endf['Open'], endf['High'], endf['Low'], endf['Close']))
             return endf
         if enrich == 'cdl3inside':
-            endf.insert(0, column='cdl3inside', value=ta.CDL3INSIDE(endf['open'], endf['high'], endf['low'], endf['close']))
+            endf.insert(0, column='cdl3inside', value=ta.CDL3INSIDE(endf['Open'], endf['High'], endf['Low'], endf['Close']))
             return endf
         if enrich == 'cdl3linestrike':
-            endf.insert(0, column='cdl3linestrike', value=ta.CDL3LINESTRIKE(endf['open'], endf['high'], endf['low'], endf['close']))
+            endf.insert(0, column='cdl3linestrike', value=ta.CDL3LINESTRIKE(endf['Open'], endf['High'], endf['Low'], endf['Close']))
             return endf
         if enrich == 'cdl3outside':
-            endf.insert(0, column='cdlcdl3outside', value=ta.CDL3OUTSIDE(endf['open'], endf['high'], endf['low'], endf['close']))
+            endf.insert(0, column='cdlcdl3outside', value=ta.CDL3OUTSIDE(endf['Open'], endf['High'], endf['Low'], endf['Close']))
             return endf
         if enrich == 'cdl3starsinsouth':
-            endf.insert(0, column='cdl3starsinsouth', value=ta.CDL3STARSINSOUTH(endf['open'], endf['high'], endf['low'], endf['close']))
+            endf.insert(0, column='cdl3starsinsouth', value=ta.CDL3STARSINSOUTH(endf['Open'], endf['High'], endf['Low'], endf['Close']))
             return endf
         if enrich == 'cdl3whitesoldiers':
-            endf.insert(0, column='cdl3whitesoldiers', value=ta.CDL3WHITESOLDIERS(endf['open'], endf['high'], endf['low'], endf['close']))
+            endf.insert(0, column='cdl3whitesoldiers', value=ta.CDL3WHITESOLDIERS(endf['Open'], endf['High'], endf['Low'], endf['Close']))
             return endf
         if enrich == 'cdlabandonedbaby':
-            endf.insert(0, column='cdlabandonedbaby', value=ta.CDLABANDONEDBABY(endf['open'], endf['high'], endf['low'], endf['close'], penetration=0))
+            endf.insert(0, column='cdlabandonedbaby', value=ta.CDLABANDONEDBABY(endf['Open'], endf['High'], endf['Low'], endf['Close'], penetration=0))
             return endf
         if enrich == 'cdladvanceblock':
-            endf.insert(0, column='cdladvanceblock', value=ta.CDLADVANCEBLOCK(endf['open'], endf['high'], endf['low'], endf['close']))
+            endf.insert(0, column='cdladvanceblock', value=ta.CDLADVANCEBLOCK(endf['Open'], endf['High'], endf['Low'], endf['Close']))
             return endf
         if enrich == 'cdlbelthold':
-            endf.insert(0, column='cdlbelthold', value=ta.CDLBELTHOLD(endf['open'], endf['high'], endf['low'], endf['close']))
+            endf.insert(0, column='cdlbelthold', value=ta.CDLBELTHOLD(endf['Open'], endf['High'], endf['Low'], endf['Close']))
             return endf
         if enrich == 'cdlbreakaway':
-            endf.insert(0, column='cdlbreakaway', value=ta.CDLBREAKAWAY(endf['open'], endf['high'], endf['low'], endf['close']))
+            endf.insert(0, column='cdlbreakaway', value=ta.CDLBREAKAWAY(endf['Open'], endf['High'], endf['Low'], endf['Close']))
             return endf
         if enrich == 'cdlclosingmarubozu':
-            endf.insert(0, column='cdlclosingmarubozu', value=ta.CDLCLOSINGMARUBOZU(endf['open'], endf['high'], endf['low'], endf['close']))
+            endf.insert(0, column='cdlclosingmarubozu', value=ta.CDLCLOSINGMARUBOZU(endf['Open'], endf['High'], endf['Low'], endf['Close']))
             return endf
         if enrich == 'cdlconcealbabyswall':
-            endf.insert(0, column='cdlconcealbabyswall', value=ta.CDLCONCEALBABYSWALL(endf['open'], endf['high'], endf['low'], endf['close']))
+            endf.insert(0, column='cdlconcealbabyswall', value=ta.CDLCONCEALBABYSWALL(endf['Open'], endf['High'], endf['Low'], endf['Close']))
             return endf
         if enrich == 'cdlcounterattack':
-            endf.insert(0, column='cdlcounterattack', value=ta.CDLCOUNTERATTACK(endf['open'], endf['high'], endf['low'], endf['close']))
+            endf.insert(0, column='cdlcounterattack', value=ta.CDLCOUNTERATTACK(endf['Open'], endf['High'], endf['Low'], endf['Close']))
             return endf
         if enrich == 'cdldarkcloudcover':
-            endf.insert(0, column='cdldarkcloudcover', value=ta.CDLDARKCLOUDCOVER(endf['open'], endf['high'], endf['low'], endf['close'], penetration=0))
+            endf.insert(0, column='cdldarkcloudcover', value=ta.CDLDARKCLOUDCOVER(endf['Open'], endf['High'], endf['Low'], endf['Close'], penetration=0))
             return endf
         if enrich == 'cdldoji':
-            endf.insert(0, column='cdldoji', value=ta.CDLDOJI(endf['open'], endf['high'], endf['low'], endf['close']))
+            endf.insert(0, column='cdldoji', value=ta.CDLDOJI(endf['Open'], endf['High'], endf['Low'], endf['Close']))
             return endf
         if enrich == 'cdldojistar':
-            endf.insert(0, column='cdldojistar', value=ta.CDLDOJISTAR(endf['open'], endf['high'], endf['low'], endf['close']))
+            endf.insert(0, column='cdldojistar', value=ta.CDLDOJISTAR(endf['Open'], endf['High'], endf['Low'], endf['Close']))
             return endf
         if enrich == 'cdldragonflydoji':
-            endf.insert(0, column='cdldragonflydoji', value=ta.CDLDRAGONFLYDOJI(endf['open'], endf['high'], endf['low'], endf['close']))
+            endf.insert(0, column='cdldragonflydoji', value=ta.CDLDRAGONFLYDOJI(endf['Open'], endf['High'], endf['Low'], endf['Close']))
             return endf
         if enrich == 'cdlengulfing':
-            endf.insert(0, column='cdlengulfing', value=ta.CDLENGULFING(endf['open'], endf['high'], endf['low'], endf['close']))
+            endf.insert(0, column='cdlengulfing', value=ta.CDLENGULFING(endf['Open'], endf['High'], endf['Low'], endf['Close']))
             return endf
         if enrich == 'cdleveningdojistar':
-            endf.insert(0, column='cdleveningdojistar', value=ta.CDLEVENINGDOJISTAR(endf['open'], endf['high'], endf['low'], endf['close'], penetration=0))
+            endf.insert(0, column='cdleveningdojistar', value=ta.CDLEVENINGDOJISTAR(endf['Open'], endf['High'], endf['Low'], endf['Close'], penetration=0))
             return endf
         if enrich == 'cdleveningstar':
-            endf.insert(0, column='cdleveningstar', value=ta.CDLEVENINGSTAR(endf['open'], endf['high'], endf['low'], endf['close'], penetration=0))
+            endf.insert(0, column='cdleveningstar', value=ta.CDLEVENINGSTAR(endf['Open'], endf['High'], endf['Low'], endf['Close'], penetration=0))
             return endf
         if enrich == 'cdlgapsidesidewhite':
-            endf.insert(0, column='cdlgapsidesidewhite', value=ta.CDLGAPSIDESIDEWHITE(endf['open'], endf['high'], endf['low'], endf['close']))
+            endf.insert(0, column='cdlgapsidesidewhite', value=ta.CDLGAPSIDESIDEWHITE(endf['Open'], endf['High'], endf['Low'], endf['Close']))
             return endf
         if enrich == 'cdlgravestonedoji':
-            endf.insert(0, column='cdlgravestonedoji', value=ta.CDLGRAVESTONEDOJI(endf['open'], endf['high'], endf['low'], endf['close']))
+            endf.insert(0, column='cdlgravestonedoji', value=ta.CDLGRAVESTONEDOJI(endf['Open'], endf['High'], endf['Low'], endf['Close']))
             return endf
         if enrich == 'cdlhammer':
-            endf.insert(0, column='cdlhammer', value=ta.CDLHAMMER(endf['open'], endf['high'], endf['low'], endf['close']))
+            endf.insert(0, column='cdlhammer', value=ta.CDLHAMMER(endf['Open'], endf['High'], endf['Low'], endf['Close']))
             return endf
         if enrich == 'cdlhangingman':
-            endf.insert(0, column='cdlhangingman', value=ta.CDLHANGINGMAN(endf['open'], endf['high'], endf['low'], endf['close']))
+            endf.insert(0, column='cdlhangingman', value=ta.CDLHANGINGMAN(endf['Open'], endf['High'], endf['Low'], endf['Close']))
             return endf
         if enrich == 'cdlharami':
-            endf.insert(0, column='cdlharami', value=ta.CDLHARAMI(endf['open'], endf['high'], endf['low'], endf['close']))
+            endf.insert(0, column='cdlharami', value=ta.CDLHARAMI(endf['Open'], endf['High'], endf['Low'], endf['Close']))
             return endf
         if enrich == 'cdlharamicross':
-            endf.insert(0, column='cdlharamicross', value=ta.CDLHARAMICROSS(endf['open'], endf['high'], endf['low'], endf['close']))
+            endf.insert(0, column='cdlharamicross', value=ta.CDLHARAMICROSS(endf['Open'], endf['High'], endf['Low'], endf['Close']))
             return endf
-        if enrich == 'cdlhighwave':
-            endf.insert(0, column='cdlhighwave', value=ta.CDLHIGHWAVE(endf['open'], endf['high'], endf['low'], endf['close']))
+        if enrich == 'cdlHighwave':
+            endf.insert(0, column='cdlHighwave', value=ta.CDLHighWAVE(endf['Open'], endf['High'], endf['Low'], endf['Close']))
             return endf
         if enrich == 'cdlhikkake':
-            endf.insert(0, column='cdlhikkake', value=ta.CDLHIKKAKE(endf['open'], endf['high'], endf['low'], endf['close']))
+            endf.insert(0, column='cdlhikkake', value=ta.CDLHIKKAKE(endf['Open'], endf['High'], endf['Low'], endf['Close']))
             return endf
         if enrich == 'cdlhikkakemod':
-            endf.insert(0, column='cdlhikkakemod', value=ta.CDLHIKKAKEMOD(endf['open'], endf['high'], endf['low'], endf['close']))
+            endf.insert(0, column='cdlhikkakemod', value=ta.CDLHIKKAKEMOD(endf['Open'], endf['High'], endf['Low'], endf['Close']))
             return endf
         if enrich == 'cdlhomingpigeon':
-            endf.insert(0, column='cdlhomingpigeon', value=ta.CDLHOMINGPIGEON(endf['open'], endf['high'], endf['low'], endf['close']))
+            endf.insert(0, column='cdlhomingpigeon', value=ta.CDLHOMINGPIGEON(endf['Open'], endf['High'], endf['Low'], endf['Close']))
             return endf
         if enrich == 'cdlidentical3crows':
-            endf.insert(0, column='cdlidentical3crows', value=ta.CDLIDENTICAL3CROWS(endf['open'], endf['high'], endf['low'], endf['close']))
+            endf.insert(0, column='cdlidentical3crows', value=ta.CDLIDENTICAL3CROWS(endf['Open'], endf['High'], endf['Low'], endf['Close']))
             return endf
         if enrich == 'cdlinneck':
-            endf.insert(0, column='cdlinneck', value=ta.CDLINNECK(endf['open'], endf['high'], endf['low'], endf['close']))
+            endf.insert(0, column='cdlinneck', value=ta.CDLINNECK(endf['Open'], endf['High'], endf['Low'], endf['Close']))
             return endf
         if enrich == 'cdlinvertedhammer':
-            endf.insert(0, column='cdlinvertedhammer', value=ta.CDLINVERTEDHAMMER(endf['open'], endf['high'], endf['low'], endf['close']))
+            endf.insert(0, column='cdlinvertedhammer', value=ta.CDLINVERTEDHAMMER(endf['Open'], endf['High'], endf['Low'], endf['Close']))
             return endf
         if enrich == 'cdlkicking':
-            endf.insert(0, column='cdlkicking', value=ta.CDLKICKING(endf['open'], endf['high'], endf['low'], endf['close']))
+            endf.insert(0, column='cdlkicking', value=ta.CDLKICKING(endf['Open'], endf['High'], endf['Low'], endf['Close']))
             return endf
         if enrich == 'cdlkickingbylength':
-            endf.insert(0, column='cdlkickingbylength', value=ta.CDLKICKINGBYLENGTH(endf['open'], endf['high'], endf['low'], endf['close']))
+            endf.insert(0, column='cdlkickingbylength', value=ta.CDLKICKINGBYLENGTH(endf['Open'], endf['High'], endf['Low'], endf['Close']))
             return endf
         if enrich == 'cdlladderbottom':
-            endf.insert(0, column='cdlladderbottom', value=ta.CDLLADDERBOTTOM(endf['open'], endf['high'], endf['low'], endf['close']))
+            endf.insert(0, column='cdlladderbottom', value=ta.CDLLADDERBOTTOM(endf['Open'], endf['High'], endf['Low'], endf['Close']))
             return endf
         if enrich == 'cdllongleggeddoji':
-            endf.insert(0, column='cdllongleggeddoji', value=ta.CDLLONGLEGGEDDOJI(endf['open'], endf['high'], endf['low'], endf['close']))
+            endf.insert(0, column='cdllongleggeddoji', value=ta.CDLLONGLEGGEDDOJI(endf['Open'], endf['High'], endf['Low'], endf['Close']))
             return endf
         if enrich == 'cdllongline':
-            endf.insert(0, column='cdllongline', value=ta.CDLLONGLINE(endf['open'], endf['high'], endf['low'], endf['close']))
+            endf.insert(0, column='cdllongline', value=ta.CDLLONGLINE(endf['Open'], endf['High'], endf['Low'], endf['Close']))
             return endf
         if enrich == 'cdlmarubozu':
-            endf.insert(0, column='cdlmarubozu', value=ta.CDLMARUBOZU(endf['open'], endf['high'], endf['low'], endf['close']))
+            endf.insert(0, column='cdlmarubozu', value=ta.CDLMARUBOZU(endf['Open'], endf['High'], endf['Low'], endf['Close']))
             return endf
         if enrich == 'cdlmatchinglow':
-            endf.insert(0, column='cdlmatchinglow', value=ta.CDLMATCHINGLOW(endf['open'], endf['high'], endf['low'], endf['close']))
+            endf.insert(0, column='cdlmatchinglow', value=ta.CDLMATCHINGLOW(endf['Open'], endf['High'], endf['Low'], endf['Close']))
             return endf
         if enrich == 'cdlmathold':
-            endf.insert(0, column='cdlmathold', value=ta.CDLMATHOLD(endf['open'], endf['high'], endf['low'], endf['close'], penetration=0))
+            endf.insert(0, column='cdlmathold', value=ta.CDLMATHOLD(endf['Open'], endf['High'], endf['Low'], endf['Close'], penetration=0))
             return endf
         if enrich == 'cdlmorningdojistar':
-            endf.insert(0, column='cdlmorningdojistar', value=ta.CDLMORNINGDOJISTAR(endf['open'], endf['high'], endf['low'], endf['close'], penetration=0))
+            endf.insert(0, column='cdlmorningdojistar', value=ta.CDLMORNINGDOJISTAR(endf['Open'], endf['High'], endf['Low'], endf['Close'], penetration=0))
             return endf
         if enrich == 'cdlmorningstar':
-            endf.insert(0, column='cdlmorningstar', value=ta.CDLMORNINGSTAR(endf['open'], endf['high'], endf['low'], endf['close'], penetration=0))
+            endf.insert(0, column='cdlmorningstar', value=ta.CDLMORNINGSTAR(endf['Open'], endf['High'], endf['Low'], endf['Close'], penetration=0))
             return endf
         if enrich == 'cdlonneck':
-            endf.insert(0, column='cdlonneck', value=ta.CDLONNECK(endf['open'], endf['high'], endf['low'], endf['close']))
+            endf.insert(0, column='cdlonneck', value=ta.CDLONNECK(endf['Open'], endf['High'], endf['Low'], endf['Close']))
             return endf
         if enrich == 'cdlpiercing':
-            endf.insert(0, column='cdlpiercing', value=ta.CDLPIERCING(endf['open'], endf['high'], endf['low'], endf['close']))
+            endf.insert(0, column='cdlpiercing', value=ta.CDLPIERCING(endf['Open'], endf['High'], endf['Low'], endf['Close']))
             return endf
         if enrich == 'cdlrickshawman':
-            endf.insert(0, column='cdlrickshawman', value=ta.CDLRICKSHAWMAN(endf['open'], endf['high'], endf['low'], endf['close']))
+            endf.insert(0, column='cdlrickshawman', value=ta.CDLRICKSHAWMAN(endf['Open'], endf['High'], endf['Low'], endf['Close']))
             return endf
         if enrich == 'cdlrisefall3methods':
-            endf.insert(0, column='cdlrisefall3methods', value=ta.CDLRISEFALL3METHODS(endf['open'], endf['high'], endf['low'], endf['close']))
+            endf.insert(0, column='cdlrisefall3methods', value=ta.CDLRISEFALL3METHODS(endf['Open'], endf['High'], endf['Low'], endf['Close']))
             return endf
         if enrich == 'cdlseparatinglines':
-            endf.insert(0, column='cdlseparatinglines', value=ta.CDLSEPARATINGLINES(endf['open'], endf['high'], endf['low'], endf['close']))
+            endf.insert(0, column='cdlseparatinglines', value=ta.CDLSEPARATINGLINES(endf['Open'], endf['High'], endf['Low'], endf['Close']))
             return endf
         if enrich == 'cdlshootingstar':
-            endf.insert(0, column='cdlshootingstar', value=ta.CDLSHOOTINGSTAR(endf['open'], endf['high'], endf['low'], endf['close']))
+            endf.insert(0, column='cdlshootingstar', value=ta.CDLSHOOTINGSTAR(endf['Open'], endf['High'], endf['Low'], endf['Close']))
             return endf
         if enrich == 'cdlshortline':
-            endf.insert(0, column='cdlshortline', value=ta.CDLSHORTLINE(endf['open'], endf['high'], endf['low'], endf['close']))
+            endf.insert(0, column='cdlshortline', value=ta.CDLSHORTLINE(endf['Open'], endf['High'], endf['Low'], endf['Close']))
             return endf
         if enrich == 'cdlspinningtop':
-            endf.insert(0, column='cdlspinningtop', value=ta.CDLSPINNINGTOP(endf['open'], endf['high'], endf['low'], endf['close']))
+            endf.insert(0, column='cdlspinningtop', value=ta.CDLSPINNINGTOP(endf['Open'], endf['High'], endf['Low'], endf['Close']))
             return endf
         if enrich == 'cdlstalledpattern':
-            endf.insert(0, column='cdlstalledpattern', value=ta.CDLSTALLEDPATTERN(endf['open'], endf['high'], endf['low'], endf['close']))
+            endf.insert(0, column='cdlstalledpattern', value=ta.CDLSTALLEDPATTERN(endf['Open'], endf['High'], endf['Low'], endf['Close']))
             return endf
         if enrich == 'cdlsticksandwich':
-            endf.insert(0, column='cdlsticksandwich', value=ta.CDLSTICKSANDWICH(endf['open'], endf['high'], endf['low'], endf['close']))
+            endf.insert(0, column='cdlsticksandwich', value=ta.CDLSTICKSANDWICH(endf['Open'], endf['High'], endf['Low'], endf['Close']))
             return endf
         if enrich == 'cdltakuri':
-            endf.insert(0, column='cdltakuri', value=ta.CDLTAKURI(endf['open'], endf['high'], endf['low'], endf['close']))
+            endf.insert(0, column='cdltakuri', value=ta.CDLTAKURI(endf['Open'], endf['High'], endf['Low'], endf['Close']))
             return endf
         if enrich == 'cdltasukigap':
-            endf.insert(0, column='cdltasukigap', value=ta.CDLTASUKIGAP(endf['open'], endf['high'], endf['low'], endf['close']))
+            endf.insert(0, column='cdltasukigap', value=ta.CDLTASUKIGAP(endf['Open'], endf['High'], endf['Low'], endf['Close']))
             return endf
         if enrich == 'cdlthrusting':
-            endf.insert(0, column='cdlthrusting', value=ta.CDLTHRUSTING(endf['open'], endf['high'], endf['low'], endf['close']))
+            endf.insert(0, column='cdlthrusting', value=ta.CDLTHRUSTING(endf['Open'], endf['High'], endf['Low'], endf['Close']))
             return endf
         if enrich == 'cdltristar':
-            endf.insert(0, column='cdltristar', value=ta.CDLTRISTAR(endf['open'], endf['high'], endf['low'], endf['close']))
+            endf.insert(0, column='cdltristar', value=ta.CDLTRISTAR(endf['Open'], endf['High'], endf['Low'], endf['Close']))
             return endf
         if enrich == 'cdlunique3river':
-            endf.insert(0, column='cdlunique3river', value=ta.CDLUNIQUE3RIVER(endf['open'], endf['high'], endf['low'], endf['close']))
+            endf.insert(0, column='cdlunique3river', value=ta.CDLUNIQUE3RIVER(endf['Open'], endf['High'], endf['Low'], endf['Close']))
             return endf
         if enrich == 'cdlupsidegap2crows':
-            endf.insert(0, column='cdlupsidegap2crows', value=ta.CDLUPSIDEGAP2CROWS(endf['open'], endf['high'], endf['low'], endf['close']))
+            endf.insert(0, column='cdlupsidegap2crows', value=ta.CDLUPSIDEGAP2CROWS(endf['Open'], endf['High'], endf['Low'], endf['Close']))
             return endf
         if enrich == 'cdlxsidegap3methods':
-            endf.insert(0, column='cdlxsidegap3methods', value=ta.CDLXSIDEGAP3METHODS(endf['open'], endf['high'], endf['low'], endf['close']))
+            endf.insert(0, column='cdlxsidegap3methods', value=ta.CDLXSIDEGAP3METHODS(endf['Open'], endf['High'], endf['Low'], endf['Close']))
             return endf
 
         # Price
         if enrich == 'avgprice':
-            endf.insert(0, column='avgprice', value=ta.AVGPRICE(endf['open'], endf['high'], endf['low'], endf['close']))
+            endf.insert(0, column='avgprice', value=ta.AVGPRICE(endf['Open'], endf['High'], endf['Low'], endf['Close']))
             return endf
         if enrich == 'medprice':
-            endf.insert(0, column='medprice', value=ta.MEDPRICE(endf['high'], endf['low']))
+            endf.insert(0, column='medprice', value=ta.MEDPRICE(endf['High'], endf['Low']))
             return endf
         if enrich == 'typprice':
-            endf.insert(0, column='typprice', value=ta.TYPPRICE(endf['high'], endf['low'], endf['close']))
+            endf.insert(0, column='typprice', value=ta.TYPPRICE(endf['High'], endf['Low'], endf['Close']))
             return endf
         if enrich == 'wclprice':
-            endf.insert(0, column='wclprice', value=ta.WCLPRICE(endf['high'], endf['low'], endf['close']))
+            endf.insert(0, column='wclprice', value=ta.WCLPRICE(endf['High'], endf['Low'], endf['Close']))
             return endf
 
         # Stats
         if enrich == 'beta':
-            endf.insert(0, column='beta', value=ta.BETA(endf['high'], endf['low'], timeperiod=5))
+            endf.insert(0, column='beta', value=ta.BETA(endf['High'], endf['Low'], timeperiod=5))
             return endf
         if enrich == 'correl':
-            endf.insert(0, column='correl', value=ta.CORREL(endf['high'], endf['low'], timeperiod=30))
+            endf.insert(0, column='correl', value=ta.CORREL(endf['High'], endf['Low'], timeperiod=30))
             return endf
         if enrich == 'linearreg':
-            endf.insert(0, column='linearreg', value=ta.LINEARREG(endf['close'], timeperiod=14))
+            endf.insert(0, column='linearreg', value=ta.LINEARREG(endf['Close'], timeperiod=14))
             return endf
         if enrich == 'linearreg_angle':
-            endf.insert(0, column='linearreg_angle', value=ta.LINEARREG_ANGLE(endf['close'], timeperiod=14))
+            endf.insert(0, column='linearreg_angle', value=ta.LINEARREG_ANGLE(endf['Close'], timeperiod=14))
             return endf
         if enrich == 'linearreg_intercept':
-            endf.insert(0, column='linearreg_intercept', value=ta.LINEARREG_INTERCEPT(endf['close'], timeperiod=14))
+            endf.insert(0, column='linearreg_intercept', value=ta.LINEARREG_INTERCEPT(endf['Close'], timeperiod=14))
             return endf
         if enrich == 'linearreg_slope':
-            endf.insert(0, column='linearreg_slope', value=ta.LINEARREG_SLOPE(endf['close'], timeperiod=14))
+            endf.insert(0, column='linearreg_slope', value=ta.LINEARREG_SLOPE(endf['Close'], timeperiod=14))
             return endf
         if enrich == 'stddev':
-            endf.insert(0, column='stddev', value=ta.STDDEV(endf['close'], timeperiod=5, nbdev=1))
+            endf.insert(0, column='stddev', value=ta.STDDEV(endf['Close'], timeperiod=5, nbdev=1))
             return endf
         if enrich == 'tsf':
-            endf.insert(0, column='tsf', value=ta.TSF(endf['close'], timeperiod=14))
+            endf.insert(0, column='tsf', value=ta.TSF(endf['Close'], timeperiod=14))
             return endf
         if enrich == 'var':
-            endf.insert(0, column='var', value=ta.VAR(endf['close'], timeperiod=5, nbdev=1))
+            endf.insert(0, column='var', value=ta.VAR(endf['Close'], timeperiod=5, nbdev=1))
             return endf
 
     def listDepen(self):
@@ -527,56 +527,56 @@ class Enrichment():
 
     def addDepen(self, enrich, endf):
         if enrich == 'nana':
-            endf['dependef'] = endf['close']
+            endf['dependef'] = endf['Close']
             return endf
         if enrich == '1BarClose':
-            endf.insert(endf.shape[1], column='depen1', value=(endf.diff(periods=-1)['close'] * -1))
+            endf.insert(endf.shape[1], column='depen1', value=(endf.diff(periods=-1)['Close'] * -1))
             return endf
         if enrich == '2BarClose':
-            endf.insert(endf.shape[1], column='depen2', value=(endf.diff(periods=-2)['close'] * -1))
+            endf.insert(endf.shape[1], column='depen2', value=(endf.diff(periods=-2)['Close'] * -1))
             return endf
         if enrich == '3BarClose':
-            endf.insert(endf.shape[1], column='depen3', value=(endf.diff(periods=-3)['close'] * -1))
+            endf.insert(endf.shape[1], column='depen3', value=(endf.diff(periods=-3)['Close'] * -1))
             return endf
 
         if enrich == '1BarBool':
             # Diff comes back with negative showing positive change
-            endf.loc[endf.diff(periods=-1)['close'] < 0, 'depen1bool'] = 1
-            endf.loc[endf.diff(periods=-1)['close'] >= 0, 'depen1bool'] = 0
+            endf.loc[endf.diff(periods=-1)['Close'] < 0, 'depen1bool'] = 1
+            endf.loc[endf.diff(periods=-1)['Close'] >= 0, 'depen1bool'] = 0
             return endf
         if enrich == '2BarBool':
             # Diff comes back with negative showing positive change
-            endf.loc[endf.diff(periods=-2)['close'] < 0, 'depen2bool'] = 1
-            endf.loc[endf.diff(periods=-2)['close'] >= 0, 'depen2bool'] = 0
+            endf.loc[endf.diff(periods=-2)['Close'] < 0, 'depen2bool'] = 1
+            endf.loc[endf.diff(periods=-2)['Close'] >= 0, 'depen2bool'] = 0
             return endf
         if enrich == '3BarBool':
             # Diff comes back with negative showing positive change
-            endf.loc[endf.diff(periods=-3)['close'] < 0, 'depen3bool'] = 1
-            endf.loc[endf.diff(periods=-3)['close'] >= 0, 'depen3bool'] = 0
+            endf.loc[endf.diff(periods=-3)['Close'] < 0, 'depen3bool'] = 1
+            endf.loc[endf.diff(periods=-3)['Close'] >= 0, 'depen3bool'] = 0
             return endf
 
         if enrich == 'High5':
             n = 5  # number of points to be checked before and after
-            endf['High5'] = endf.iloc[argrelextrema(endf.high.values, np.greater_equal, order=n)[0]]['high']
+            endf['High5'] = endf.iloc[argrelextrema(endf.High.values, np.greater_equal, order=n)[0]]['High']
             endf['High5'].fillna(0, inplace=True)
             endf.loc[endf['High5'] > 0, 'High5'] = 1
             return endf
         if enrich == 'Low5':
             n = 5  # number of points to be checked before and after
-            endf['Low5'] = endf.iloc[argrelextrema(endf.low.values, np.less_equal, order=n)[0]]['low']
+            endf['Low5'] = endf.iloc[argrelextrema(endf.low.values, np.less_equal, order=n)[0]]['Low']
             endf['Low5'].fillna(0, inplace=True)
             endf.loc[endf['Low5'] > 0, 'Low5'] = 1
             return endf
 
         if enrich == 'High10':
             n = 10  # number of points to be checked before and after
-            endf['High10'] = endf.iloc[argrelextrema(endf.high.values, np.greater_equal, order=n)[0]]['high']
+            endf['High10'] = endf.iloc[argrelextrema(endf.High.values, np.greater_equal, order=n)[0]]['High']
             endf['High10'].fillna(0, inplace=True)
             endf.loc[endf['High10'] > 0, 'High10'] = 1
             return endf
         if enrich == 'Low10':
             n = 10  # number of points to be checked before and after
-            endf['Low10'] = endf.iloc[argrelextrema(endf.low.values, np.less_equal, order=n)[0]]['low']
+            endf['Low10'] = endf.iloc[argrelextrema(endf.low.values, np.less_equal, order=n)[0]]['Low']
             endf['Low10'].fillna(0, inplace=True)
             endf.loc[endf['Low10'] > 0, 'Low10'] = 1
             return endf

@@ -106,6 +106,7 @@ class Basic():
             tmpsamples.append(tmpinfo)
         return tmpsamples
 
+    # Timeframe to Milliseconds
     def tfToMS(self, tf):
         if 'T' in tf:
             temptf = int(tf.replace('T', ''))

@@ -52,7 +52,7 @@ class Runner(Basic):
                             # Check for recent additions
                             result = self.db.session.execute('SELECT * from ' + tmpDataConf['id']).fetchall()
                             # Drop results to dataFrame
-                            datadf = DataFrame(result, columns=['date', 'open', 'high', 'low', 'close', 'volume'])
+                            datadf = DataFrame(result, columns=['Date', 'Open', 'High', 'Low', 'Close', 'Volume'])
                             # print('Data Found start from: #'+str(datadf['date'].iloc[-1])+'#',file=sys.stderr)
                             data = tmpex.fetch_ohlcv(tmpDataConf['symb'], '1m', int(datadf['date'].iloc[-1]))
                     # Write results to database
@@ -65,7 +65,7 @@ class Runner(Basic):
                 # Check for recent additions
                 result = self.db.session.execute('SELECT * from ' + tmpDataConf['id']).fetchall()
                 # Drop results to dataFrame
-                datadf = DataFrame(result, columns=['date', 'open', 'high', 'low', 'close', 'volume'])
+                datadf = DataFrame(result, columns=['Date', 'Open', 'High', 'Low', 'Close', 'Volume'])
                 # Create and save head tail and count
                 tmpDataConf['head'] = datadf.values.tolist()[0]
                 tmpDataConf['tail'] = datadf.values.tolist()[-1]

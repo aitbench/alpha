@@ -14,6 +14,7 @@ from logging import Formatter, FileHandler
 # Flask Login manager
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required
 from werkzeug.security import generate_password_hash, check_password_hash
+from werkzeug.utils import secure_filename
 # Flask AP Scheduler
 from flask_apscheduler import APScheduler
 # AI-TB
@@ -276,6 +277,27 @@ def data():
             delfile = dataPath + 'samples' + os.path.sep + request.form['id'] + '.feather'
             os.remove(delfile)
             return redirect("/data")
+        if act == 'upload':
+            id = request.form['id']
+            # If no files sent
+            if 'file' not in request.files:
+                flash('No file part')
+                return redirect(request.url)
+            file = request.files['file']
+            # If filename empty. User sent page with file
+            if file.filename == '':
+                flash('No selected file')
+                return redirect(request.url)
+            filename = secure_filename(file.filename)
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            dataResult = do.uploadData(filename, id)
+            print(dataResult, file=sys.stderr)
+            # return render_template('pages/data-upload.html', cols=cols)
+            if dataResult:
+                return 'Success'
+            else:
+                return 'Could not find Open/open', 404
+
     else:
         # List data in folder ignoring .keep files
         dataCfgfiles = do.listCfgFiles('data')
@@ -542,6 +564,7 @@ if __name__ == '__main__':
     # Overwrite config for flask-debugtoolbar
     # app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
     app.config['DEBUG'] = True
+    app.config['UPLOAD_FOLDER'] = 'tmp'
     do.clearRunLocks()
     app.run()
 

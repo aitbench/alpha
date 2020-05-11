@@ -145,3 +145,4 @@ dmypy.json
 # AI-TB temp
 /tmp/run/*
 !/tmp/run/.keep
+/tmp/*

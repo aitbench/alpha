@@ -188,12 +188,12 @@ class Helper(Basic):
 
         class OHBASE(Base):
             __tablename__ = id
-            date = Column('date', Integer, primary_key=True)
-            open = Column('open', Float)
-            high = Column('high', Float)
-            low = Column('low', Float)
-            close = Column('close', Float)
-            volume = Column('volume', Float)
+            date = Column('Date', Integer, primary_key=True)
+            open = Column('Open', Float)
+            High = Column('High', Float)
+            Low = Column('Low', Float)
+            close = Column('Close', Float)
+            volume = Column('Volume', Float)
         # Table creation object
         table_creation_sql = str(CreateTable(OHBASE.__table__))
         table_creation_sql = table_creation_sql.replace('CREATE TABLE', 'CREATE TABLE IF NOT EXISTS')
@@ -252,38 +252,37 @@ class Helper(Basic):
         # print(selState,file=sys.stderr)
         result = self.db.session.execute(selState).fetchall()
         # print(result,file=sys.stderr)
-        createSampledf = pd.DataFrame(result, columns=['date', 'open', 'high', 'low', 'close', 'volume'])
+        createSampledf = pd.DataFrame(result, columns=['Date', 'Open', 'High', 'Low', 'Close', 'Volume'])
         if createSampledf.shape[0] == 0:
             return
         # Setup Datetime and Index
-        # createSampledf['date'].astype('datetime64[ms]')
+        # createSampledf['Date'].astype('datetime64[ms]')
         # TODO EXCLUDE forming Candle
         # Create DatetimeIndex
-        createSampledf['date'] = pd.to_datetime(createSampledf['date'], unit='ms')
-        createSampledf.set_index('date', inplace=True)
+        createSampledf['Date'] = pd.to_datetime(createSampledf['Date'], unit='ms')
+        createSampledf.set_index('Date', inplace=True)
         # Break up OHLC
-        open = createSampledf['open']
-        high = createSampledf['high']
-        low = createSampledf['low']
-        close = createSampledf['close']
-        vols = createSampledf['volume']
+        Open = createSampledf['Open']
+        High = createSampledf['High']
+        Low = createSampledf['Low']
+        Close = createSampledf['Close']
+        Vols = createSampledf['Volume']
         # Resample prices and vols
-        sopen = open.resample(timeframe).first()
-        shigh = high.resample(timeframe).max()
-        slow = low.resample(timeframe).min()
-        sclose = close.resample(timeframe).last()
-        svols = vols.resample(timeframe).sum()
+        sOpen = Open.resample(timeframe).first()
+        sHigh = High.resample(timeframe).max()
+        sLow = Low.resample(timeframe).min()
+        sClose = Close.resample(timeframe).last()
+        sVols = Vols.resample(timeframe).sum()
         # Join the two together
-        result = pd.concat([sopen, shigh, slow, sclose, svols], axis=1)
+        result = pd.concat([sOpen, sHigh, sLow, sClose, sVols], axis=1)
         result.reset_index(inplace=True)
-        result['date'] = result['date'].astype(np.int64) / int(1e6)
-        sname = str(data) + '_' + timeframe + '_' + str(int(result['date'].iloc[0])) + '_' + str(int(result['date'].iloc[-1]))
+        result['Date'] = result['Date'].astype(np.int64) / int(1e6)
+        sname = str(data) + '_' + timeframe + '_' + str(int(result['Date'].iloc[0])) + '_' + str(int(result['Date'].iloc[-1]))
         result.to_feather(self.sampleDataPath + sname + '.feather')
 
     def createNugget(self, sample, indie, depen, nana):
         en = enrichments.Enrichment()
         df = pd.read_feather(self.sampleDataPath + sample + '.feather')
-        # print(df,file=sys.stderr)
         richcfg = self.readCfgFile('enrich', indie + '.yml')
         riches = richcfg['riches'].split(', ')
         for rich in riches:
@@ -292,3 +291,33 @@ class Helper(Basic):
         df = en.doNaN(nana, df)
         nfile = sample + '_' + indie + '_' + depen + '.feather'
         df.to_feather(self.nuggetDataPath + nfile)
+
+    def uploadData(self, fname, id):
+        # print(fname,file=sys.stderr)
+        nada, ext = os.path.splitext(fname)
+        ffname = os.path.join(self.tmpPath, fname)
+        df = pd.DataFrame()
+        if ext == '.csv':
+            df = pd.read_csv(ffname)
+        if ext == '.feather':
+            df = pd.read_feather(ffname)
+        if ext == '.parquet':
+            df = pd.read_parquet(ffname)
+        if ext == '.pickle':
+            df = pd.read_pickle(ffname)
+        # df.reset_index(inplace=True)
+        # print(df.index.astype(np.int64)/1000000,file=sys.stderr)
+        print(df.index.astype(int) / 1000000, file=sys.stderr)
+        success = False
+        if 'open' in df.columns:
+            success = True
+            for index, dr in df.iterrows():
+                sqlins = 'INSERT OR IGNORE INTO ' + id + ' VALUES (' + str(index.value / 1000000) + ',' + str(dr['open']) + ',' + str(dr['high']) + ',' + str(dr['low']) + ',' + str(dr['close']) + ',' + str(dr['volume']) + ')'
+                # print(sqlins,file=sys.stderr)
+                self.db.session.execute(sqlins)
+        if 'Open' in df.columns:
+            success = True
+            for index, dr in df.iterrows():
+                sqlins = 'INSERT OR IGNORE INTO ' + id + ' VALUES (' + str(index.value / 1000000) + ',' + str(dr['Open']) + ',' + str(dr['High']) + ',' + str(dr['Low']) + ',' + str(dr['Close']) + ',' + str(dr['Volume']) + ')'
+                # self.db.session.execute(sqlins)
+        return success
