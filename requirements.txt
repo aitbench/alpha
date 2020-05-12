@@ -1,6 +1,7 @@
 APScheduler==3.6.3
 bokeh==2.0.2
 ccxt==1.27.20
+fastparquet==0.3.3
 Flask==1.1.2
 Flask-APScheduler==1.11.0
 Flask-Login==0.5.0
