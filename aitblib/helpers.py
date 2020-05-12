@@ -333,6 +333,7 @@ class Helper(Basic):
             for index, dr in updf.iterrows():
                 sqlins = 'INSERT OR IGNORE INTO ' + id + ' VALUES (' + str(index.value / 1000000) + ',' + str(dr['Open']) + ',' + str(dr['High']) + ',' + str(dr['Low']) + ',' + str(dr['Close']) + ',' + str(dr['Volume']) + ')'
                 self.db.session.execute(sqlins)
+        os.remove(ffname)
         return success
 
 
