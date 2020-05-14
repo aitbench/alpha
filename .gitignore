@@ -134,6 +134,12 @@ dmypy.json
 !/conf/conn/.keep
 /conf/data/*
 !/conf/data/.keep
+/conf/ann/*
+!/conf/ann/.keep
+/conf/cnn/*
+!/conf/cnn/.keep
+/conf/rnn/*
+!/conf/rnn/.keep
 
 # AI-TB data
 /data/samples/*
@@ -141,11 +147,13 @@ dmypy.json
 /data/nuggets/*
 !/data/nuggets/.keep
 
+# AI-TB temp
+/tmp/*
+/tmp/import/*
+!/tmp/import/.keep
+/tmp/run/*
+!/tmp/run/.keep
+
 # SQLite default instance
 /data/*.db
 /data/*.db-journal
-
-# AI-TB temp
-/tmp/run/*
-!/tmp/run/.keep
-/tmp/*
