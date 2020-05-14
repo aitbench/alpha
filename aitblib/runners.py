@@ -15,7 +15,7 @@ class Runner(Basic):
         tname = self.logPath + 'test.log'
         with open(tname, 'a') as file:
             file.write(str(datetime.datetime.now()) + " -- Testing timing and threads\n")
-        # print('TesterRunner',file=sys.stderr)
+        print('TesterRunner', file=sys.stderr)
 
     def dataDownload(self, aggro):
         # Create file and path
@@ -24,10 +24,12 @@ class Runner(Basic):
         else:
             dpre = 'dataDownload'
         dname = self.runPath + dpre + '.run'
+        dlog = self.logPath + dpre + '.log'
+        # Testing logging
+        # with open(dlog, 'a') as file:
+        # file.write(str(datetime.datetime.now())+" --Testing\n")
         # Test if already running
         if os.path.exists(dname):
-            with open(self.logPath + dpre + '.log', 'a') as file:
-                file.write(str(datetime.datetime.now()) + " -- Data Downloader lockfile found!!\n")
             return
         # Write lock file
         with open(dname, 'w') as file:
@@ -54,14 +56,17 @@ class Runner(Basic):
                             # Drop results to dataFrame
                             datadf = DataFrame(result, columns=['Date', 'Open', 'High', 'Low', 'Close', 'Volume'])
                             # print('Data Found start from: #'+str(datadf['date'].iloc[-1])+'#',file=sys.stderr)
-                            data = tmpex.fetch_ohlcv(tmpDataConf['symb'], '1m', int(datadf['date'].iloc[-1]))
+                            data = tmpex.fetch_ohlcv(tmpDataConf['symb'], '1m', int(datadf['Date'].iloc[-1]))
                     # Write results to database
                     for datarow in data:
                         self.db.session.execute('INSERT OR IGNORE INTO ' + tmpDataConf['id'] + ' VALUES (' + str(datarow[0]) + ',' + str(datarow[1]) + ',' + str(datarow[2]) + ',' + str(datarow[3]) + ',' + str(datarow[4]) + ',' + str(datarow[5]) + ')')
                     # Commit database entries
                     self.db.session.commit()
-                except BaseException:
-                    print('Pull data Error', file=sys.stderr)
+                except (ccxt.ExchangeError, ccxt.NetworkError) as error:
+                    # Catch most common errors
+                    with open(dlog, 'a') as file:
+                        file.write(str(datetime.datetime.now()) + " --" + type(error).__name__ + "--" + error.args + "\n")
+                    break
                 # Check for recent additions
                 result = self.db.session.execute('SELECT * from ' + tmpDataConf['id']).fetchall()
                 # Drop results to dataFrame

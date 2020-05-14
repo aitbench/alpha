@@ -1,0 +1,42 @@
+{% extends 'layouts/main.html' %}
+{% block title %}Ops Runners{% endblock %}
+{% block content %}
+
+<script>
+  //function to check if element is scrolled to the bottom
+  function isElementScrolledToBottom(el) {
+    if (el.scrollTop >= (el.scrollHeight - el.offsetHeight)) {
+        return true;
+    }
+    return false;
+  }
+
+  //function to scroll to bottom
+  function scrollToBottom(el) {
+    el.scrollTop = el.scrollHeight;
+  }
+</script>
+
+{% for name, runner in runners.items() %}
+<div class="block-header">
+  <h2>
+    {{ name }}
+    <small>{{ runner }}</small>
+  </h2>
+</div>
+<pre id="output_{{ runner }}" style="height:200px;overflow-y:auto;"></pre>
+<script>
+    var output = document.getElementById('output_{{ runner}}');
+
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', '/logstream/{{runner}}');
+    xhr.send();
+
+    setInterval(function() {
+        output.textContent = xhr.responseText;
+        output.scrollTop = output.scrollHeight;
+    }, 1000);
+</script>
+{% endfor %}
+
+{% endblock %}

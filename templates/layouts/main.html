@@ -184,12 +184,23 @@
 							<span>Observatorium</span>
 						</a>
 					</li>
-					<li {% if request.endpoint == 'ai' %} class="active" {% endif %}>
-						<a href="/ai">
-							<i class="material-icons">memory</i>
-							<span>AI</span>
-						</a>
-					</li>
+					<li {% if request.endpoint == 'aiann' or request.endpoint == 'aicnn' or request.endpoint == 'airnn' %} class="active" {% endif %}>
+            <a href="javascript:void(0);" class="menu-toggle waves-effect waves-block">
+                <i class="material-icons">memory</i>
+                <span>AI</span>
+            </a>
+            <ul class="ml-menu">
+                <li {% if request.endpoint == 'ai-ann' %} class="active" {% endif %}>
+                    <a href="/ai-ann" class="waves-effect waves-block">ANNs</a>
+                </li>
+                <li {% if request.endpoint == 'ai-cnn' %} class="active" {% endif %}>
+                    <a href="/ai-cnn" class="waves-effect waves-block">CNNs</a>
+                </li>
+                <li {% if request.endpoint == 'ai-rnn' %} class="active" {% endif %}>
+                    <a href="/ai-rnn" class="waves-effect waves-block">RNNs</a>
+                </li>
+            </ul>
+        	</li>
 					<li {% if request.endpoint == 'sentiment' %} class="active" {% endif %}>
 						<a href="/sentiment">
 							<i class="material-icons">sentiment_satisfied</i>
@@ -208,12 +219,23 @@
 							<span>Trading</span>
 						</a>
 					</li>
-					<li {% if request.endpoint == 'ops' %} class="active" {% endif %}>
-						<a href="/ops">
-							<i class="material-icons">settings</i>
-							<span>Operations</span>
-						</a>
-					</li>
+					<li {% if request.endpoint == 'opsdb' or request.endpoint == 'opsrun' or request.endpoint == 'opsusers' %} class="active" {% endif %}>
+            <a href="javascript:void(0);" class="menu-toggle waves-effect waves-block">
+                <i class="material-icons">settings</i>
+                <span>Operations</span>
+            </a>
+            <ul class="ml-menu">
+                <li {% if request.endpoint == 'opsdb' %} class="active" {% endif %}>
+                    <a href="/ops-db" class="waves-effect waves-block">Database</a>
+                </li>
+                <li {% if request.endpoint == 'opsrun' %} class="active" {% endif %}>
+                    <a href="/ops-run" class="waves-effect waves-block">Runners</a>
+                </li>
+                <li {% if request.endpoint == 'opsusers' %} class="active" {% endif %}>
+                    <a href="/ops-users" class="waves-effect waves-block">Users</a>
+                </li>
+            </ul>
+        	</li>
 					<li {% if request.endpoint == 'changelogs' %} class="active" {% endif %}>
 						<a href="/changelogs">
 							<i class="material-icons">update</i>
@@ -384,8 +406,8 @@
 	<script src="static/js/demo.js"></script>
 	<!-- Bokeh -->
 	<script src="static/js/bokeh-2.0.2.min.js"></script>
-	<script src="static/js/release/bokeh-widgets-2.0.2.min.js"></script>
-	<script src="static/js/release/bokeh-tables-2.0.2.min.js"></script>
+	<script src="static/js/bokeh-widgets-2.0.2.min.js"></script>
+	<script src="static/js/bokeh-tables-2.0.2.min.js"></script>
 	{% block footer %}{% endblock %}
 </body>
 </html>

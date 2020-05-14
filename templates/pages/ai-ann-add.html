@@ -1,0 +1,150 @@
+{% extends 'layouts/main.html' %}
+{% block title %}Nuggets Add{% endblock %}
+{% block content %}
+<form method="post">
+<div class="row clearfix">
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        <div class="card">
+            <div class="header">
+                <h2>
+                    Add ANN
+                </h2>
+            </div>
+            <div class="body">
+                <div class="row clearfix">
+                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-6">
+                        <div>
+                          <label>Nugget</label><br>
+                            <div class="form-line">
+                                <input name="nom" type="text" class="form-control" placeholder="Name of AI">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                        <div>
+                            <label>Nugget</label><br>
+                            <select name="nugget" class="form-control" style="display:inline;width:100%">
+                              {% for nugget in nuggets %}
+                              <option {% if selected == nugget['id'] %} selected {% endif %}
+                              value='{{nugget['id']}}'>{{nugget['con']}} {{nugget['timeframe']}}
+                                {{nugget['symb']}} {{nugget['from']}} - {{nugget['to']}} I(X):{{nugget['indi']}} D(y):{{nugget['depen']}}</option>
+                              {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-6">
+                      <label>Test Split</label>
+                      <div class="input-group spinner" data-trigger="spinner">
+                          <div class="form-line">
+                              <input name="testsplit" type="text" class="form-control text-center" value="1" data-rule="currency">
+                          </div>
+                          <span class="input-group-addon">
+                              <a href="javascript:;" class="spin-up" data-spin="up"><i class="glyphicon glyphicon-chevron-up"></i></a>
+                              <a href="javascript:;" class="spin-down" data-spin="down"><i class="glyphicon glyphicon-chevron-down"></i></a>
+                          </span>
+                      </div>
+                    </div>
+                </div>
+                <div class="row clearfix">
+                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-6">
+                      <label>Input Layer Units</label>
+                      <div class="input-group spinner" data-trigger="spinner">
+                          <div class="form-line">
+                              <input name="inputlayerunits" type="text" class="form-control text-center" value="1" data-rule="currency">
+                          </div>
+                          <span class="input-group-addon">
+                              <a href="javascript:;" class="spin-up" data-spin="up"><i class="glyphicon glyphicon-chevron-up"></i></a>
+                              <a href="javascript:;" class="spin-down" data-spin="down"><i class="glyphicon glyphicon-chevron-down"></i></a>
+                          </span>
+                      </div>
+                    </div>
+                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-6">
+                      <label>Hidden Layers</label>
+                      <div class="input-group spinner" data-trigger="spinner">
+                          <div class="form-line">
+                              <input name="hiddenlayers" type="text" class="form-control text-center" value="1" data-rule="currency">
+                          </div>
+                          <span class="input-group-addon">
+                              <a href="javascript:;" class="spin-up" data-spin="up"><i class="glyphicon glyphicon-chevron-up"></i></a>
+                              <a href="javascript:;" class="spin-down" data-spin="down"><i class="glyphicon glyphicon-chevron-down"></i></a>
+                          </span>
+                      </div>
+                    </div>
+                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-6">
+                      <label>Hidden Layer Units</label>
+                      <div class="input-group spinner" data-trigger="spinner">
+                          <div class="form-line">
+                              <input name="hiddenlayerunits" type="text" class="form-control text-center" value="1" data-rule="currency">
+                          </div>
+                          <span class="input-group-addon">
+                              <a href="javascript:;" class="spin-up" data-spin="up"><i class="glyphicon glyphicon-chevron-up"></i></a>
+                              <a href="javascript:;" class="spin-down" data-spin="down"><i class="glyphicon glyphicon-chevron-down"></i></a>
+                          </span>
+                      </div>
+                    </div>
+                </div>
+                <div class="row clearfix">
+                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-6">
+                      <label>Optimizer</label><br>
+                        <select name="optimizer" class="form-control" style="display:inline;width:fit-content">
+                          <option value='SGD'>SGD</option>
+                          <option value='RMSprop'>RMSprop</option>
+                          <option value='Adam'>Adam</option>
+                          <option value='Adadelta'>Adadelta</option>
+                          <option value='Adagrad'>Adagrad</option>
+                          <option value='Adamax'>Adamax</option>
+                          <option value='Nadam'>Nadam</option>
+                          <option value='Ftrl'>Ftrl</option>
+                        </select>
+                    </div>
+                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-6">
+                      <label>Optimizer</label>
+                      <div class="input-group spinner" data-trigger="spinner">
+                          <div class="form-line">
+                              <input name="hiddenlayerunits" type="text" class="form-control text-center" value="1" data-rule="currency">
+                          </div>
+                          <span class="input-group-addon">
+                              <a href="javascript:;" class="spin-up" data-spin="up"><i class="glyphicon glyphicon-chevron-up"></i></a>
+                              <a href="javascript:;" class="spin-down" data-spin="down"><i class="glyphicon glyphicon-chevron-down"></i></a>
+                          </span>
+                      </div>
+                    </div>
+                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-6">
+                      <label>Optimizer</label>
+                      <div class="input-group spinner" data-trigger="spinner">
+                          <div class="form-line">
+                              <input name="hiddenlayerunits" type="text" class="form-control text-center" value="1" data-rule="currency">
+                          </div>
+                          <span class="input-group-addon">
+                              <a href="javascript:;" class="spin-up" data-spin="up"><i class="glyphicon glyphicon-chevron-up"></i></a>
+                              <a href="javascript:;" class="spin-down" data-spin="down"><i class="glyphicon glyphicon-chevron-down"></i></a>
+                          </span>
+                      </div>
+                    </div>
+                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-6">
+                      <label>Optimizer</label>
+                      <div class="input-group spinner" data-trigger="spinner">
+                          <div class="form-line">
+                              <input name="hiddenlayerunits" type="text" class="form-control text-center" value="1" data-rule="currency">
+                          </div>
+                          <span class="input-group-addon">
+                              <a href="javascript:;" class="spin-up" data-spin="up"><i class="glyphicon glyphicon-chevron-up"></i></a>
+                              <a href="javascript:;" class="spin-down" data-spin="down"><i class="glyphicon glyphicon-chevron-down"></i></a>
+                          </span>
+                      </div>
+                    </div>
+                </div>
+                <div class="row clearfix">
+                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-6" style="margin-top:20px">
+                        <button type="submit" name="action" value="fin" class="btn bg-green btn-lg waves-effect waves-float">Create</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</form>
+{% endblock %}
+
+{% block footer %}
+{% endblock %}

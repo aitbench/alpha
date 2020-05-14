@@ -32,6 +32,7 @@ import datetime
 # Testing only
 import sys
 
+
 # Remember these two
 # print('This is error output', file=sys.stderr)
 # print('This is standard output', file=sys.stdout)
@@ -88,6 +89,7 @@ def unauthorized_callback():
 # Setup global variables
 confPath = app.root_path + os.path.sep + 'conf' + os.path.sep
 dataPath = app.root_path + os.path.sep + 'data' + os.path.sep
+logPath = app.root_path + os.path.sep + 'logs' + os.path.sep
 
 # Automatically tear down SQLAlchemy.
 
@@ -420,17 +422,47 @@ def observe():
         nuggets = do.nuggetsInfo(nugfiles)
         return render_template('pages/observe.html', selected=nugget, nuggets=nuggets, script=script, div=div)
     else:
-        # List samples in folder ignoring .keep files
+        # List nuggets in folder ignoring .keep files
         nugfiles = do.listDataFiles('nuggets')
         # Pull nuggets info from above files
         nuggets = do.nuggetsInfo(nugfiles)
         return render_template('pages/observe.html', nuggets=nuggets)
 
 
-@app.route('/ai')
+@app.route('/ai-ann', methods=['GET', 'POST'])
 @login_required
-def ai():
-    return render_template('pages/ai.html')
+def aiann():
+    if request.method == 'POST':
+        # ANN page wants something
+        act = request.form['action']
+        if act == 'add':
+            # List nuggets in folder ignoring .keep files
+            nugfiles = do.listDataFiles('nuggets')
+            # Pull nuggets info from above files
+            nuggets = do.nuggetsInfo(nugfiles)
+            return render_template('pages/ai-ann-add.html', nuggets=nuggets)
+        if act == 'fin':
+            # nugget = request.form['nugget']
+            # indie = request.form['indie']
+            # depen = request.form['depen']
+            # nana = request.form['nana']
+            # do.createANN(sample,indie,depen,nana)
+            return redirect("/ai-ann")
+        if act == 'delete':
+            # Delete file
+            delfile = confPath + 'ann' + os.path.sep + request.form['id'] + '.yml'
+            os.remove(delfile)
+            return redirect("/ai-ann")
+    else:
+        # List samples in folder ignoring .keep files
+        annfiles = do.listCfgFiles('ann')
+        # Pull nuggets info from above files
+        anns = []
+        # Iterate through each file
+        for afile in annfiles:
+            adata = do.readCfgFile('ann', afile)
+            anns.append(adata)
+        return render_template('pages/ai-ann.html', anns=anns)
 
 
 @app.route('/sentiment')
@@ -451,10 +483,23 @@ def trading():
     return render_template('pages/trading.html')
 
 
-@app.route('/ops')
+@app.route('/ops-db')
 @login_required
-def ops():
-    return render_template('pages/ops.html')
+def opsdb():
+    return render_template('pages/ops-db.html')
+
+
+@app.route('/ops-run')
+@login_required
+def opsrun():
+    runners = {'Data Downloader (Aggressive)': 'dataDownloadAggro.log'}
+    return render_template('pages/ops-run.html', runners=runners)
+
+
+@app.route('/ops-users')
+@login_required
+def opsusers():
+    return render_template('pages/ops-users.html')
 
 
 @app.route('/changelogs')
@@ -524,9 +569,21 @@ def forgot():
     form = ForgotForm(request.form)
     return render_template('forms/forgot.html', form=form)
 
+
+# Log streamer
+@app.route('/logstream/<alog>')
+@login_required
+def logstream(alog):
+    def generate(alog):
+        with open(logPath + alog) as f:
+            yield f.read()
+    if os.path.exists(logPath + alog):
+        return app.response_class(generate(alog), mimetype='text/plain')
+    else:
+        return 'Log file empty...'
+
+
 # Error handlers.
-
-
 @app.errorhandler(500)
 def internal_error(error):
     # db_session.rollback()

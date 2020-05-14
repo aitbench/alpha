@@ -1,0 +1,94 @@
+{% extends 'layouts/main.html' %}
+{% block title %}Connections{% endblock %}
+{% block content %}
+
+<div class="block-header block-header-wit-add">
+  <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6" style="padding-left:0px">
+  <h2>
+    ANNs
+    <small>Artificial Neural Networks</small>
+  </h2>
+  </div>
+  <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+  <div class="align-right" >
+    <form method="post">
+      <button name="action" value="add" type="submit" class="btn bg-green waves-effect waves-float">
+        <i class="material-icons">add</i>
+      </button>
+    </form>
+  </div>
+  </div>
+</div>
+<div class="row">
+    {% for ann in anns %}
+    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+        <div class="card">
+            <div class="header bg-light-blue">
+                <h1> {{ann['name']}} </h1>
+                <ul class="header-dropdown m-r--5">
+                    <form action="connections" class="inform" method="post" id="{{ann['id']}}">
+                    <li class="dropdown">
+                        <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                            <i class="material-icons">more_vert</i>
+                        </a>
+                          <ul class="dropdown-menu pull-right">
+                              <input type="hidden" name="action" value="delete"/>
+                              <input type="hidden" name="con" value="{{ann['id']}}"/>
+                              <li><a href="javascript:void(0);" onClick="document.forms['{{ann['id']}}'].submit();" class=" waves-effect waves-block">
+                                <i class="material-icons" style="color:red !important">delete_forever</i>Delete</a></li>
+                          </ul>
+                    </li>
+                    </form>
+                </ul>
+            </div>
+            <div class="body" style="padding-top:0px; padding-bottom:0px">
+                <!-- Nav tabs -->
+                <ul class="nav nav-tabs tab-nav-right" role="tablist">
+                    <li role="presentation" class="active">
+                        <a href="#info_only_icon_title_{{ann['id']}}" data-toggle="tab" aria-expanded="true">
+                            <i class="material-icons">home</i>
+                        </a>
+                    </li>
+                    <li role="presentation" class="">
+                        <a href="#fees_only_icon_title_{{ann['id']}}" data-toggle="tab" aria-expanded="false">
+                            <i class="material-icons">attach_money</i>
+                        </a>
+                    </li>
+                    <li role="presentation" class="">
+                        <a href="#abilities_only_icon_title_{{ann['id']}}" data-toggle="tab" aria-expanded="false">
+                            <i class="material-icons">settings_input_component</i>
+                        </a>
+                    </li>
+                </ul>
+                <!-- Tab panes -->
+                <div class="tab-content">
+                    <div role="tabpanel" class="tab-pane fade active in" id="info_only_icon_title_{{ann['id']}}">
+                        <b>Id:</b> {{ann['id']}}<br>
+                        <b>Test Split:</b> {{ann['testsplit']}}<br>
+                        <b>Input Layer Units:</b> {{ ann['inputlayerunits'] * 100 }} % <br>
+                        <b>Hidden Layers:</b> {{ann['hiddenlayers']}}<br>
+                        <b>Hidden Layer Units:</b> {{ann['hiddenlayerunits']}}<br>
+                        <b>Optimizer:</b> {{ann['optimizer']}}<br>
+                        <b>Loss:</b> {{ann['loss']}}<br>
+                        <b>Metrics:</b> {{ann['metrics']}}<br>
+                        <b>Batch Size:</b> {{ann['batchsize']}}<br>
+                        <b>Epoch:</b> {{ann['epoch']}}<br>
+                        <b>Confusion Matrix:</b> {{ann['cmatrix']}}<br>
+                        <b>Accuracy:</b> {{ann['accuracy']}}<br>
+                        <b>Training:</b> {{ann['training']}}<br>
+                    </div>
+                    <div role="tabpanel" class="tab-pane fade" id="fees_only_icon_title_{{ann['id']}}">
+                      <label> Fees </label>
+
+                    </div>
+                    <div role="tabpanel" class="tab-pane fade" id="abilities_only_icon_title_{{ann['id']}}">
+                      <label> Abilities </label>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

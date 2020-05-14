@@ -316,7 +316,7 @@ class Helper(Basic):
                     updf[col] = pd.to_datetime(updf[col])
                     updf.set_index(col, inplace=True)
                     break
-                elif is_date(updf[col][0]):
+                elif self.is_date(updf[col][0]):
                     # Set column as datetime and make it an index
                     updf[col] = pd.to_datetime(updf[col])
                     updf.set_index(col, inplace=True)
@@ -328,25 +328,26 @@ class Helper(Basic):
             for index, dr in updf.iterrows():
                 sqlins = 'INSERT OR IGNORE INTO ' + id + ' VALUES (' + str(index.value / 1000000) + ',' + str(dr['open']) + ',' + str(dr['high']) + ',' + str(dr['low']) + ',' + str(dr['close']) + ',' + str(dr['volume']) + ')'
                 self.db.session.execute(sqlins)
+            self.db.session.commit()
         if 'Open' in updf.columns:
             success = True
             for index, dr in updf.iterrows():
                 sqlins = 'INSERT OR IGNORE INTO ' + id + ' VALUES (' + str(index.value / 1000000) + ',' + str(dr['Open']) + ',' + str(dr['High']) + ',' + str(dr['Low']) + ',' + str(dr['Close']) + ',' + str(dr['Volume']) + ')'
                 self.db.session.execute(sqlins)
+            self.db.session.commit()
         os.remove(ffname)
         return success
 
+    def is_date(string, fuzzy=True):
+        """
+        Return whether the string can be interpreted as a date.
 
-def is_date(string, fuzzy=True):
-    """
-    Return whether the string can be interpreted as a date.
+        :param string: str, string to check for date
+        :param fuzzy: bool, ignore unknown tokens in string if True
+        """
+        try:
+            parse(string, fuzzy=fuzzy)
+            return True
 
-    :param string: str, string to check for date
-    :param fuzzy: bool, ignore unknown tokens in string if True
-    """
-    try:
-        parse(string, fuzzy=fuzzy)
-        return True
-
-    except ValueError:
-        return False
+        except ValueError:
+            return False
