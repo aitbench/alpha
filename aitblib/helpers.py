@@ -198,6 +198,8 @@ class Helper(Basic):
             volume = Column('Volume', Float)
         # Table creation object
         table_creation_sql = str(CreateTable(OHBASE.__table__))
+        if 'mysql' in str(self.db.engine.url):
+            table_creation_sql = 'CREATE TABLE ' + id + ' (Date BIGINT NOT NULL, Open FLOAT, High FLOAT, Low FLOAT, Close FLOAT, Volume FLOAT, PRIMARY KEY(Date))'
         table_creation_sql = table_creation_sql.replace('CREATE TABLE', 'CREATE TABLE IF NOT EXISTS')
         # Create SQL table
         self.db.session.execute(table_creation_sql)
@@ -322,17 +324,23 @@ class Helper(Basic):
                     updf.set_index(col, inplace=True)
                     break
         # print(updf.index.astype(int)/1000000,file=sys.stderr)
+        if 'sqlite' in str(self.db.engine.url):
+            sqlpre = 'INSERT OR IGNORE INTO '
+        else:
+            sqlpre = 'INSERT IGNORE INTO '
         success = False
         if 'open' in updf.columns:
             success = True
             for index, dr in updf.iterrows():
-                sqlins = 'INSERT OR IGNORE INTO ' + id + ' VALUES (' + str(index.value / 1000000) + ',' + str(dr['open']) + ',' + str(dr['high']) + ',' + str(dr['low']) + ',' + str(dr['close']) + ',' + str(dr['volume']) + ')'
+                sqlins = sqlpre + id + ' VALUES (' + str(int(index.value / 1000000)) + ',' + str(dr['open']) + ',' + str(dr['high']) + ',' + str(dr['low']) + ',' + str(dr['close']) + ',' + str(dr['volume']) + ')'
+                # print(sqlins,file=sys.stderr)
                 self.db.session.execute(sqlins)
             self.db.session.commit()
         if 'Open' in updf.columns:
             success = True
             for index, dr in updf.iterrows():
-                sqlins = 'INSERT OR IGNORE INTO ' + id + ' VALUES (' + str(index.value / 1000000) + ',' + str(dr['Open']) + ',' + str(dr['High']) + ',' + str(dr['Low']) + ',' + str(dr['Close']) + ',' + str(dr['Volume']) + ')'
+                sqlins = sqlpre + id + ' VALUES (' + str(int(index.value / 1000000)) + ',' + str(dr['Open']) + ',' + str(dr['High']) + ',' + str(dr['Low']) + ',' + str(dr['Close']) + ',' + str(dr['Volume']) + ')'
+                # print(sqlins,file=sys.stderr)
                 self.db.session.execute(sqlins)
             self.db.session.commit()
         os.remove(ffname)

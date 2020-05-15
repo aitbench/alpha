@@ -1,0 +1,61 @@
+{% extends 'layouts/basic.html' %}
+{% block title %}Setup{% endblock %}
+{% block content %}
+<body class="signup-page">
+    <div class="signup-box">
+        <div class="logo">
+            <a href="{{ url_for('home') }}">AI Trading Bench</b></a>
+            <small>Predicting the wave</small>
+        </div>
+        <div class="card">
+            <div class="body">
+                <form id="sign_up" method="POST">
+                  {{ form.csrf_token }}
+                    <div class="msg">Database setup</div>
+                    <div class="input-group">
+                        <span class="input-group-addon">
+                            <i class="material-icons">flash_on</i>
+                        </span>
+                        <div class="form-line">
+                            {{ form.dbtype(class_ = 'form-control', placeholder = form.dbtype.label.text, required = true) }}
+                          </div>
+                    </div>
+                    <div class="input-group">
+                        <span class="input-group-addon">
+                            <i class="material-icons">computer</i>
+                        </span>
+                        <div class="form-line">
+                            {{ form.hostname(class_ = 'form-control', placeholder = form.hostname.label.text, required = true) }}
+                          </div>
+                    </div>
+                    <div class="input-group">
+                        <span class="input-group-addon">
+                            <i class="material-icons">business_center</i>
+                        </span>
+                        <div class="form-line">
+                            {{ form.database(class_ = 'form-control', placeholder = form.database.label.text, required = true) }}
+                          </div>
+                    </div>
+                    <div class="input-group">
+                        <span class="input-group-addon">
+                            <i class="material-icons">person</i>
+                        </span>
+                        <div class="form-line">
+                            {{ form.uname(class_ = 'form-control first-input', placeholder = form.uname.label.text, required = true, autofocus = true) }}
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <span class="input-group-addon">
+                            <i class="material-icons">lock</i>
+                        </span>
+                        <div class="form-line">
+                            {{ form.password(class_ = 'form-control', placeholder = form.password.label.text, required = true) }}
+                        </div>
+                    </div>
+                    <button class="btn btn-block btn-lg bg-pink waves-effect" type="submit">Setup</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+{% endblock %}

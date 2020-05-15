@@ -1,6 +1,7 @@
 APScheduler==3.6.3
 bokeh==2.0.2
 ccxt==1.27.20
+cx-Oracle==7.3.0
 fastparquet==0.3.3
 Flask==1.1.2
 Flask-APScheduler==1.11.0
@@ -8,9 +9,11 @@ Flask-Login==0.5.0
 Flask-SQLAlchemy==2.4.1
 Flask-WTF==0.14.3
 matplotlib==3.2.1
+mysqlclient==1.4.6
 numpy==1.18.4
 pandas==1.0.3
 Pillow==7.1.2
+psycopg2-binary==2.8.5
 pyarrow==0.17.0
 pytz==2020.1
 PyYAML==5.3.1

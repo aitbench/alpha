@@ -23,7 +23,7 @@ from aitblib import helpers
 from aitblib import runners
 from aitblib import enrichments
 from aitblib import charting
-from aitblib.Flask_forms import LoginForm, RegisterForm, ForgotForm
+from aitblib.Flask_forms import LoginForm, RegisterForm, ForgotForm, SetupForm
 # System
 import os
 import yaml
@@ -45,6 +45,13 @@ import sys
 app = Flask(__name__)
 app.config.from_pyfile('conf/flask.py')
 app.config.from_pyfile('conf/db-default.py')
+# Setup global variables
+confPath = app.root_path + os.path.sep + 'conf' + os.path.sep
+dataPath = app.root_path + os.path.sep + 'data' + os.path.sep
+logPath = app.root_path + os.path.sep + 'logs' + os.path.sep
+# Custom DB setup
+if os.path.exists(confPath + 'db.py'):
+    app.config.from_pyfile('conf/db.py')
 
 # Init and start Login
 login_manager = LoginManager()
@@ -86,14 +93,7 @@ def unauthorized_callback():
     return redirect('/login')
 
 
-# Setup global variables
-confPath = app.root_path + os.path.sep + 'conf' + os.path.sep
-dataPath = app.root_path + os.path.sep + 'data' + os.path.sep
-logPath = app.root_path + os.path.sep + 'logs' + os.path.sep
-
 # Automatically tear down SQLAlchemy.
-
-
 @app.teardown_request
 def shutdown_session(exception=None):
     db.session.remove()
@@ -507,9 +507,8 @@ def opsusers():
 def changelogs():
     return render_template('pages/changelogs.html')
 
+
 # User templates
-
-
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     logform = LoginForm()
@@ -543,7 +542,6 @@ def logout():
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     form = RegisterForm()
-    print(request.form, file=sys.stderr)
     if form.validate_on_submit():
         # Get variables
         email = request.form.get('email')
@@ -582,8 +580,34 @@ def logstream(alog):
     else:
         return 'Log file empty...'
 
+# Setup
+
+
+@app.route('/setup', methods=['GET', 'POST'])
+def syssetup():
+    form = SetupForm()
+    # print(request.form,file=sys.stderr)
+    if form.validate_on_submit():
+        # Get variables
+        dbtype = request.form.get('dbtype')
+        hostname = request.form.get('hostname')
+        database = request.form.get('database')
+        uname = request.form.get('uname')
+        password = request.form.get('password')
+        # Create connection string
+        conString = "SQLALCHEMY_DATABASE_URI = '" + dbtype + '://' + uname + ':' + password + '@' + hostname + '/' + database + "'"
+        # print(conString, file=sys.stderr)
+        # Write to file
+        with open(confPath + 'db.py', 'w') as f:
+            f.write(conString)
+        app.config.from_pyfile('conf/db.py')
+        # Form finished successfully go to login
+        return redirect('/setup')
+    return render_template('forms/setup.html', form=form)
 
 # Error handlers.
+
+
 @app.errorhandler(500)
 def internal_error(error):
     # db_session.rollback()
@@ -622,6 +646,7 @@ if __name__ == '__main__':
     # app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
     app.config['DEBUG'] = True
     app.config['UPLOAD_FOLDER'] = 'tmp'
+    # print(db.engine.url)
     do.clearRunLocks()
     app.run()
 

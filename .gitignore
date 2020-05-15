@@ -157,3 +157,6 @@ dmypy.json
 # SQLite default instance
 /data/*.db
 /data/*.db-journal
+
+# DB config
+/conf/db.py
