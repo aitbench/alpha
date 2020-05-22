@@ -21,8 +21,8 @@ class Basic():
         self.sampleDataPath = self.dataPath + 'samples' + os.path.sep
         self.nuggetDataPath = self.dataPath + 'nuggets' + os.path.sep
         self.annDataPath = self.dataPath + 'ann' + os.path.sep
-        # Img Path
-        self.imgPath = appRoot + os.path.sep + 'static' + os.path.sep + 'img' + os.path.sep
+        # Chart Path
+        self.chartPath = appRoot + os.path.sep + 'static' + os.path.sep + 'charts' + os.path.sep
         # Time format
         self.timeform = '%d/%m/%Y'
         # Bokeh theme

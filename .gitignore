@@ -171,6 +171,10 @@ dmypy.json
 /tmp/run/*
 !/tmp/run/.keep
 
+# AI-TB Charts
+/static/charts/*
+!/static/charts/.keep
+
 # SQLite default instance
 /data/*.db
 /data/*.db-journal

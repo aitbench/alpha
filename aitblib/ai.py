@@ -15,8 +15,7 @@ from keras.callbacks import CSVLogger
 # Decimal needed for Decimal :P
 from decimal import Decimal
 # Accuracy and Loss Plots
-import matplotlib.pyplot as pltA
-import matplotlib.pyplot as pltL
+import matplotlib.pyplot as plt
 
 
 class AI(Basic):
@@ -171,19 +170,29 @@ class AI(Basic):
                 aConf['testaccuracy'] = str(round(history.history['val_accuracy'][-1], 2))
                 aConf['trainaccuracy'] = str(round(history.history['accuracy'][-1], 2))
 
+                # Wipe previous files as they do not overwrite
+                lChart = self.chartPath + aConf['id'] + '_loss.png'
+                if os.path.exists(lChart):
+                    os.remove(lChart)
                 # Plot Loss
-                pltL.title('Loss')
-                pltL.plot(history.history['loss'], label='train')
-                pltL.plot(history.history['val_loss'], label='test')
-                pltL.legend()
-                pltL.savefig(self.annDataPath + aConf['id'] + '_loss.png')
+                plt.title('Loss')
+                plt.plot(history.history['loss'], label='train')
+                plt.plot(history.history['val_loss'], label='test')
+                plt.legend()
+                plt.savefig(lChart, pad_inches=0.01, dpi=600)
+                plt.close()
 
+                # Wipe previous files as they do not overwrite
+                aChart = self.chartPath + aConf['id'] + '_acc.png'
+                if os.path.exists(aChart):
+                    os.remove(aChart)
                 # Plot Accuracy
-                pltA.title('Accuracy')
-                pltA.plot(history.history['accuracy'], label='train')
-                pltA.plot(history.history['val_accuracy'], label='test')
-                pltA.legend()
-                pltA.savefig(self.annDataPath + aConf['id'] + '_acc.png')
+                plt.title('Accuracy')
+                plt.plot(history.history['accuracy'], label='train')
+                plt.plot(history.history['val_accuracy'], label='test')
+                plt.legend()
+                plt.savefig(aChart, pad_inches=0.01, dpi=600)
+                plt.close()
 
                 # Remove training and add timestamp
                 aConf['lasttrain'] = str(datetime.datetime.now())
