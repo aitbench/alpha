@@ -10,11 +10,6 @@ import time
 from .basic import Basic
 # Import enrichments
 from aitblib import enrichments
-# SQL alchemy
-from sqlalchemy import Column
-from sqlalchemy import Integer, Float
-from sqlalchemy.schema import CreateTable
-from sqlalchemy.ext.declarative import declarative_base
 # Dataframes
 import pandas as pd
 import numpy as np
@@ -186,20 +181,7 @@ class Helper(Basic):
         id = con.lower() + '_' + fsymb
         dataYML = "id: " + id + "\n"
         # Create Database table class
-        Base = declarative_base()
-
-        class OHBASE(Base):
-            __tablename__ = id
-            date = Column('Date', Integer, primary_key=True)
-            open = Column('Open', Float)
-            High = Column('High', Float)
-            Low = Column('Low', Float)
-            close = Column('Close', Float)
-            volume = Column('Volume', Float)
-        # Table creation object
-        table_creation_sql = str(CreateTable(OHBASE.__table__))
-        if 'mysql' in str(self.db.engine.url):
-            table_creation_sql = 'CREATE TABLE ' + id + ' (Date BIGINT NOT NULL, Open FLOAT, High FLOAT, Low FLOAT, Close FLOAT, Volume FLOAT, PRIMARY KEY(Date))'
+        table_creation_sql = 'CREATE TABLE ' + id + ' (Date BIGINT NOT NULL, Open FLOAT, High FLOAT, Low FLOAT, Close FLOAT, Volume FLOAT, PRIMARY KEY(Date))'
         table_creation_sql = table_creation_sql.replace('CREATE TABLE', 'CREATE TABLE IF NOT EXISTS')
         # Create SQL table
         self.db.session.execute(table_creation_sql)
@@ -281,6 +263,10 @@ class Helper(Basic):
         result = pd.concat([sOpen, sHigh, sLow, sClose, sVols], axis=1)
         result.reset_index(inplace=True)
         result['Date'] = result['Date'].astype(np.int64) / int(1e6)
+        # Drop any NaN row
+        result.dropna(inplace=True)
+        # Reset indexes as feather is touchy
+        result.reset_index(drop=True, inplace=True)
         sname = str(data) + '_' + timeframe + '_' + str(int(result['Date'].iloc[0])) + '_' + str(int(result['Date'].iloc[-1]))
         result.to_feather(self.sampleDataPath + sname + '.feather')
 
@@ -359,3 +345,55 @@ class Helper(Basic):
 
         except ValueError:
             return False
+
+    def createANN(self, nugget, nom, testsplit, scaler, scarcity, inputlayerunits, hiddenlayers, hiddenlayerunits, optimizer, loss, metrics, batchsize, epoch):
+        # Create ANN YAML
+        id = nom.lower()
+        annYML = 'id: ' + id + "\n"
+        annYML = annYML + 'name: ' + nom + "\n"
+        annYML = annYML + 'nugget: ' + nugget + "\n"
+        annYML = annYML + 'training: True' + "\n"
+        annYML = annYML + 'scaler: ' + scaler + "\n"
+        print(scarcity, file=sys.stderr)
+        if scarcity == "on":
+            annYML = annYML + 'scarcity: True' + "\n"
+        else:
+            annYML = annYML + 'scarcity: False' + "\n"
+        annYML = annYML + 'testsplit: ' + testsplit + "\n"
+        # ANN Layers
+        annYML = annYML + 'inputlayerunits: ' + inputlayerunits + "\n"
+        annYML = annYML + 'hiddenlayers: ' + hiddenlayers + "\n"
+        annYML = annYML + 'hiddenlayerunits: ' + hiddenlayerunits + "\n"
+        # Fitting
+        annYML = annYML + 'optimizer: ' + optimizer + "\n"
+        annYML = annYML + 'loss: ' + loss + "\n"
+        annYML = annYML + 'metrics: ' + metrics + "\n"
+        annYML = annYML + 'batchsize: ' + batchsize + "\n"
+        annYML = annYML + 'epoch: ' + epoch + "\n"
+        # Training
+        annYML = annYML + 'lasttrain: 0' + "\n"
+        annYML = annYML + 'trainaccuracy: 0' + "\n"
+        annYML = annYML + 'testaccuracy: 0' + "\n"
+        # Add Nugget Info
+        nfile = self.nuggetDataPath + nugget + '.feather'
+        df = pd.read_feather(nfile)
+        info = self.nugInfo(nfile)
+        # Add info from nuggetinfo and enrichments
+        annYML = annYML + 'symb: ' + info['symb'] + "\n"
+        annYML = annYML + 'timeframe: ' + info['timeframe'] + "\n"
+        annYML = annYML + 'from: ' + info['from'] + "\n"
+        annYML = annYML + 'to: ' + info['to'] + "\n"
+        annYML = annYML + 'depen: ' + info['depen'] + "\n"
+        indis = list(df.columns[0:-7].values.tolist())
+        annYML = annYML + 'indi: ' + "\n" + yaml.dump(indis) + "\n"
+        # Delete empty lines
+        annYML = os.linesep.join([s for s in annYML.splitlines() if s])
+        # Save to YAML file
+        self.writeCfgFile('ann', id, annYML)
+
+    def turnANNon(self, id):
+        adata = self.readCfgFile('ann', id + '.yml')
+        adata['training'] = True
+        aYML = yaml.dump(adata)
+        # Save to YAML file
+        self.writeCfgFile('ann', id, aYML)

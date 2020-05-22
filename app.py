@@ -23,6 +23,7 @@ from aitblib import helpers
 from aitblib import runners
 from aitblib import enrichments
 from aitblib import charting
+from aitblib import ai
 from aitblib.Flask_forms import LoginForm, RegisterForm, ForgotForm, SetupForm
 # System
 import os
@@ -45,10 +46,12 @@ import sys
 app = Flask(__name__)
 app.config.from_pyfile('conf/flask.py')
 app.config.from_pyfile('conf/db-default.py')
+
 # Setup global variables
 confPath = app.root_path + os.path.sep + 'conf' + os.path.sep
 dataPath = app.root_path + os.path.sep + 'data' + os.path.sep
 logPath = app.root_path + os.path.sep + 'logs' + os.path.sep
+
 # Custom DB setup
 if os.path.exists(confPath + 'db.py'):
     app.config.from_pyfile('conf/db.py')
@@ -104,20 +107,36 @@ def shutdown_session(exception=None):
 
 class ConfigAPS(object):
     SCHEDULER_API_ENABLED = True
+    SCHEDULER_JOB_DEFAULTS = {
+        'coalesce': True,
+        'max_instances': 1
+    }
 
 
-# Init Scheduler
-scheduler = APScheduler()
-RunThe = runners.Runner(app.root_path, db)
 # Test Job
 if os.environ.get("WERKZEUG_RUN_MAIN") == "true":
-    @scheduler.task('interval', id='testjob', seconds=15)
-    def testjob():
+    # Init Scheduler
+    scheduler = APScheduler()
+    # Config APS
+    app.config.from_object(ConfigAPS())
+    scheduler.init_app(app)
+    scheduler.start()
+    # Init used libraries
+    RunThe = runners.Runner(app.root_path, db)
+    AI = ai.AI(app.root_path, db)
+    # Data Download
+
+    @scheduler.task('interval', id='dataJob', seconds=15)
+    def dataJob():
         RunThe.dataDownload(True)
+
+    @scheduler.task('interval', id='trainAI', seconds=15)
+    def trainAI():
+        AI.trainANN()
     # Minute by minute
 
-    @scheduler.task('cron', id='minutejob', minute='*')
-    def minutejob():
+    @scheduler.task('cron', id='minuteJob', minute='*')
+    def minuteJob():
         # print('MinuteByMinute', file=sys.stdout)
         pass
     # Hourly
@@ -442,13 +461,32 @@ def aiann():
             nuggets = do.nuggetsInfo(nugfiles)
             return render_template('pages/ai-ann-add.html', nuggets=nuggets)
         if act == 'fin':
-            # nugget = request.form['nugget']
-            # indie = request.form['indie']
-            # depen = request.form['depen']
-            # nana = request.form['nana']
-            # do.createANN(sample,indie,depen,nana)
+            nugget = request.form['nugget']
+            nom = request.form['nom']
+            scaler = request.form['scaler']
+            try:
+                scarcity = request.form['scarcity']
+            except BaseException:
+                scarcity = "0"
+            testsplit = request.form['testsplit']
+            # Layers
+            inputlayerunits = request.form['inputlayerunits']
+            hiddenlayers = request.form['hiddenlayers']
+            hiddenlayerunits = request.form['hiddenlayerunits']
+            # Fitting
+            optimizer = request.form['optimizer']
+            loss = request.form['loss']
+            metrics = request.form['metrics']
+            batchsize = request.form['batchsize']
+            epoch = request.form['epoch']
+            do.createANN(nugget, nom, testsplit, scaler, scarcity, inputlayerunits, hiddenlayers, hiddenlayerunits, optimizer, loss, metrics, batchsize, epoch)
+            return redirect("/ai-ann")
+        if act == 'train':
+            id = request.form['id']
+            do.turnANNon(id)
             return redirect("/ai-ann")
         if act == 'delete':
+            # TODO Clear up other leftover files PNGs Sorted + ModelFiles
             # Delete file
             delfile = confPath + 'ann' + os.path.sep + request.form['id'] + '.yml'
             os.remove(delfile)
@@ -492,7 +530,8 @@ def opsdb():
 @app.route('/ops-run')
 @login_required
 def opsrun():
-    runners = {'Data Downloader (Aggressive)': 'dataDownloadAggro.log'}
+    runners = {'Data Downloader (Aggressive)': 'dataDownloadAggro.log',
+               'ANN Training': 'trainANN.log'}
     return render_template('pages/ops-run.html', runners=runners)
 
 
@@ -636,19 +675,18 @@ if not app.debug:
 
 # Default port:
 if __name__ == '__main__':
-    # Config App
-    app.config.from_object(ConfigAPS())
-    scheduler.init_app(app)
-    scheduler.start()
+
     # Init debugger
     # toolbar = DebugToolbarExtension(app)
-    # Overwrite config for flask-debugtoolbar
+        # Overwrite config for flask-debugtoolbar
     # app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
     app.config['DEBUG'] = True
     app.config['UPLOAD_FOLDER'] = 'tmp'
     # print(db.engine.url)
+    # Clear down all current run locks
     do.clearRunLocks()
-    app.run()
+    # Run App
+    app.run()  # threaded=False breaks APScheduler
 
 # Or specify port manually:
 '''

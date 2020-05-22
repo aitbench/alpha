@@ -141,11 +141,28 @@ dmypy.json
 /conf/rnn/*
 !/conf/rnn/.keep
 
+# AI-TB Enrichments
+/conf/enrich/*
+!/conf/enrich/All.yml
+!/conf/enrich/Momentum.yml
+!/conf/enrich/Overlaps.yml
+!/conf/enrich/Pattern.yml
+!/conf/enrich/Price.yml
+!/conf/enrich/Stats.yml
+!/conf/enrich/Volitility.yml
+!/conf/enrich/Volume.yml
+
 # AI-TB data
 /data/samples/*
 !/data/samples/.keep
 /data/nuggets/*
 !/data/nuggets/.keep
+/data/ann/*
+!/data/ann/.keep
+/data/cnn/*
+!/data/cnn/.keep
+/data/rnn/*
+!/data/rnn/.keep
 
 # AI-TB temp
 /tmp/*

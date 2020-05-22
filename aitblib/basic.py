@@ -14,12 +14,15 @@ class Basic():
         self.logPath = appRoot + os.path.sep + 'logs' + os.path.sep
         # Configuration Paths
         self.confPath = appRoot + os.path.sep + 'conf' + os.path.sep
-        self.dataConfPath = appRoot + os.path.sep + 'conf' + os.path.sep + 'data' + os.path.sep
-        self.conConfPath = appRoot + os.path.sep + 'conf' + os.path.sep + 'conn' + os.path.sep
+        self.dataConfPath = self.confPath + 'data' + os.path.sep
+        self.conConfPath = self.confPath + 'conn' + os.path.sep
         # Data paths
         self.dataPath = appRoot + os.path.sep + 'data' + os.path.sep
-        self.sampleDataPath = appRoot + os.path.sep + 'data' + os.path.sep + 'samples' + os.path.sep
-        self.nuggetDataPath = appRoot + os.path.sep + 'data' + os.path.sep + 'nuggets' + os.path.sep
+        self.sampleDataPath = self.dataPath + 'samples' + os.path.sep
+        self.nuggetDataPath = self.dataPath + 'nuggets' + os.path.sep
+        self.annDataPath = self.dataPath + 'ann' + os.path.sep
+        # Img Path
+        self.imgPath = appRoot + os.path.sep + 'static' + os.path.sep + 'img' + os.path.sep
         # Time format
         self.timeform = '%d/%m/%Y'
         # Bokeh theme

@@ -25,18 +25,24 @@
   </h2>
 </div>
 <pre id="output_{{ runner }}" style="height:200px;overflow-y:auto;"></pre>
+
+{% endfor %}
+
 <script>
-    var output = document.getElementById('output_{{ runner}}');
+{% for name, runner in runners.items() %}
+    var output_{{ runner[0-5] }} = document.getElementById('output_{{ runner }}');
 
-    var xhr = new XMLHttpRequest();
-    xhr.open('GET', '/logstream/{{runner}}');
-    xhr.send();
+    var xhr_{{ runner[0-5] }} = new XMLHttpRequest();
 
+{% endfor %}
     setInterval(function() {
-        output.textContent = xhr.responseText;
-        output.scrollTop = output.scrollHeight;
+{% for name, runner in runners.items() %}
+    xhr_{{ runner[0-5] }}.open('GET', '/logstream/{{runner}}');
+    xhr_{{ runner[0-5] }}.send();
+        output_{{ runner[0-5] }}.textContent = xhr_{{ runner[0-5] }}.responseText;
+        output_{{ runner[0-5] }}.scrollTop = output_{{ runner[0-5] }}.scrollHeight;
+{% endfor %}
     }, 1000);
 </script>
-{% endfor %}
 
 {% endblock %}

@@ -3,9 +3,9 @@ import datetime
 import sys
 import yaml
 import ccxt
+import pandas as pd
 # AITB Basic base class
 from .basic import Basic
-from pandas import DataFrame
 
 
 class Runner(Basic):
@@ -34,6 +34,11 @@ class Runner(Basic):
         # Write lock file
         with open(dname, 'w') as file:
             file.write(str(datetime.datetime.now()))
+        # Create SQL pre insert
+        if 'sqlite' in str(self.db.engine.url):
+            sqlpre = 'INSERT OR IGNORE INTO '
+        else:
+            sqlpre = 'INSERT IGNORE INTO '
         # Get list of data files
         dataCfgs = self.listCfgFiles('data')
         for file in dataCfgs:
@@ -54,12 +59,13 @@ class Runner(Basic):
                             # Check for recent additions
                             result = self.db.session.execute('SELECT * from ' + tmpDataConf['id']).fetchall()
                             # Drop results to dataFrame
-                            datadf = DataFrame(result, columns=['Date', 'Open', 'High', 'Low', 'Close', 'Volume'])
+                            datadf = pd.DataFrame(result, columns=['Date', 'Open', 'High', 'Low', 'Close', 'Volume'])
                             # print('Data Found start from: #'+str(datadf['date'].iloc[-1])+'#',file=sys.stderr)
                             data = tmpex.fetch_ohlcv(tmpDataConf['symb'], '1m', int(datadf['Date'].iloc[-1]))
                     # Write results to database
                     for datarow in data:
-                        self.db.session.execute('INSERT OR IGNORE INTO ' + tmpDataConf['id'] + ' VALUES (' + str(datarow[0]) + ',' + str(datarow[1]) + ',' + str(datarow[2]) + ',' + str(datarow[3]) + ',' + str(datarow[4]) + ',' + str(datarow[5]) + ')')
+
+                        self.db.session.execute(sqlpre + tmpDataConf['id'] + ' VALUES (' + str(datarow[0]) + ',' + str(datarow[1]) + ',' + str(datarow[2]) + ',' + str(datarow[3]) + ',' + str(datarow[4]) + ',' + str(datarow[5]) + ')')
                     # Commit database entries
                     self.db.session.commit()
                 except (ccxt.ExchangeError, ccxt.NetworkError) as error:
@@ -70,7 +76,7 @@ class Runner(Basic):
                 # Check for recent additions
                 result = self.db.session.execute('SELECT * from ' + tmpDataConf['id']).fetchall()
                 # Drop results to dataFrame
-                datadf = DataFrame(result, columns=['Date', 'Open', 'High', 'Low', 'Close', 'Volume'])
+                datadf = pd.DataFrame(result, columns=['Date', 'Open', 'High', 'Low', 'Close', 'Volume'])
                 # Create and save head tail and count
                 tmpDataConf['head'] = datadf.values.tolist()[0]
                 tmpDataConf['tail'] = datadf.values.tolist()[-1]

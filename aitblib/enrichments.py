@@ -84,7 +84,7 @@ class Enrichment():
                    'cdlhangingman': 'Hanging Man',
                    'cdlharami': 'Harami Pattern',
                    'cdlharamicross': 'Harami Cross Pattern',
-                   'cdlHighwave': 'High-Wave Candle',
+                   'cdlhighwave': 'High-Wave Candle',
                    'cdlhikkake': 'Hikkake Pattern',
                    'cdlhikkakemod': 'Modified Hikkake Pattern',
                    'cdlhomingpigeon': 'Homing Pigeon',
@@ -363,10 +363,13 @@ class Enrichment():
             endf.insert(0, column='cdlharami', value=ta.CDLHARAMI(endf['Open'], endf['High'], endf['Low'], endf['Close']))
             return endf
         if enrich == 'cdlharamicross':
+            # print(endf.info(),file=sys.stderr)
             endf.insert(0, column='cdlharamicross', value=ta.CDLHARAMICROSS(endf['Open'], endf['High'], endf['Low'], endf['Close']))
+            # print(endf.info(),file=sys.stderr)
             return endf
-        if enrich == 'cdlHighwave':
-            endf.insert(0, column='cdlHighwave', value=ta.CDLHighWAVE(endf['Open'], endf['High'], endf['Low'], endf['Close']))
+        if enrich == 'cdlhighwave':
+            print(endf.info(), file=sys.stderr)
+            endf.insert(0, column='cdlhighwave', value=ta.CDLHIGHWAVE(endf['Open'], endf['High'], endf['Low'], endf['Close']))
             return endf
         if enrich == 'cdlhikkake':
             endf.insert(0, column='cdlhikkake', value=ta.CDLHIKKAKE(endf['Open'], endf['High'], endf['Low'], endf['Close']))
@@ -557,26 +560,30 @@ class Enrichment():
 
         if enrich == 'High5':
             n = 5  # number of points to be checked before and after
+            # np.seterr(invalid='ignore')
             endf['High5'] = endf.iloc[argrelextrema(endf.High.values, np.greater_equal, order=n)[0]]['High']
             endf['High5'].fillna(0, inplace=True)
             endf.loc[endf['High5'] > 0, 'High5'] = 1
             return endf
         if enrich == 'Low5':
             n = 5  # number of points to be checked before and after
-            endf['Low5'] = endf.iloc[argrelextrema(endf.low.values, np.less_equal, order=n)[0]]['Low']
+            # np.seterr(invalid='ignore')
+            endf['Low5'] = endf.iloc[argrelextrema(endf.Low.values, np.less_equal, order=n)[0]]['Low']
             endf['Low5'].fillna(0, inplace=True)
             endf.loc[endf['Low5'] > 0, 'Low5'] = 1
             return endf
 
         if enrich == 'High10':
             n = 10  # number of points to be checked before and after
+            # np.seterr(invalid='ignore')
             endf['High10'] = endf.iloc[argrelextrema(endf.High.values, np.greater_equal, order=n)[0]]['High']
             endf['High10'].fillna(0, inplace=True)
             endf.loc[endf['High10'] > 0, 'High10'] = 1
             return endf
         if enrich == 'Low10':
             n = 10  # number of points to be checked before and after
-            endf['Low10'] = endf.iloc[argrelextrema(endf.low.values, np.less_equal, order=n)[0]]['Low']
+            # np.seterr(invalid='ignore')
+            endf['Low10'] = endf.iloc[argrelextrema(endf.Low.values, np.less_equal, order=n)[0]]['Low']
             endf['Low10'].fillna(0, inplace=True)
             endf.loc[endf['Low10'] > 0, 'Low10'] = 1
             return endf

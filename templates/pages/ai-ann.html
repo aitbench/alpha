@@ -1,5 +1,5 @@
 {% extends 'layouts/main.html' %}
-{% block title %}Connections{% endblock %}
+{% block title %}AI - ANN{% endblock %}
 {% block content %}
 
 <div class="block-header block-header-wit-add">
@@ -26,14 +26,20 @@
             <div class="header bg-light-blue">
                 <h1> {{ann['name']}} </h1>
                 <ul class="header-dropdown m-r--5">
-                    <form action="connections" class="inform" method="post" id="{{ann['id']}}">
+                    <li>
+                      <form class="inform" method="post" id="{{ann['id']}}_Train">
+                        <input type="hidden" name="id" value="{{ann['id']}}" /><br>
+                        <button type="submit" name="action" value="train" class="btn bg-green btn-lg waves-effect waves-float"><i class="material-icons">directions_run</i></button>
+                    </form>
+                    </li>
+                    <form class="inform" method="post" id="{{ann['id']}}">
                     <li class="dropdown">
                         <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
                             <i class="material-icons">more_vert</i>
                         </a>
                           <ul class="dropdown-menu pull-right">
                               <input type="hidden" name="action" value="delete"/>
-                              <input type="hidden" name="con" value="{{ann['id']}}"/>
+                              <input type="hidden" name="id" value="{{ann['id']}}"/>
                               <li><a href="javascript:void(0);" onClick="document.forms['{{ann['id']}}'].submit();" class=" waves-effect waves-block">
                                 <i class="material-icons" style="color:red !important">delete_forever</i>Delete</a></li>
                           </ul>
@@ -50,8 +56,8 @@
                         </a>
                     </li>
                     <li role="presentation" class="">
-                        <a href="#fees_only_icon_title_{{ann['id']}}" data-toggle="tab" aria-expanded="false">
-                            <i class="material-icons">attach_money</i>
+                        <a href="#timing_only_icon_title_{{ann['id']}}" data-toggle="tab" aria-expanded="false">
+                            <i class="material-icons">restore</i>
                         </a>
                     </li>
                     <li role="presentation" class="">
@@ -59,31 +65,48 @@
                             <i class="material-icons">settings_input_component</i>
                         </a>
                     </li>
+                    <li role="presentation" class="">
+                        <a href="#charts_only_icon_title_{{ann['id']}}" data-toggle="tab" aria-expanded="false">
+                            <i class="material-icons">show_chart</i>
+                        </a>
+                    </li>
                 </ul>
                 <!-- Tab panes -->
                 <div class="tab-content">
                     <div role="tabpanel" class="tab-pane fade active in" id="info_only_icon_title_{{ann['id']}}">
                         <b>Id:</b> {{ann['id']}}<br>
+						            <b>Training:</b> {{ann['training']}}<br>
+                        <b>Scaler:</b> {{ann['scaler']}}<br>
+                        <b>Scarcity:</b> {{ann['scarcity']}}<br>
                         <b>Test Split:</b> {{ann['testsplit']}}<br>
-                        <b>Input Layer Units:</b> {{ ann['inputlayerunits'] * 100 }} % <br>
+                        <b>Input Layer Units:</b> {{ann['inputlayerunits']}}<br>
                         <b>Hidden Layers:</b> {{ann['hiddenlayers']}}<br>
                         <b>Hidden Layer Units:</b> {{ann['hiddenlayerunits']}}<br>
                         <b>Optimizer:</b> {{ann['optimizer']}}<br>
                         <b>Loss:</b> {{ann['loss']}}<br>
                         <b>Metrics:</b> {{ann['metrics']}}<br>
                         <b>Batch Size:</b> {{ann['batchsize']}}<br>
-                        <b>Epoch:</b> {{ann['epoch']}}<br>
-                        <b>Confusion Matrix:</b> {{ann['cmatrix']}}<br>
-                        <b>Accuracy:</b> {{ann['accuracy']}}<br>
-                        <b>Training:</b> {{ann['training']}}<br>
+                        <b>Epoch:</b> {{ann['epoch']}}<br><br>
+                        <b>Last Trained:</b> {{ann['lasttrain']}}<br>
+                        <b>Training Accuracy:</b> {{ann['trainaccuracy']}}<br>
+                        <b>Testing Accuracy:</b> {{ann['testaccuracy']}}<br>
                     </div>
-                    <div role="tabpanel" class="tab-pane fade" id="fees_only_icon_title_{{ann['id']}}">
-                      <label> Fees </label>
-
+                    <div role="tabpanel" class="tab-pane fade" id="timing_only_icon_title_{{ann['id']}}">
+                        <b>Symbol:</b> {{ann['symb']}}<br>
+                        <b>TimeFrame:</b> {{ann['timeframe']}}<br>
+                        <b>From:</b> {{ann['from']}}<br>
+                        <b>To:</b> {{ann['to']}}<br>
                     </div>
                     <div role="tabpanel" class="tab-pane fade" id="abilities_only_icon_title_{{ann['id']}}">
-                      <label> Abilities </label>
-
+                        <b>Dependants:</b> {{ann['depen']}}<br>
+                        <b>Independants:</b><br>
+                            {% for indi in ann['indi'] %}
+                              - {{indi}}<br>
+                            {% endfor %}
+                    </div>
+                    <div role="tabpanel" class="tab-pane fade" id="charts_only_icon_title_{{ann['id']}}">
+                      <img width="100%" src="data/ann/{{ann['id']}}_acc.png"/><br>
+                      <img width="100%" src="data/ann/{{ann['id']}}_loss.png"/>
                     </div>
                 </div>
             </div>

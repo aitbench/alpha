@@ -39,7 +39,10 @@ pip install python-snappy
 python app.py
 ```
 Then go to http://localhost:5000/register
+
 Then sign in http://localhost:5000/login
+
+If you wish to use an SQL server instead of SQLite go to http://localhost:5000/setup and restart the app.
 
 ## Free Data
 ##### Crypto Data
