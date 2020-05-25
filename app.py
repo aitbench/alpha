@@ -509,10 +509,34 @@ def sentiment():
     return render_template('pages/sentiment.html')
 
 
-@app.route('/backtest')
+@app.route('/backtest', methods=['GET', 'POST'])
 @login_required
 def backt():
-    return render_template('pages/backtest.html')
+    if request.method == 'POST':
+        # ANN page wants something
+        act = request.form['action']
+        if act == 'add':
+            # List data in folder ignoring .keep files
+            datafiles = do.listCfgFiles('data')
+            aifiles = do.listCfgFiles('ann')
+            enfiles = do.listCfgFiles('enrich')
+            return render_template('pages/backtest-add.html', datas=datafiles, ais=aifiles, ens=enfiles)
+        if act == 'delete':
+            # TODO Clear up other leftover files
+            # Delete file
+            delfile = confPath + 'bt' + os.path.sep + request.form['id'] + '.yml'
+            os.remove(delfile)
+            return redirect("/backtest")
+    else:
+        # List backtests in folder ignoring .keep files
+        bkfiles = do.listCfgFiles('bt')
+        # Pull info from above files
+        bktests = []
+        # Iterate through each file
+        for bkfile in bkfiles:
+            bkdata = do.readCfgFile('ann', bkfile)
+            bktests.append(bkdata)
+        return render_template('pages/backtest.html', bktests=bktests)
 
 
 @app.route('/trading')

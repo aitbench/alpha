@@ -179,7 +179,7 @@ class AI(Basic):
                 plt.plot(history.history['loss'], label='train')
                 plt.plot(history.history['val_loss'], label='test')
                 plt.legend()
-                plt.savefig(lChart, pad_inches=0.01, dpi=600)
+                plt.savefig(lChart, pad_inches=0.01, dpi=50)
                 plt.close()
 
                 # Wipe previous files as they do not overwrite
@@ -191,7 +191,7 @@ class AI(Basic):
                 plt.plot(history.history['accuracy'], label='train')
                 plt.plot(history.history['val_accuracy'], label='test')
                 plt.legend()
-                plt.savefig(aChart, pad_inches=0.01, dpi=600)
+                plt.savefig(aChart, pad_inches=0.01, dpi=50)
                 plt.close()
 
                 # Remove training and add timestamp

@@ -140,6 +140,8 @@ dmypy.json
 !/conf/cnn/.keep
 /conf/rnn/*
 !/conf/rnn/.keep
+/conf/bt/*
+!/conf/bt/.keep
 
 # AI-TB Enrichments
 /conf/enrich/*
@@ -163,6 +165,8 @@ dmypy.json
 !/data/cnn/.keep
 /data/rnn/*
 !/data/rnn/.keep
+/data/bt/*
+!/data/bt/.keep
 
 # AI-TB temp
 /tmp/*
@@ -174,6 +178,10 @@ dmypy.json
 # AI-TB Charts
 /static/charts/*
 !/static/charts/.keep
+
+# AI-TB Reports
+/static/reports/*
+!/static/reports/.keep
 
 # SQLite default instance
 /data/*.db

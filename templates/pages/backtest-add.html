@@ -1,0 +1,209 @@
+{% extends 'layouts/main.html' %}
+{% block title %}Backtest Add{% endblock %}
+{% block content %}
+<form method="post">
+<div class="row clearfix">
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        <div class="card">
+            <div class="header">
+                <h2>
+                    Create Backtest
+                </h2>
+            </div>
+            <div class="body">
+                <div class="row clearfix">
+                    <div class="col-lg-2 col-md-2 col-sm-6 col-xs-6">
+                        <div>
+                          <label>Name</label><br>
+                            <div class="form-line">
+                                <input name="nom" type="text" class="form-control" placeholder="Name of Backtest">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-2 col-md-2 col-sm-6 col-xs-12">
+                        <div>
+                            <label>Type</label><br>
+                            <select name="type" class="form-control" style="width:fit-content">
+                              <option value='basic1ai'>Basic 1AI</option>
+                              <option value='basic2ai'>Basic 2AI</option>
+                              <option value='trailing'>Trailing</option>
+                              <option value='signal'>Signal</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-lg-2 col-md-2 col-sm-6 col-xs-12">
+                        <div>
+                            <label>Symbol</label><br>
+                            <select name="symb" class="form-control" style="width:fit-content">
+                              <option value='basic'>Basic</option>
+                              <option value='basic2ai'>Basic 2AI</option>
+                              <option value='trailing'>Trailing</option>
+                              <option value='signal'>Signal</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-lg-2 col-md-2 col-sm-6 col-xs-12">
+                        <div>
+                            <label>Period</label><br>
+                            <select name="selection" class="form-control" style="display:inline;width:fit-content">
+                              <option value='1M'>1 Month</option>
+                              <option value='3M'>3 Months</option>
+                              <option value='6M'>6 Months</option>
+                              <option value='1Y'>1 Year</option>
+                              <option value='2Y'>2 Years</option>
+                              <option value='5Y'>5 Years</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-lg-2 col-md-2 col-sm-6 col-xs-12">
+                        <div>
+                            <label>Timeframe</label><br>
+                            <select name="timeframe" class="form-control" style="display:inline;width:fit-content">
+                              <option value='1T'>1m</option>
+                              <option value='3T'>3m</option>
+                              <option value='5T'>5m</option>
+                              <option value='10T'>10m</option>
+                              <option value='30T'>30m</option>
+                              <option value='1H'>1h</option>
+                              <option value='6H'>6h</option>
+                              <option value='12H'>12h</option>
+                              <option value='1D'>1d</option>
+                          </select>
+                        </div>
+                    </div>
+                    <div class="col-lg-2 col-md-2 col-sm-6 col-xs-12">
+                        <div>
+                            <label>Native Enrichments</label><br>
+                            <select name="timeframe" class="form-control" style="display:inline;width:fit-content">
+                              <option value='nanana'>None</option>
+                              {% for en in ens %}
+                                <option value='{{ en }}'>{{ en }}</option>
+                              {% endfor %}
+                          </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="row clearfix">
+                    <div class="col-lg-2 col-md-2 col-sm-6 col-xs-12">
+                        <div>
+                            <label>Entry AI</label><br>
+                            <select name="timeframe" class="form-control" style="display:inline;width:fit-content">
+                              <option value='nanana'>None</option>
+                              {% for ai in ais %}
+                                <option value='{{ ai }}'>{{ ai }}</option>
+                              {% endfor %}
+                          </select>
+                        </div>
+                    </div>
+                    <div class="col-lg-2 col-md-2 col-sm-6 col-xs-12">
+                        <div>
+                            <label>Exit AI</label><br>
+                            <select name="timeframe" class="form-control" style="display:inline;width:fit-content">
+                              <option value='nanana'>None</option>
+                              {% for ai in ais %}
+                                <option value='{{ ai }}'>{{ ai }}</option>
+                              {% endfor %}
+                          </select>
+                        </div>
+                    </div>
+                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-6">
+                      <label>TakeProfit</label>
+                      <div class="input-group spinner" data-trigger="spinner">
+                          <div class="form-line">
+                              <input name="tp" type="text" class="form-control text-center" value="1" data-rule="currency">
+                          </div>
+                          <span class="input-group-addon">
+                              <a href="javascript:;" class="spin-up" data-spin="up"><i class="glyphicon glyphicon-chevron-up"></i></a>
+                              <a href="javascript:;" class="spin-down" data-spin="down"><i class="glyphicon glyphicon-chevron-down"></i></a>
+                          </span>
+                      </div>
+                    </div>
+                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-6">
+                      <label>StopLoss</label>
+                      <div class="input-group spinner" data-trigger="spinner">
+                          <div class="form-line">
+                              <input name="sl" type="text" class="form-control text-center" value="1" data-rule="currency">
+                          </div>
+                          <span class="input-group-addon">
+                              <a href="javascript:;" class="spin-up" data-spin="up"><i class="glyphicon glyphicon-chevron-up"></i></a>
+                              <a href="javascript:;" class="spin-down" data-spin="down"><i class="glyphicon glyphicon-chevron-down"></i></a>
+                          </span>
+                      </div>
+                    </div>
+                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-6">
+                      <label>Trailing StopLoss xATR</label>
+                      <div class="input-group spinner" data-trigger="spinner">
+                          <div class="form-line">
+                              <input name="tsl" type="text" class="form-control text-center" value="6" data-rule="currency">
+                          </div>
+                          <span class="input-group-addon">
+                              <a href="javascript:;" class="spin-up" data-spin="up"><i class="glyphicon glyphicon-chevron-up"></i></a>
+                              <a href="javascript:;" class="spin-down" data-spin="down"><i class="glyphicon glyphicon-chevron-down"></i></a>
+                          </span>
+                      </div>
+                    </div>
+                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-6">
+                      <label>Trailing ATR</label>
+                      <div class="input-group spinner" data-trigger="spinner">
+                          <div class="form-line">
+                              <input name="tatr" type="text" class="form-control text-center" value="100" data-rule="currency">
+                          </div>
+                          <span class="input-group-addon">
+                              <a href="javascript:;" class="spin-up" data-spin="up"><i class="glyphicon glyphicon-chevron-up"></i></a>
+                              <a href="javascript:;" class="spin-down" data-spin="down"><i class="glyphicon glyphicon-chevron-down"></i></a>
+                          </span>
+                      </div>
+                    </div>
+                </div>
+                <div class="row clearfix">
+                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-6">
+                      <label>Cash</label>
+                      <div class="input-group spinner" data-trigger="spinner">
+                          <div class="form-line">
+                              <input name="cash" type="text" class="form-control text-center" value="10000" data-rule="currency">
+                          </div>
+                          <span class="input-group-addon">
+                              <a href="javascript:;" class="spin-up" data-spin="up"><i class="glyphicon glyphicon-chevron-up"></i></a>
+                              <a href="javascript:;" class="spin-down" data-spin="down"><i class="glyphicon glyphicon-chevron-down"></i></a>
+                          </span>
+                      </div>
+                    </div>
+                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-6">
+                      <label>Commission</label>
+                      <div class="input-group spinner" data-trigger="spinner">
+                          <div class="form-line">
+                              <input name="commission" type="text" class="form-control text-center" value="0.001" data-rule="currency">
+                          </div>
+                          <span class="input-group-addon">
+                              <a href="javascript:;" class="spin-up" data-spin="up"><i class="glyphicon glyphicon-chevron-up"></i></a>
+                              <a href="javascript:;" class="spin-down" data-spin="down"><i class="glyphicon glyphicon-chevron-down"></i></a>
+                          </span>
+                      </div>
+                    </div>
+                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-6">
+                      <label>Margin</label>
+                      <div class="input-group spinner" data-trigger="spinner">
+                          <div class="form-line">
+                              <input name="margin" type="text" class="form-control text-center" value="1" data-rule="currency">
+                          </div>
+                          <span class="input-group-addon">
+                              <a href="javascript:;" class="spin-up" data-spin="up"><i class="glyphicon glyphicon-chevron-up"></i></a>
+                              <a href="javascript:;" class="spin-down" data-spin="down"><i class="glyphicon glyphicon-chevron-down"></i></a>
+                          </span>
+                      </div>
+                    </div>
+                </div>
+                <div class="row clearfix align-right">
+                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 align-right">
+                        <button type="submit" name="action" value="fin" class="btn bg-green btn-lg waves-effect waves-float">Create</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</form>
+{% endblock %}
+
+{% block footer %}
+{% endblock %}

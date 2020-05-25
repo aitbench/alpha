@@ -157,15 +157,15 @@
                 <script>
                   // Post Request when selector changes to exchange. Gets Exchange info via action=info
                   function showHideDates() {
-                      d = document.getElementById("typeSel").value;
+                      d = document.getElementById("typeSel_{{ da['id'] }}").value;
                       if(d=='custom'){
                         console.log(d)
-                        document.getElementById("fDate").style.display = "block"
-                        document.getElementById("tDate").style.display = "block"
+                        document.getElementById("fDate_{{ da['id'] }}").style.display = "block"
+                        document.getElementById("tDate_{{ da['id'] }}").style.display = "block"
                       }
                       else{
-                        document.getElementById("fDate").style.display = "none"
-                        document.getElementById("tDate").style.display = "none"
+                        document.getElementById("fDate_{{ da['id'] }}").style.display = "none"
+                        document.getElementById("tDate_{{ da['id'] }}").style.display = "none"
                       }
                   }
                 </script>
@@ -184,6 +184,7 @@
                 </div>
                 <label>Timeframe</label>
                   <select name="timeframe" class="form-control" style="display:inline;width:fit-content" id="timeSel_{{ da['id'] }}">
+                    <option value='1T'>1m</option>
                     <option value='3T'>3m</option>
                     <option value='5T'>5m</option>
                     <option value='10T'>10m</option>
