@@ -84,7 +84,7 @@ class Runner(Basic):
                 tmpDataConf['count'] = str(datadf.shape[0])
                 id = tmpDataConf['id']
                 # Convert Dict to YAML
-                saveConf = yaml.dump(tmpDataConf)
+                saveConf = yaml.dump(tmpDataConf, default_flow_style=False, sort_keys=False)
                 # Cfg File
                 self.writeCfgFile('data', id, saveConf)
         # Remove File Lock

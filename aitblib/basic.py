@@ -16,6 +16,7 @@ class Basic():
         self.confPath = appRoot + os.path.sep + 'conf' + os.path.sep
         self.dataConfPath = self.confPath + 'data' + os.path.sep
         self.conConfPath = self.confPath + 'conn' + os.path.sep
+        self.enConfPath = self.confPath + 'enrich' + os.path.sep
         # Data paths
         self.dataPath = appRoot + os.path.sep + 'data' + os.path.sep
         self.sampleDataPath = self.dataPath + 'samples' + os.path.sep

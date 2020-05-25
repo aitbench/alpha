@@ -199,7 +199,7 @@ class AI(Basic):
                 aConf['training'] = False
 
                 # Save config
-                aYML = yaml.dump(aConf)
+                aYML = yaml.dump(aConf, default_flow_style=False, sort_keys=False)
                 # print(aYML,file=sys.stderr)
                 self.writeCfgFile('ann', aConf['id'], aYML)
         # Remove File Lock

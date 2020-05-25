@@ -525,7 +525,11 @@ class Enrichment():
                  'High5': 'High 5 peaks Bool',
                  'Low5': 'Low 5 dips Bool',
                  'High10': 'High 10 peaks Bool',
-                 'Low10': 'Low 10 dips Bool'}
+                 'Low10': 'Low 10 dips Bool',
+                 'High15': 'High 15 peaks Bool',
+                 'Low15': 'Low 15 dips Bool',
+                 'High20': 'High 20 peaks Bool',
+                 'Low20': 'Low 20 dips Bool'}
         return depen
 
     def addDepen(self, enrich, endf):
@@ -586,6 +590,36 @@ class Enrichment():
             endf['Low10'] = endf.iloc[argrelextrema(endf.Low.values, np.less_equal, order=n)[0]]['Low']
             endf['Low10'].fillna(0, inplace=True)
             endf.loc[endf['Low10'] > 0, 'Low10'] = 1
+            return endf
+
+        if enrich == 'High15':
+            n = 15  # number of points to be checked before and after
+            # np.seterr(invalid='ignore')
+            endf['High15'] = endf.iloc[argrelextrema(endf.High.values, np.greater_equal, order=n)[0]]['High']
+            endf['High15'].fillna(0, inplace=True)
+            endf.loc[endf['High15'] > 0, 'High15'] = 1
+            return endf
+        if enrich == 'Low15':
+            n = 15  # number of points to be checked before and after
+            # np.seterr(invalid='ignore')
+            endf['Low15'] = endf.iloc[argrelextrema(endf.Low.values, np.less_equal, order=n)[0]]['Low']
+            endf['Low15'].fillna(0, inplace=True)
+            endf.loc[endf['Low15'] > 0, 'Low15'] = 1
+            return endf
+
+        if enrich == 'High20':
+            n = 20  # number of points to be checked before and after
+            # np.seterr(invalid='ignore')
+            endf['High20'] = endf.iloc[argrelextrema(endf.High.values, np.greater_equal, order=n)[0]]['High']
+            endf['High20'].fillna(0, inplace=True)
+            endf.loc[endf['High20'] > 0, 'High20'] = 1
+            return endf
+        if enrich == 'Low20':
+            n = 20  # number of points to be checked before and after
+            # np.seterr(invalid='ignore')
+            endf['Low20'] = endf.iloc[argrelextrema(endf.Low.values, np.less_equal, order=n)[0]]['Low']
+            endf['Low20'].fillna(0, inplace=True)
+            endf.loc[endf['Low20'] > 0, 'Low20'] = 1
             return endf
 
     def listNaN(self):

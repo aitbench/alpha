@@ -73,9 +73,9 @@ class Helper(Basic):
         conYML = conYML + 'pairs: ' + tmppairs + "\n"
         conYML = conYML + 'totpairs: ' + str(len(tmpex.symbols)) + "\n"
         conYML = conYML + 'modefees: ' + str(tmpfeesmode) + "\n"
-        conYML = conYML + yaml.dump(tmpex.urls) + "\n"
-        conYML = conYML + yaml.dump(abilities) + "\n"
-        conYML = conYML + yaml.dump(tmpfees) + "\n"
+        conYML = conYML + yaml.dump(tmpex.urls, default_flow_style=False, sort_keys=False) + "\n"
+        conYML = conYML + yaml.dump(abilities, default_flow_style=False, sort_keys=False) + "\n"
+        conYML = conYML + yaml.dump(tmpfees, default_flow_style=False, sort_keys=False) + "\n"
         # Remove empty lines
         conYML = os.linesep.join([s for s in conYML.splitlines() if s])
         # Save to YAML file
@@ -376,7 +376,7 @@ class Helper(Basic):
         annYML = annYML + 'testaccuracy: 0' + "\n"
         # Add Nugget Info
         nfile = self.nuggetDataPath + nugget + '.feather'
-        df = pd.read_feather(nfile)
+        # df = pd.read_feather(nfile)
         info = self.nugInfo(nfile)
         # Add info from nuggetinfo and enrichments
         annYML = annYML + 'symb: ' + info['symb'] + "\n"
@@ -384,8 +384,11 @@ class Helper(Basic):
         annYML = annYML + 'from: ' + info['from'] + "\n"
         annYML = annYML + 'to: ' + info['to'] + "\n"
         annYML = annYML + 'depen: ' + info['depen'] + "\n"
-        indis = list(df.columns[0:-7].values.tolist())
-        annYML = annYML + 'indi: ' + "\n" + yaml.dump(indis) + "\n"
+        # indis = list(df.columns[0:-7].values.tolist())
+        with open(self.enConfPath + info['indi'] + '.yml', 'r') as afile:
+            indi = yaml.full_load(afile)
+        print(indi['riches'], file=sys.stderr)
+        annYML = annYML + 'indi: ' + indi['riches'] + "\n"
         # Delete empty lines
         annYML = os.linesep.join([s for s in annYML.splitlines() if s])
         # Save to YAML file
@@ -394,6 +397,6 @@ class Helper(Basic):
     def turnANNon(self, id):
         adata = self.readCfgFile('ann', id + '.yml')
         adata['training'] = True
-        aYML = yaml.dump(adata)
+        aYML = yaml.dump(adata, default_flow_style=False, sort_keys=False)
         # Save to YAML file
         self.writeCfgFile('ann', id, aYML)
