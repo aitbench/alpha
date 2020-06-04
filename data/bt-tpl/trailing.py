@@ -25,13 +25,13 @@ class XXXNAMEXXX(TrailingStrategy):
         import pickle as pkl
         self.endf = pkl.load(open('XXXENDFXXX', 'rb'))
         # Load the scaler
-        self.sclr = pkl.load(open('XXXENTSCLRXXX', 'rb'))
+        self.ensclr = pkl.load(open('XXXENTSCLRXXX', 'rb'))
         # Load the model
         import keras
         # Keras threading fix - DO NOT REMOVE :P
         import keras.backend.tensorflow_backend as tb
         tb._SYMBOLIC_SCOPE.value = True
-        self.model = keras.models.load_model('XXXENTMODELXXX')
+        self.enmodel = keras.models.load_model('XXXENTMODELXXX')
         # Trailing Stuffs
         # def set_atr_periods(self, periods=100)
         # def set_trailing_sl(self, n_atr=6)
@@ -44,33 +44,34 @@ class XXXNAMEXXX(TrailingStrategy):
         price = self.data.Close[-1]
 
         # Test AI with values at idx
-        if self.predEnt(idx):
-            # Buy if not in a current position
-            if not self.position:
-                self.buy()
+        if self.predEnt(idx) and not self.position:
+            self.buy()
 
         # Print equity to show progress
         #print(self.equity)
+
         # Manual override of stoploss
         if self.position and self.position.pl_pct < self.slpc:
             self.position.close()
 
-    # Prediction from model
+    # Prediction entry from model
     def predEnt(self,idx):
         # Get independants at idx
-        X = self.endf.loc[idx].values[0:-6]
+        enX = self.endf.loc[idx].values[0:-6]
         # Reshape ndarray for Scaler
         import numpy as np
-        X = np.reshape(X,(1,-1))
+        enX = np.reshape(enX,(1,-1))
         # Transform via preloaded scaler
-        XScaled = self.sclr.transform(X)
+        XScaled = self.ensclr.transform(enX)
         # Make raw and class predictions
-        rawPred = self.model.predict(XScaled)
-        classPred = self.model.predict_classes(XScaled)
+        rawPred = self.enmodel.predict(XScaled)
+        classPred = self.enmodel.predict_classes(XScaled)
         # Flip to boolean classPred flips at 0.5
         pred = (rawPred > 0.9)
         # Return prediction in boolean
         return pred
+
+
 
 # Load dataframes
 natdf = pkl.load(open('XXXNATDFXXX', 'rb'))

@@ -196,3 +196,7 @@ dmypy.json
 
 # Ignore any straggler html
 /*.html
+
+# Ignore any straggler backtests
+!/app.py
+/*.py

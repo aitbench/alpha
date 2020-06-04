@@ -129,48 +129,54 @@ class ConfigAPS(object):
 
 
 # Test Job
-if os.environ.get("WERKZEUG_RUN_MAIN") == "true":
-    # Init Scheduler
-    scheduler = APScheduler()
-    # Config APS
-    app.config.from_object(ConfigAPS())
-    scheduler.init_app(app)
+# if os.environ.get("WERKZEUG_RUN_MAIN") == "true":
+# Init Scheduler
+scheduler = APScheduler()
+# Config APS
+app.config.from_object(ConfigAPS())
+scheduler.init_app(app)
 
-    # Init used libraries
-    RunThe = runners.Runner(app.root_path, db)
-    AI = ai.AI(app.root_path, db)
-    # Data Download
+# Init used libraries
+RunThe = runners.Runner(app.root_path, db)
+AI = ai.AI(app.root_path, db)
+# Data Download
 
-    @scheduler.task('interval', id='dataJob', seconds=30)
-    def dataJob():
-        RunThe.dataDownload(True)
 
-    @scheduler.task('interval', id='bkTest', seconds=5)
-    def bkTest():
-        RunThe.backTest()
+@scheduler.task('interval', id='dataJob', seconds=30)
+def dataJob():
+    RunThe.dataDownload(True)
 
-    @scheduler.task('interval', id='trainAI', seconds=15)
-    def trainAI():
-        AI.trainANN()
-    # Minute by minute
 
-    @scheduler.task('cron', id='minuteJob', minute='*')
-    def minuteJob():
-        # print('MinuteByMinute', file=sys.stdout)
-        pass
-    # Hourly
-    # @scheduler.task('cron', id='hourlyjob', hour='*')
-    # def hourlyjob():
-    #     print('Hourly', file=sys.stdout)
-    # # Daily
-    # @scheduler.task('cron', id='dailyjob', day='*')
-    # def dailyjob():
-    #     print('Daily', file=sys.stdout)
-    # # Weekly
-    # @scheduler.task('cron', id='weeklyjob', week='*', day_of_week='sun')
-    # def weeklyjob():
-    #     print('Weekly', file=sys.stdout)
-    scheduler.start()
+@scheduler.task('interval', id='bkTest', seconds=5)
+def bkTest():
+    RunThe.backTest()
+
+
+@scheduler.task('interval', id='trainAI', seconds=15)
+def trainAI():
+    AI.trainANN()
+# Minute by minute
+
+
+@scheduler.task('cron', id='minuteJob', minute='*')
+def minuteJob():
+    # print('MinuteByMinute', file=sys.stdout)
+    pass
+
+
+# Hourly
+# @scheduler.task('cron', id='hourlyjob', hour='*')
+# def hourlyjob():
+#     print('Hourly', file=sys.stdout)
+# # Daily
+# @scheduler.task('cron', id='dailyjob', day='*')
+# def dailyjob():
+#     print('Daily', file=sys.stdout)
+# # Weekly
+# @scheduler.task('cron', id='weeklyjob', week='*', day_of_week='sun')
+# def weeklyjob():
+#     print('Weekly', file=sys.stdout)
+scheduler.start()
 
 # Init Helper Class
 do = helpers.Helper(app.root_path, db)
@@ -511,7 +517,7 @@ def aiann():
             # Delete data files
             os.remove(dataPath + 'ann' + os.path.sep + request.form['id'] + '.h5')
             os.remove(dataPath + 'ann' + os.path.sep + request.form['id'] + '.pkl')
-            os.remove(dataPath + 'ann' + os.path.sep + request.form['id'] + '_sorted.pkls')
+            os.remove(dataPath + 'ann' + os.path.sep + request.form['id'] + '_sorted.pkl')
             return redirect("/ai-ann")
     else:
         # List samples in folder ignoring .keep files
@@ -615,13 +621,11 @@ def changelogs():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     logform = LoginForm()
-    # print(request.form,file=sys.stderr)
     name = request.form.get('name')
     # email = request.form.get('email')
     password = request.form.get('password')
     # remember = True if request.form.get('remember') else False
     if logform.validate_on_submit():
-        # print("XXXXXX",file=sys.stderr)
         # Check for existence of username
         user = User.query.filter_by(name=name).first()
         # Check if user actually exists and then
@@ -689,7 +693,6 @@ def logstream(alog):
 @app.route('/setup', methods=['GET', 'POST'])
 def syssetup():
     form = SetupForm()
-    # print(request.form,file=sys.stderr)
     if form.validate_on_submit():
         # Get variables
         dbtype = request.form.get('dbtype')
@@ -699,7 +702,6 @@ def syssetup():
         password = request.form.get('password')
         # Create connection string
         conString = "SQLALCHEMY_DATABASE_URI = '" + dbtype + '://' + uname + ':' + password + '@' + hostname + '/' + database + "'"
-        # print(conString, file=sys.stderr)
         # Write to file
         with open(confPath + 'db.py', 'w') as f:
             f.write(conString)
@@ -746,11 +748,10 @@ if __name__ == '__main__':
     # app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
     app.config['DEBUG'] = True
     app.config['UPLOAD_FOLDER'] = 'tmp'
-    # print(db.engine.url)
     # Clear down all current run locks
     do.clearRunLocks()
     # Run App
-    app.run()  # threaded=False breaks APScheduler
+    app.run(use_reloader=False)  # threaded=False breaks APScheduler
 
 # Or specify port manually:
 '''

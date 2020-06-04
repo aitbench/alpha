@@ -24,13 +24,13 @@ class XXXNAMEXXX(Strategy):
         import pickle as pkl
         self.endf = pkl.load(open('XXXENDFXXX', 'rb'))
         # Load the scaler
-        self.sclr = pkl.load(open('XXXENTSCLRXXX', 'rb'))
+        self.ensclr = pkl.load(open('XXXENTSCLRXXX', 'rb'))
         # Load the model
         import keras
-        # Fuckit might work and it does. DO NOT REMOVE :P
+        # Keras threading fix - DO NOT REMOVE :P
         import keras.backend.tensorflow_backend as tb
         tb._SYMBOLIC_SCOPE.value = True
-        self.model = keras.models.load_model('XXXENTMODELXXX')
+        self.enmodel = keras.models.load_model('XXXENTMODELXXX')
 
     def next(self):
         super().next()
@@ -46,7 +46,7 @@ class XXXNAMEXXX(Strategy):
         # Print equity to show progress
         #print(self.equity)
 
-    # Prediction from model
+    # Prediction entry from model
     def predEnt(self,idx):
         # Get independants at idx
         X = self.endf.loc[idx].values[0:-6]
@@ -54,10 +54,10 @@ class XXXNAMEXXX(Strategy):
         import numpy as np
         X = np.reshape(X,(1,-1))
         # Transform via preloaded scaler
-        XScaled = self.sclr.transform(X)
+        XScaled = self.ensclr.transform(X)
         # Make raw and class predictions
-        rawPred = self.model.predict(XScaled)
-        classPred = self.model.predict_classes(XScaled)
+        rawPred = self.enmodel.predict(XScaled)
+        classPred = self.enmodel.predict_classes(XScaled)
         # Flip to boolean classPred flips at 0.5
         pred = (rawPred > 0.9)
         # Return prediction in boolean

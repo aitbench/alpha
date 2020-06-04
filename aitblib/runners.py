@@ -52,7 +52,6 @@ class Runner(Basic):
                     # Check if data empty else start from last entry
                     if tmpDataConf['count'] == 0:
                         if tmpex.has['fetchOHLCV']:
-                            # print('No Data start Fresh',file=sys.stderr)
                             data = tmpex.fetch_ohlcv(tmpDataConf['symb'], '1m', tmpDataConf['start'])
                     else:
                         if tmpex.has['fetchOHLCV']:
@@ -60,7 +59,6 @@ class Runner(Basic):
                             result = self.db.session.execute('SELECT * from ' + tmpDataConf['id']).fetchall()
                             # Drop results to dataFrame
                             datadf = pd.DataFrame(result, columns=['Date', 'Open', 'High', 'Low', 'Close', 'Volume'])
-                            # print('Data Found start from: #'+str(datadf['date'].iloc[-1])+'#',file=sys.stderr)
                             ldate = datetime.utcfromtimestamp(datadf['Date'].iloc[-1] / 1000).strftime('%Y-%m-%d %H:%M')
                             with open(dlog, 'a') as file:
                                 file.write(str(datetime.now()) + " -- Downloading " + tmpDataConf['symb'] + " starting from " + ldate + "\n")

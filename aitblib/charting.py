@@ -36,25 +36,27 @@ class Chart(Basic):
         # Create array of incremental and decremental candles
         inc = df.Close > df.Open
         dec = df.Open > df.Close
+        # Drop index
+        self.ll(df.info)
         # Create title from nugget info
         title = info['symb'] + ' ' + info['timeframe'] + ' From:' + info['from'] + ' To:' + info['to']
         # Create first figure of OHLC
         TOOLS = "pan,wheel_zoom,reset,save"
         p = figure(x_axis_type="datetime", sizing_mode='scale_width', tools=TOOLS, height=200, title=title)
         p.grid.grid_line_alpha = 0.3
-        p.segment(df.Date, df.High, df.Date, df.Low, color="black")
+        p.segment(df.index, df.High, df.index, df.Low, color="black")
         # Add in
-        p.vbar(df.Date[inc], w, df.Open[inc], df.Close[inc], fill_color="#D5E1DD", line_color="black")
-        p.vbar(df.Date[dec], w, df.Open[dec], df.Close[dec], fill_color="#F2583E", line_color="black")
+        p.vbar(df.index[inc], w, df.Open[inc], df.Close[inc], fill_color="#D5E1DD", line_color="black")
+        p.vbar(df.index[dec], w, df.Open[dec], df.Close[dec], fill_color="#F2583E", line_color="black")
         plots.append(p)
         # Dependant plot
         i = figure(x_axis_type="datetime", sizing_mode='scale_width', x_range=p.x_range, height=50, title=df.columns[-1])
-        i.square(df.Date, df.iloc[:, -1])
+        i.square(df.index, df.iloc[:, -1])
         plots.append(i)
         # Additional independants plot
-        for col in df.columns[:-7]:
+        for col in df.columns[:-6]:
             d = figure(x_axis_type="datetime", sizing_mode='scale_width', x_range=p.x_range, height=50, title=col)
-            d.line(df.Date, df[col])
+            d.line(df.index, df[col])
             plots.append(d)
         # Create Bokeh Grid
         grid = gridplot(plots, ncols=1, sizing_mode='scale_width', toolbar_location="right")

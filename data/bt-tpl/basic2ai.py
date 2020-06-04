@@ -10,27 +10,34 @@ import quantstats as qs
 class XXXNAMEXXX(Strategy):
     # Any variables in here can be used for optimization
     SL = XXXSTOPLOSSXXX
-    TP = XXXTAKEPROFITXXX
 
     def init(self):
         super().init()
+
+        # Init
+        import pickle as pkl
+        import keras
+        # Keras threading fix - DO NOT REMOVE :P
+        import keras.backend.tensorflow_backend as tb
+        tb._SYMBOLIC_SCOPE.value = True
+
         # StopLoss and TakeProfit
-        self.sl = 1 - (0.01 * self.SL)
-        self.tp = 1 + (0.01 * self.TP)
+        self.slpc = 0.01 * self.SL * -1
         # Pull Native DF
         self.mydf = self.data.getDF
         ## AI Setup
         # Load Entry DF
-        import pickle as pkl
         self.endf = pkl.load(open('XXXENDFXXX', 'rb'))
-        # Load the scaler
-        self.sclr = pkl.load(open('XXXENTSCLRXXX', 'rb'))
-        # Load the model
-        import keras
-        # Fuckit might work and it does. DO NOT REMOVE :P
-        import keras.backend.tensorflow_backend as tb
-        tb._SYMBOLIC_SCOPE.value = True
-        self.model = keras.models.load_model('XXXENTMODELXXX')
+        # Load the Entry scaler
+        self.ensclr = pkl.load(open('XXXENTSCLRXXX', 'rb'))
+        # Load the Entry model
+        self.enmodel = keras.models.load_model('XXXENTMODELXXX')
+        # Load Exit DF
+        self.exdf = pkl.load(open('XXXEXDFXXX', 'rb'))
+        # Load the Exit scaler
+        self.exsclr = pkl.load(open('XXXEXSCLRXXX', 'rb'))
+        # Load the Exit Model
+        self.exmodel = keras.models.load_model('XXXEXMODELXXX')
 
     def next(self):
         super().next()
@@ -38,15 +45,21 @@ class XXXNAMEXXX(Strategy):
         price = self.data.Close[-1]
 
         # Test AI with values at idx
-        if self.predEnt(idx):
-            # Buy if not in a current position
-            if not self.position:
-                self.buy(sl=self.sl*price, tp=self.tp*price)
+        if self.predEnt(idx) and not self.position:
+            self.buy()
 
         # Print equity to show progress
         #print(self.equity)
 
-    # Prediction from model
+        # Manual override of stoploss
+        if self.position and self.position.pl_pct < self.slpc:
+            self.position.close()
+
+        # Test AI with values at idx
+        if self.predEx(idx) and self.position:
+            self.position.close()
+
+    # Prediction entry from model
     def predEnt(self,idx):
         # Get independants at idx
         X = self.endf.loc[idx].values[0:-6]
@@ -54,10 +67,27 @@ class XXXNAMEXXX(Strategy):
         import numpy as np
         X = np.reshape(X,(1,-1))
         # Transform via preloaded scaler
-        XScaled = self.sclr.transform(X)
+        XScaled = self.ensclr.transform(X)
         # Make raw and class predictions
-        rawPred = self.model.predict(XScaled)
-        classPred = self.model.predict_classes(XScaled)
+        rawPred = self.enmodel.predict(XScaled)
+        classPred = self.enmodel.predict_classes(XScaled)
+        # Flip to boolean classPred flips at 0.5
+        pred = (rawPred > 0.9)
+        # Return prediction in boolean
+        return pred
+
+    # Prediction entry from model
+    def predEx(self,idx):
+        # Get independants at idx
+        exX = self.exdf.loc[idx].values[0:-6]
+        # Reshape ndarray for Scaler
+        import numpy as np
+        exX = np.reshape(exX,(1,-1))
+        # Transform via preloaded scaler
+        XScaled = self.exsclr.transform(exX)
+        # Make raw and class predictions
+        rawPred = self.exmodel.predict(XScaled)
+        classPred = self.exmodel.predict_classes(XScaled)
         # Flip to boolean classPred flips at 0.5
         pred = (rawPred > 0.9)
         # Return prediction in boolean
@@ -66,11 +96,14 @@ class XXXNAMEXXX(Strategy):
 # Load dataframes
 natdf = pkl.load(open('XXXNATDFXXX', 'rb'))
 endf = pkl.load(open('XXXENDFXXX', 'rb'))
+exdf = pkl.load(open('XXXEXDFXXX', 'rb'))
 
 # Find max length of df
 max = natdf.shape[0]
 if max > endf.shape[0]:
     max = endf.shape[0]
+if max > exdf.shape[0]:
+    max = exdf.shape[0]
 
 # Create backtest based on df data
 comm = XXXCOMMXXX * 0.01

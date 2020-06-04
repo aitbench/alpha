@@ -239,9 +239,7 @@ class Helper(Basic):
             todate = time.mktime(d.timetuple())
             todate = int(todate * 1000)
         selState = 'SELECT * FROM ' + data + ' WHERE date BETWEEN ' + str(fromdate) + ' AND ' + str(todate)
-        # print(selState,file=sys.stderr)
         result = self.db.session.execute(selState).fetchall()
-        # print(result,file=sys.stderr)
         createSampledf = pd.DataFrame(result, columns=['Date', 'Open', 'High', 'Low', 'Close', 'Volume'])
         if createSampledf.shape[0] == 0:
             return
@@ -366,7 +364,7 @@ class Helper(Basic):
         annYML = annYML + 'nugget: ' + nugget + "\n"
         annYML = annYML + 'training: True' + "\n"
         annYML = annYML + 'scaler: ' + scaler + "\n"
-        print(scarcity, file=sys.stderr)
+        # print(scarcity,file=sys.stderr)
         if scarcity == "on":
             annYML = annYML + 'scarcity: True' + "\n"
         else:
@@ -399,7 +397,7 @@ class Helper(Basic):
         # indis = list(df.columns[0].values.tolist())
         with open(self.enConfPath + info['indi'] + '.yml', 'r') as afile:
             indi = yaml.full_load(afile)
-        print(indi['riches'], file=sys.stderr)
+        # print(indi['riches'],file=sys.stderr)
         annYML = annYML + 'indi: ' + indi['riches'] + "\n"
         # Delete empty lines
         annYML = os.linesep.join([s for s in annYML.splitlines() if s])
@@ -440,7 +438,10 @@ class Helper(Basic):
             with open(self.btplDataPath + 'basic2ai.py', 'r') as file:
                 fdata = file.read()
             # Make template only changes
-
+            fdata = fdata.replace('XXXEXDFXXX', re.escape(self.btDataPath + id + '_exit') + '.pkl')
+            # Models
+            fdata = fdata.replace('XXXEXMODELXXX', re.escape(self.annDataPath + bdata['exitai']) + '.h5')
+            fdata = fdata.replace('XXXEXSCLRXXX', re.escape(self.annDataPath + bdata['exitai']) + '.pkl')
         if bdata['type'] == 'trailing':
             # Read in the template
             with open(self.btplDataPath + 'trailing.py', 'r') as file:
