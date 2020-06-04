@@ -515,7 +515,7 @@ class Enrichment():
             return endf
 
     def listDepen(self):
-        depen = {'nana': 'None',
+        depen = {'Dummy': 'None',
                  '1BarClose': 'One Bar Ahead',
                  '2BarClose': 'Two Bars Ahead',
                  '3BarClose': 'Three Bars Ahead',
@@ -533,33 +533,33 @@ class Enrichment():
         return depen
 
     def addDepen(self, enrich, endf):
-        if enrich == 'nana':
-            endf['dependef'] = endf['Close']
+        if enrich == 'Dummy':
+            endf['Dummy'] = endf['Close']
             return endf
         if enrich == '1BarClose':
-            endf.insert(endf.shape[1], column='depen1', value=(endf.diff(periods=-1)['Close'] * -1))
+            endf.insert(endf.shape[1], column='D1', value=(endf.diff(periods=-1)['Close'] * -1))
             return endf
         if enrich == '2BarClose':
-            endf.insert(endf.shape[1], column='depen2', value=(endf.diff(periods=-2)['Close'] * -1))
+            endf.insert(endf.shape[1], column='D2', value=(endf.diff(periods=-2)['Close'] * -1))
             return endf
         if enrich == '3BarClose':
-            endf.insert(endf.shape[1], column='depen3', value=(endf.diff(periods=-3)['Close'] * -1))
+            endf.insert(endf.shape[1], column='D3', value=(endf.diff(periods=-3)['Close'] * -1))
             return endf
 
         if enrich == '1BarBool':
             # Diff comes back with negative showing positive change
-            endf.loc[endf.diff(periods=-1)['Close'] < 0, 'depen1bool'] = 1
-            endf.loc[endf.diff(periods=-1)['Close'] >= 0, 'depen1bool'] = 0
+            endf.loc[endf.diff(periods=-1)['Close'] < 0, 'D1Bool'] = 1
+            endf.loc[endf.diff(periods=-1)['Close'] >= 0, 'D1Bool'] = 0
             return endf
         if enrich == '2BarBool':
             # Diff comes back with negative showing positive change
-            endf.loc[endf.diff(periods=-2)['Close'] < 0, 'depen2bool'] = 1
-            endf.loc[endf.diff(periods=-2)['Close'] >= 0, 'depen2bool'] = 0
+            endf.loc[endf.diff(periods=-2)['Close'] < 0, 'D2Bool'] = 1
+            endf.loc[endf.diff(periods=-2)['Close'] >= 0, 'D2Bool'] = 0
             return endf
         if enrich == '3BarBool':
             # Diff comes back with negative showing positive change
-            endf.loc[endf.diff(periods=-3)['Close'] < 0, 'depen3bool'] = 1
-            endf.loc[endf.diff(periods=-3)['Close'] >= 0, 'depen3bool'] = 0
+            endf.loc[endf.diff(periods=-3)['Close'] < 0, 'D3Bool'] = 1
+            endf.loc[endf.diff(periods=-3)['Close'] >= 0, 'D3Bool'] = 0
             return endf
 
         if enrich == 'High5':
@@ -638,8 +638,6 @@ class Enrichment():
         if nana == 'drop':
             # Drop any NaN row
             nadf.dropna(inplace=True)
-            # Reset indexes as feather is touchy
-            nadf.reset_index(drop=True, inplace=True)
             return nadf
 
         if nana == 'fzero':

@@ -1,7 +1,7 @@
 import os.path
 import yaml
 import datetime
-# import sys
+import sys
 
 
 class Basic():
@@ -22,8 +22,11 @@ class Basic():
         self.sampleDataPath = self.dataPath + 'samples' + os.path.sep
         self.nuggetDataPath = self.dataPath + 'nuggets' + os.path.sep
         self.annDataPath = self.dataPath + 'ann' + os.path.sep
+        self.btDataPath = self.dataPath + 'bt' + os.path.sep
+        self.btplDataPath = self.dataPath + 'bt-tpl' + os.path.sep
         # Chart Path
         self.chartPath = appRoot + os.path.sep + 'static' + os.path.sep + 'charts' + os.path.sep
+        self.stBtPath = appRoot + os.path.sep + 'static' + os.path.sep + 'bt' + os.path.sep
         # Time format
         self.timeform = '%d/%m/%Y'
         # Bokeh theme
@@ -31,6 +34,17 @@ class Basic():
 
     def Hello(self):
         print('Hello this is basic')
+
+    def ll(self, info):
+        # HEADER = '\033[95m'
+        # OKBLUE = '\033[94m'
+        # OKGREEN = '\033[92m'
+        # WARNING = '\033[93m'
+        FAIL = '\033[91m'
+        ENDC = '\033[0m'
+        # BOLD = '\033[1m'
+        # UNDERLINE = '\033[4m'
+        print(f"{FAIL}" + str(info) + f"{ENDC}", file=sys.stderr)
 
     # List of Config files
     def listCfgFiles(self, oftype):

@@ -48,8 +48,8 @@ class AI(Basic):
             aConf = self.readCfgFile('ann', file)
             if aConf['training']:
                 # Read Nugget to DataFrame
-                nfile = self.nuggetDataPath + aConf['nugget'] + '.feather'
-                df = pd.read_feather(nfile)
+                nfile = self.nuggetDataPath + aConf['nugget'] + '.pkl'
+                df = pd.read_pickle(nfile)
                 # Starting log entry
                 with open(tlog, 'w') as file:
                     file.write(str(datetime.datetime.now()) + " -- Training " + aConf['id'] + " ...")
@@ -102,7 +102,7 @@ class AI(Basic):
                             file.write(str(datetime.datetime.now()) + " -- Scarcity Finalized")
 
                 # Create Independants X and Dependant y series
-                X = df.iloc[:, 0:-7].values
+                X = df.iloc[:, 0:-6].values
                 y = df.iloc[:, -1].values
                 # Splitting the dataset into the Training set and Test set
                 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=aConf['testsplit'], random_state=0)
@@ -161,8 +161,8 @@ class AI(Basic):
                 # Setup logger
                 csv_logger = CSVLogger(tlog, append=True)
                 # Fitting the ANN to the Training set
-                history = classifier.fit(X_train, y_train, validation_data=(X_test, y_test), batch_size=aConf['batchsize'], epochs=aConf['epoch'], callbacks=[csv_logger], verbose=0)
-
+                history = classifier.fit(X_train, y_train, validation_data=(X_test, y_test), batch_size=aConf['batchsize'], epochs=aConf['epoch'], callbacks=[csv_logger])
+                # , verbose=0
                 # Save the model
                 classifier.save(self.annDataPath + aConf['id'] + '.h5')
 
@@ -179,7 +179,7 @@ class AI(Basic):
                 plt.plot(history.history['loss'], label='train')
                 plt.plot(history.history['val_loss'], label='test')
                 plt.legend()
-                plt.savefig(lChart, pad_inches=0.01, dpi=50)
+                plt.savefig(lChart, pad_inches=0.01, dpi=60)
                 plt.close()
 
                 # Wipe previous files as they do not overwrite
@@ -191,7 +191,7 @@ class AI(Basic):
                 plt.plot(history.history['accuracy'], label='train')
                 plt.plot(history.history['val_accuracy'], label='test')
                 plt.legend()
-                plt.savefig(aChart, pad_inches=0.01, dpi=50)
+                plt.savefig(aChart, pad_inches=0.01, dpi=60)
                 plt.close()
 
                 # Remove training and add timestamp

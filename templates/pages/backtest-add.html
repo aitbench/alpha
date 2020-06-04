@@ -14,14 +14,16 @@
                 <div class="row clearfix">
                     <div class="col-lg-2 col-md-2 col-sm-6 col-xs-6">
                         <div>
+                          <input name="id" type="hidden" value="0"/>
                           <label>Name</label><br>
                             <div class="form-line">
-                                <input name="nom" type="text" class="form-control" placeholder="Name of Backtest">
+                                <input name="name" type="text" class="form-control" placeholder="Name of Backtest">
                             </div>
                         </div>
                     </div>
                     <div class="col-lg-2 col-md-2 col-sm-6 col-xs-12">
                         <div>
+                            <input name="run" type="hidden" value="0"/>
                             <label>Type</label><br>
                             <select name="type" class="form-control" style="width:fit-content">
                               <option value='basic1ai'>Basic 1AI</option>
@@ -35,17 +37,16 @@
                         <div>
                             <label>Symbol</label><br>
                             <select name="symb" class="form-control" style="width:fit-content">
-                              <option value='basic'>Basic</option>
-                              <option value='basic2ai'>Basic 2AI</option>
-                              <option value='trailing'>Trailing</option>
-                              <option value='signal'>Signal</option>
+                              {% for data in datas %}
+                                <option value='{{ data|ffname }}'>{{ data|ffname }}</option>
+                              {% endfor %}
                             </select>
                         </div>
                     </div>
                     <div class="col-lg-2 col-md-2 col-sm-6 col-xs-12">
                         <div>
                             <label>Period</label><br>
-                            <select name="selection" class="form-control" style="display:inline;width:fit-content">
+                            <select name="period" class="form-control" style="display:inline;width:fit-content">
                               <option value='1M'>1 Month</option>
                               <option value='3M'>3 Months</option>
                               <option value='6M'>6 Months</option>
@@ -74,10 +75,10 @@
                     <div class="col-lg-2 col-md-2 col-sm-6 col-xs-12">
                         <div>
                             <label>Native Enrichments</label><br>
-                            <select name="timeframe" class="form-control" style="display:inline;width:fit-content">
-                              <option value='nanana'>None</option>
+                            <select name="native" class="form-control" style="display:inline;width:fit-content">
+                              <option value='NotUsed'>None</option>
                               {% for en in ens %}
-                                <option value='{{ en }}'>{{ en }}</option>
+                                <option value='{{ en|ffname }}'>{{ en|ffname }}</option>
                               {% endfor %}
                           </select>
                         </div>
@@ -87,10 +88,10 @@
                     <div class="col-lg-2 col-md-2 col-sm-6 col-xs-12">
                         <div>
                             <label>Entry AI</label><br>
-                            <select name="timeframe" class="form-control" style="display:inline;width:fit-content">
-                              <option value='nanana'>None</option>
+                            <select name="entryai" class="form-control" style="display:inline;width:fit-content">
+                              <option value='NotUsed'>None</option>
                               {% for ai in ais %}
-                                <option value='{{ ai }}'>{{ ai }}</option>
+                                <option value='{{ ai|ffname }}'>{{ ai|ffname}}</option>
                               {% endfor %}
                           </select>
                         </div>
@@ -98,19 +99,19 @@
                     <div class="col-lg-2 col-md-2 col-sm-6 col-xs-12">
                         <div>
                             <label>Exit AI</label><br>
-                            <select name="timeframe" class="form-control" style="display:inline;width:fit-content">
-                              <option value='nanana'>None</option>
+                            <select name="exitai" class="form-control" style="display:inline;width:fit-content">
+                              <option value='NotUsed'>None</option>
                               {% for ai in ais %}
-                                <option value='{{ ai }}'>{{ ai }}</option>
+                                <option value='{{ ai|ffname }}'>{{ ai|ffname }}</option>
                               {% endfor %}
                           </select>
                         </div>
                     </div>
                     <div class="col-lg-2 col-md-2 col-sm-2 col-xs-6">
-                      <label>TakeProfit</label>
+                      <label>TakeProfit (%)</label>
                       <div class="input-group spinner" data-trigger="spinner">
                           <div class="form-line">
-                              <input name="tp" type="text" class="form-control text-center" value="1" data-rule="currency">
+                              <input name="tp" type="text" class="form-control text-center" value="1" data-rule="currency"/>
                           </div>
                           <span class="input-group-addon">
                               <a href="javascript:;" class="spin-up" data-spin="up"><i class="glyphicon glyphicon-chevron-up"></i></a>
@@ -119,7 +120,7 @@
                       </div>
                     </div>
                     <div class="col-lg-2 col-md-2 col-sm-2 col-xs-6">
-                      <label>StopLoss</label>
+                      <label>StopLoss (%)</label>
                       <div class="input-group spinner" data-trigger="spinner">
                           <div class="form-line">
                               <input name="sl" type="text" class="form-control text-center" value="1" data-rule="currency">
@@ -143,7 +144,7 @@
                       </div>
                     </div>
                     <div class="col-lg-2 col-md-2 col-sm-2 col-xs-6">
-                      <label>Trailing ATR</label>
+                      <label>Trailing ATR bars</label>
                       <div class="input-group spinner" data-trigger="spinner">
                           <div class="form-line">
                               <input name="tatr" type="text" class="form-control text-center" value="100" data-rule="currency">
@@ -169,10 +170,10 @@
                       </div>
                     </div>
                     <div class="col-lg-2 col-md-2 col-sm-2 col-xs-6">
-                      <label>Commission</label>
+                      <label>Commission (%)</label>
                       <div class="input-group spinner" data-trigger="spinner">
                           <div class="form-line">
-                              <input name="commission" type="text" class="form-control text-center" value="0.001" data-rule="currency">
+                              <input name="commission" type="text" class="form-control text-center" value="0.1" data-rule="currency">
                           </div>
                           <span class="input-group-addon">
                               <a href="javascript:;" class="spin-up" data-spin="up"><i class="glyphicon glyphicon-chevron-up"></i></a>
@@ -195,6 +196,12 @@
                 </div>
                 <div class="row clearfix align-right">
                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 align-right">
+                        <input name="from" type="hidden" value="0"/>
+                        <input name="to" type="hidden" value="0"/>
+                        <input name="lastrun" type="hidden" value="0"/>
+                        <input name="fperc" type="hidden" value="0"/>
+                        <input name="hperc" type="hidden" value="0"/>
+                        <input name="dd" type="hidden" value="0"/>
                         <button type="submit" name="action" value="fin" class="btn bg-green btn-lg waves-effect waves-float">Create</button>
                     </div>
                 </div>

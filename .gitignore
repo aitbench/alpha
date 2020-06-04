@@ -183,9 +183,16 @@ dmypy.json
 /static/reports/*
 !/static/reports/.keep
 
+# AI-TB BT results
+/static/bt/*
+!/static/bt/.keep
+
 # SQLite default instance
 /data/*.db
 /data/*.db-journal
 
 # DB config
 /conf/db.py
+
+# Ignore any straggler html
+/*.html

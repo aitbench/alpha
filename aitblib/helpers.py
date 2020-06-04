@@ -12,7 +12,6 @@ from .basic import Basic
 from aitblib import enrichments
 # Dataframes
 import pandas as pd
-import numpy as np
 # Parser for is_date
 from dateutil.parser import parse
 
@@ -205,22 +204,27 @@ class Helper(Basic):
         # print("last modified: %s" % time.ctime(os.path.getmtime(file)))
         # print("created: %s" % time.ctime(os.path.getctime(file)))
 
-    def createSample(self, data, fromdate, todate, timeframe, selection):
+    def getFrom(self, period):
         monthInMS = 43800 * 60 * 1000
-        if selection != 'custom':
+        todate = time.time() * 1000
+        if period == '1M':
+            fromdate = todate - monthInMS
+        if period == '3M':
+            fromdate = todate - 3 * monthInMS
+        if period == '6M':
+            fromdate = todate - 6 * monthInMS
+        if period == '1Y':
+            fromdate = todate - 12 * monthInMS
+        if period == '2Y':
+            fromdate = todate - 24 * monthInMS
+        if period == '5Y':
+            fromdate = todate - 60 * monthInMS
+        return fromdate
+
+    def createSample(self, data, fromdate, todate, timeframe, period):
+        if period != 'custom':
             todate = time.time() * 1000
-            if selection == '1M':
-                fromdate = todate - monthInMS
-            if selection == '3M':
-                fromdate = todate - 3 * monthInMS
-            if selection == '6M':
-                fromdate = todate - 6 * monthInMS
-            if selection == '1Y':
-                fromdate = todate - 12 * monthInMS
-            if selection == '2Y':
-                fromdate = todate - 24 * monthInMS
-            if selection == '5Y':
-                fromdate = todate - 60 * monthInMS
+            fromdate = self.getFrom(period)
         else:
             # From date in UnixTimestamp in UTC
             format = '%A %d %B %Y'
@@ -244,6 +248,8 @@ class Helper(Basic):
         # Setup Datetime and Index
         # createSampledf['Date'].astype('datetime64[ms]')
         # TODO EXCLUDE forming Candle
+        # Create filename
+        sname = str(data) + '_' + timeframe + '_' + str(int(createSampledf['Date'].iloc[0])) + '_' + str(int(createSampledf['Date'].iloc[-1]))
         # Create DatetimeIndex
         createSampledf['Date'] = pd.to_datetime(createSampledf['Date'], unit='ms')
         createSampledf.set_index('Date', inplace=True)
@@ -261,26 +267,32 @@ class Helper(Basic):
         sVols = Vols.resample(timeframe).sum()
         # Join the two together
         result = pd.concat([sOpen, sHigh, sLow, sClose, sVols], axis=1)
-        result.reset_index(inplace=True)
-        result['Date'] = result['Date'].astype(np.int64) / int(1e6)
         # Drop any NaN row
         result.dropna(inplace=True)
-        # Reset indexes as feather is touchy
-        result.reset_index(drop=True, inplace=True)
-        sname = str(data) + '_' + timeframe + '_' + str(int(result['Date'].iloc[0])) + '_' + str(int(result['Date'].iloc[-1]))
-        result.to_feather(self.sampleDataPath + sname + '.feather')
+        # Save file to pickle
+        result.to_pickle(self.sampleDataPath + sname + '.pkl')
+        return sname
 
     def createNugget(self, sample, indie, depen, nana):
         en = enrichments.Enrichment()
-        df = pd.read_feather(self.sampleDataPath + sample + '.feather')
-        richcfg = self.readCfgFile('enrich', indie + '.yml')
-        riches = richcfg['riches'].split(', ')
-        for rich in riches:
-            df = en.addIndi(rich, df)
+        df = pd.read_pickle(self.sampleDataPath + sample + '.pkl')
+        if indie != 'NotUsed':
+            if isinstance(indie, list):
+                riches = indie
+            else:
+                richcfg = self.readCfgFile('enrich', indie + '.yml')
+                riches = richcfg['riches'].split(', ')
+            for rich in riches:
+                df = en.addIndi(rich, df)
         df = en.addDepen(depen, df)
         df = en.doNaN(nana, df)
-        nfile = sample + '_' + indie + '_' + depen + '.feather'
-        df.to_feather(self.nuggetDataPath + nfile)
+        if isinstance(indie, list):
+            import random
+            n = random.randint(0, 1000)
+            indie = 'temp' + str(n)
+        nname = sample + '_' + indie + '_' + depen
+        df.to_pickle(self.nuggetDataPath + nname + '.pkl')
+        return nname
 
     def uploadData(self, fname, id):
         # Split file into extension and filename
@@ -375,7 +387,7 @@ class Helper(Basic):
         annYML = annYML + 'trainaccuracy: 0' + "\n"
         annYML = annYML + 'testaccuracy: 0' + "\n"
         # Add Nugget Info
-        nfile = self.nuggetDataPath + nugget + '.feather'
+        nfile = self.nuggetDataPath + nugget + '.pkl'
         # df = pd.read_feather(nfile)
         info = self.nugInfo(nfile)
         # Add info from nuggetinfo and enrichments
@@ -384,7 +396,7 @@ class Helper(Basic):
         annYML = annYML + 'from: ' + info['from'] + "\n"
         annYML = annYML + 'to: ' + info['to'] + "\n"
         annYML = annYML + 'depen: ' + info['depen'] + "\n"
-        # indis = list(df.columns[0:-7].values.tolist())
+        # indis = list(df.columns[0].values.tolist())
         with open(self.enConfPath + info['indi'] + '.yml', 'r') as afile:
             indi = yaml.full_load(afile)
         print(indi['riches'], file=sys.stderr)
@@ -400,3 +412,92 @@ class Helper(Basic):
         aYML = yaml.dump(adata, default_flow_style=False, sort_keys=False)
         # Save to YAML file
         self.writeCfgFile('ann', id, aYML)
+
+    def createBacktest(self, bdata):
+        # Create ID
+        id = bdata['name'].lower()
+        bdata['id'] = id
+        # Time
+        bdata['from'] = self.getFrom(bdata['period'])
+        bdata['to'] = time.time() * 1000
+        # Create sample
+        sname = self.createSample(bdata['symb'], bdata['from'], bdata['to'], bdata['timeframe'], bdata['period'])
+        # Create Native Nugget from Native Enrichment name
+        natnug = self.createNugget(sname, bdata['native'], 'Dummy', 'drop')
+        # Copy native nugget to backtest dir
+        os.replace(self.nuggetDataPath + natnug + '.pkl', self.btDataPath + id + '_native.pkl')
+        # Create Backtest Python
+        if bdata['type'] == 'basic1ai':
+            # Read in the template
+            with open(self.btplDataPath + 'basic1ai.py', 'r') as file:
+                fdata = file.read()
+            # Make template only changes
+            fdata = fdata.replace('XXXTAKEPROFITXXX', bdata['tp'])
+            # Turn off exit
+            bdata['exitai'] = 'NotUsed'
+        if bdata['type'] == 'basic2ai':
+            # Read in the template
+            with open(self.btplDataPath + 'basic2ai.py', 'r') as file:
+                fdata = file.read()
+            # Make template only changes
+
+        if bdata['type'] == 'trailing':
+            # Read in the template
+            with open(self.btplDataPath + 'trailing.py', 'r') as file:
+                fdata = file.read()
+            # Make template only changes
+            fdata = fdata.replace('XXXTATRXXX', bdata['tatr'])
+            fdata = fdata.replace('XXXTSLXXX', bdata['tsl'])
+            # Turn off exit
+            bdata['exitai'] = 'NotUsed'
+        # Replace the target string
+        fdata = fdata.replace('XXXNAMEXXX', bdata['name'])
+        fdata = fdata.replace('XXXCASHXXX', bdata['cash'])
+        fdata = fdata.replace('XXXCOMMXXX', bdata['commission'])
+        fdata = fdata.replace('XXXMARGINXXX', bdata['margin'])
+        # TP & SL
+        fdata = fdata.replace('XXXSTOPLOSSXXX', bdata['sl'])
+        # DFs
+        fdata = fdata.replace('XXXNATDFXXX', re.escape(self.btDataPath + id + '_native') + '.pkl')
+        fdata = fdata.replace('XXXENDFXXX', re.escape(self.btDataPath + id + '_entry') + '.pkl')
+        # Models
+        fdata = fdata.replace('XXXENTMODELXXX', re.escape(self.annDataPath + bdata['entryai']) + '.h5')
+        fdata = fdata.replace('XXXENTSCLRXXX', re.escape(self.annDataPath + bdata['entryai']) + '.pkl')
+        # Results
+        fdata = fdata.replace('XXXRESULTXXXX', re.escape(self.btDataPath + id + '_results') + '.csv')
+        # Write the file out again
+        with open(self.btDataPath + id + '.py', 'w') as file:
+            file.write(fdata)
+        # Entry AI
+        if bdata['entryai'] != 'NotUsed':
+            # Get enrichment list from conf file for specific AI
+            tmpai = self.readCfgFile('ann', bdata['entryai'] + '.yml')
+            # Create list from config comma seperated
+            riches = tmpai['indi'].split(', ')
+            # Create nugget with list
+            entrynug = self.createNugget(sname, riches, 'Dummy', 'drop')
+            # Copy entry nugget to backtest dir
+            os.replace(self.nuggetDataPath + entrynug + '.pkl', self.btDataPath + id + '_entry.pkl')
+        # Exit AI
+        if bdata['exitai'] != 'NotUsed':
+            # Get enrichment list from conf file for specific AI
+            tmpai = self.readCfgFile('ann', bdata['exitai'] + '.yml')
+            # Create list from config comma seperated
+            riches = tmpai['indi'].split(', ')
+            # Create nugget with list
+            exitnug = self.createNugget(sname, riches, 'Dummy', 'drop')
+            # Copy entry nugget to backtest dir
+            os.replace(self.nuggetDataPath + exitnug + '.pkl', self.btDataPath + id + '_exit.pkl')
+        # Final settings
+        bdata.pop('action', None)
+        bdata['run'] = True
+        # Save YAML config to file
+        bYML = yaml.dump(bdata, default_flow_style=False, sort_keys=False)
+        self.writeCfgFile('bt', id, bYML)
+
+    def turnBTon(self, id):
+        adata = self.readCfgFile('bt', id + '.yml')
+        adata['run'] = True
+        aYML = yaml.dump(adata, default_flow_style=False, sort_keys=False)
+        # Save to YAML file
+        self.writeCfgFile('bt', id, aYML)

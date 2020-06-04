@@ -23,7 +23,7 @@
     {% for bktest in bktests %}
     <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
         <div class="card">
-            <div class="header bg-light-blue">
+            <div class="header bg-orange">
                 <h1> {{bktest['name']}} </h1>
                 <ul class="header-dropdown m-r--5">
                     <li>
@@ -72,35 +72,42 @@
                         <b>Id:</b> {{bktest['id']}}<br>
 						            <b>Run:</b> {{bktest['run']}}<br>
                         <b>Type:</b> {{bktest['type']}}<br>
-
+                        <br>
                         <b>Cash:</b> {{bktest['cash']}}<br>
-                        <b>Commission:</b> {{bktest['commission']}}<br>
+                        <b>Commission:</b> {{bktest['commission']}}%<br>
                         <b>Margin:</b> {{bktest['margin']}}<br>
-
+                        <br>
                         <b>Native Enrichments:</b> {{bktest['native']}}<br>
                         <b>Entry AI:</b> {{bktest['entryai']}}<br>
-                        <b>Exit AI:</b> {{bktest['exitai']}}<br>
-
-                        <b>TakeProfit:</b> {{bktest['tp']}}<br>
-                        <b>StopLoss:</b> {{bktest['sl']}}<br>
-
-                        <b>Trailing SL:</b> {{bktest['tsl']}}<br>
-                        <b>ATR for TSL:</b> {{bktest['atr']}}<br>
-
+                        {% if bktest['exitai'] != 'NotUsed'%}
+                          <b>Exit AI:</b> {{bktest['exitai']}}<br>
+                        {% endif %}
+                        <b>TakeProfit:</b> {{bktest['tp']}}%<br>
+                        <b>StopLoss:</b> {{bktest['sl']}}%<br>
+                        {% if bktest['type'] == 'trailing'%}
+                          <b>Trailing SL:</b> {{bktest['tsl']}}<br>
+                          <b>ATR for TSL:</b> {{bktest['tatr']}}<br>
+                        {% endif %}
+                        <br>
                         <b>Last Run:</b> {{bktest['lastrun']}}<br>
-                        <b>Final Percent:</b> {{bktest['fperc']}}<br>
-                        <b>Drawdown:</b> {{bktest['dd']}}<br>
+                        <b>Final Profit:</b> {{bktest['fperc']}}%<br>
+                        <b>Highest Profit:</b> {{bktest['hperc']}}%<br>
+                        <b>Highest Drawdown:</b> {{bktest['dd']}}%<br>
                     </div>
                     <div role="tabpanel" class="tab-pane fade" id="timing_only_icon_title_{{bktest['id']}}">
                         <b>Symbol:</b> {{bktest['symb']}}<br>
                         <b>TimeFrame:</b> {{bktest['timeframe']}}<br>
                         <b>Period:</b> {{bktest['period']}}<br>
-                        <b>From:</b> {{bktest['from']}}<br>
-                        <b>To:</b> {{bktest['to']}}<br>
+                        <b>From:</b> {{bktest['from']|u2d}}<br>
+                        <b>To:</b> {{bktest['to']|u2d}}<br>
                     </div>
                     <div role="tabpanel" class="tab-pane fade" id="charts_only_icon_title_{{bktest['id']}}">
-                      <img width="100%" src="static/charts/{{bktest['id']}}_results.html"/><br>
-                      <img width="100%" src="static/reports/{{bktest['id']}}_report.html"/>
+                      <a class="btn btn-block btn-lg btn-primary waves-effect" width="100%"
+                      href="static/bt/{{bktest['id']}}_chart.html" target="_blank">
+                      <i class="material-icons">show_chart</i><span>Chart</span></a>
+                      <a class="btn btn-block btn-lg btn-success waves-effect" width="100%"
+                      href="static/bt/{{bktest['id']}}_report.html" target="_blank">
+                      <i class="material-icons">assignment</i><span>Report</span></a></a>
                     </div>
                 </div>
             </div>

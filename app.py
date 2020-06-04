@@ -29,7 +29,7 @@ from aitblib.Flask_forms import LoginForm, RegisterForm, ForgotForm, SetupForm
 import os
 import yaml
 import ccxt
-import datetime
+from datetime import datetime
 # Testing only
 import sys
 
@@ -51,6 +51,21 @@ app.config.from_pyfile('conf/db-default.py')
 confPath = app.root_path + os.path.sep + 'conf' + os.path.sep
 dataPath = app.root_path + os.path.sep + 'data' + os.path.sep
 logPath = app.root_path + os.path.sep + 'logs' + os.path.sep
+statPath = app.root_path + os.path.sep + 'static' + os.path.sep
+
+# Add custom Jinja2-filter
+
+
+def ffname(text):
+    return os.path.splitext(text)[0]
+
+
+def u2d(utc):
+    return datetime.utcfromtimestamp(utc / 1000).strftime('%Y-%m-%d')
+
+
+app.add_template_filter(ffname)
+app.add_template_filter(u2d)
 
 # Custom DB setup
 if os.path.exists(confPath + 'db.py'):
@@ -68,7 +83,6 @@ db = SQLAlchemy(app)
 
 
 class User(UserMixin, db.Model):
-
     id = db.Column(db.Integer, primary_key=True)  # primary keys are required by SQLAlchemy
     email = db.Column(db.String(100), unique=True)
     password = db.Column(db.String(100))
@@ -109,6 +123,7 @@ class ConfigAPS(object):
     SCHEDULER_API_ENABLED = True
     SCHEDULER_JOB_DEFAULTS = {
         'coalesce': True,
+        'misfire_grace_time': 2,
         'max_instances': 1
     }
 
@@ -120,15 +135,19 @@ if os.environ.get("WERKZEUG_RUN_MAIN") == "true":
     # Config APS
     app.config.from_object(ConfigAPS())
     scheduler.init_app(app)
-    scheduler.start()
+
     # Init used libraries
     RunThe = runners.Runner(app.root_path, db)
     AI = ai.AI(app.root_path, db)
     # Data Download
 
-    @scheduler.task('interval', id='dataJob', seconds=15)
+    @scheduler.task('interval', id='dataJob', seconds=30)
     def dataJob():
         RunThe.dataDownload(True)
+
+    @scheduler.task('interval', id='bkTest', seconds=5)
+    def bkTest():
+        RunThe.backTest()
 
     @scheduler.task('interval', id='trainAI', seconds=15)
     def trainAI():
@@ -151,16 +170,17 @@ if os.environ.get("WERKZEUG_RUN_MAIN") == "true":
     # @scheduler.task('cron', id='weeklyjob', week='*', day_of_week='sun')
     # def weeklyjob():
     #     print('Weekly', file=sys.stdout)
+    scheduler.start()
 
 # Init Helper Class
 do = helpers.Helper(app.root_path, db)
 en = enrichments.Enrichment()
 ch = charting.Chart(app.root_path, db)
 
+
 # ----------------------------------------------------------------------------#
 # Controllers.
 # ----------------------------------------------------------------------------#
-
 
 @app.route('/')
 @login_required
@@ -295,7 +315,7 @@ def data():
             return redirect("/data")
         if act == 'delete-sample':
             # Delete file
-            delfile = dataPath + 'samples' + os.path.sep + request.form['id'] + '.feather'
+            delfile = dataPath + 'samples' + os.path.sep + request.form['id'] + '.pkl'
             os.remove(delfile)
             return redirect("/data")
         if act == 'upload':
@@ -327,10 +347,10 @@ def data():
         # Iterate through each file
         for dfile in dataCfgfiles:
             tempData = do.readCfgFile('data', dfile)
-            tempData['first'] = datetime.datetime.utcfromtimestamp(tempData['first'] / 1000).strftime('%Y-%m-%d')
-            tempData['start'] = datetime.datetime.utcfromtimestamp(tempData['start'] / 1000).strftime('%Y-%m-%d')
+            tempData['first'] = datetime.utcfromtimestamp(tempData['first'] / 1000).strftime('%Y-%m-%d')
+            tempData['start'] = datetime.utcfromtimestamp(tempData['start'] / 1000).strftime('%Y-%m-%d')
             if tempData['end'] > 0:
-                tempData['end'] = datetime.datetime.utcfromtimestamp(tempData['end'] / 1000).strftime('%Y-%m-%d')
+                tempData['end'] = datetime.utcfromtimestamp(tempData['end'] / 1000).strftime('%Y-%m-%d')
             data.append(tempData)
 
         # List samples in folder ignoring .keep files
@@ -344,8 +364,8 @@ def data():
             parts = dstr.split('_')
             # print(parts,file=sys.stderr)
             info = {'id': dstr, 'con': parts[0], 'symb': parts[1] + '/' + parts[2], 'timeframe': parts[3], 'from': int(parts[4]), 'to': int(parts[5])}
-            info['from'] = datetime.datetime.utcfromtimestamp(info['from'] / 1000).strftime('%Y-%m-%d')
-            info['to'] = datetime.datetime.utcfromtimestamp(info['to'] / 1000).strftime('%Y-%m-%d')
+            info['from'] = datetime.utcfromtimestamp(info['from'] / 1000).strftime('%Y-%m-%d')
+            info['to'] = datetime.utcfromtimestamp(info['to'] / 1000).strftime('%Y-%m-%d')
             samples.append(info)
         return render_template('pages/data.html', data=data, samples=samples)
 
@@ -411,7 +431,7 @@ def alchemynugs():
             return redirect("/alchemy-nugs")
         if act == 'delete':
             # Delete file
-            delfile = dataPath + 'nuggets' + os.path.sep + request.form['id'] + '.feather'
+            delfile = dataPath + 'nuggets' + os.path.sep + request.form['id'] + '.pkl'
             os.remove(delfile)
             return redirect("/alchemy-nugs")
     else:
@@ -486,10 +506,12 @@ def aiann():
             do.turnANNon(id)
             return redirect("/ai-ann")
         if act == 'delete':
-            # TODO Clear up other leftover files PNGs Sorted + ModelFiles
-            # Delete file
-            delfile = confPath + 'ann' + os.path.sep + request.form['id'] + '.yml'
-            os.remove(delfile)
+            # Delete configuration files
+            os.remove(confPath + 'ann' + os.path.sep + request.form['id'] + '.yml')
+            # Delete data files
+            os.remove(dataPath + 'ann' + os.path.sep + request.form['id'] + '.h5')
+            os.remove(dataPath + 'ann' + os.path.sep + request.form['id'] + '.pkl')
+            os.remove(dataPath + 'ann' + os.path.sep + request.form['id'] + '_sorted.pkls')
             return redirect("/ai-ann")
     else:
         # List samples in folder ignoring .keep files
@@ -521,11 +543,25 @@ def backt():
             aifiles = do.listCfgFiles('ann')
             enfiles = do.listCfgFiles('enrich')
             return render_template('pages/backtest-add.html', datas=datafiles, ais=aifiles, ens=enfiles)
+        if act == 'fin':
+            do.createBacktest(request.form.to_dict())
+            return redirect("/backtest")
+        if act == 'run':
+            id = request.form['id']
+            do.turnBTon(id)
+            return redirect("/backtest")
         if act == 'delete':
-            # TODO Clear up other leftover files
-            # Delete file
-            delfile = confPath + 'bt' + os.path.sep + request.form['id'] + '.yml'
-            os.remove(delfile)
+            # Delete configuration file
+            os.remove(confPath + 'bt' + os.path.sep + request.form['id'] + '.yml')
+            # Delete data files
+            os.remove(dataPath + 'bt' + os.path.sep + request.form['id'] + '.py')
+            os.remove(dataPath + 'bt' + os.path.sep + request.form['id'] + '_entry.pkl')
+            os.remove(dataPath + 'bt' + os.path.sep + request.form['id'] + '_native.pkl')
+            os.remove(dataPath + 'bt' + os.path.sep + request.form['id'] + '_results.csv')
+            if os.path.exists(dataPath + 'bt' + os.path.sep + request.form['id'] + '_exit.pkl'):
+                os.remove(dataPath + 'bt' + os.path.sep + request.form['id'] + '_exit.pkl')
+            os.remove(statPath + 'bt' + os.path.sep + request.form['id'] + '_chart.html')
+            os.remove(statPath + 'bt' + os.path.sep + request.form['id'] + '_report.html')
             return redirect("/backtest")
     else:
         # List backtests in folder ignoring .keep files
@@ -534,7 +570,7 @@ def backt():
         bktests = []
         # Iterate through each file
         for bkfile in bkfiles:
-            bkdata = do.readCfgFile('ann', bkfile)
+            bkdata = do.readCfgFile('bt', bkfile)
             bktests.append(bkdata)
         return render_template('pages/backtest.html', bktests=bktests)
 
@@ -570,6 +606,10 @@ def opsusers():
 def changelogs():
     return render_template('pages/changelogs.html')
 
+
+# ----------------------------------------------------------------------------#
+# Login and Registration Templates
+# ----------------------------------------------------------------------------#
 
 # User templates
 @app.route('/login', methods=['GET', 'POST'])
@@ -691,6 +731,7 @@ if not app.debug:
     file_handler.setLevel(logging.INFO)
     app.logger.addHandler(file_handler)
     app.logger.info('errors')
+
 
 # ----------------------------------------------------------------------------#
 # Launch.

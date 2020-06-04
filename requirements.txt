@@ -2,7 +2,7 @@ APScheduler==3.6.3
 bokeh==2.0.2
 ccxt==1.27.20
 cx-Oracle==7.3.0
-fastparquet==0.3.3
+#fastparquet==0.3.3
 Keras==2.3.1
 Flask==1.1.2
 Flask-APScheduler==1.11.0
@@ -17,7 +17,8 @@ Pillow==7.1.2
 psycopg2-binary==2.8.5
 pyarrow==0.17.0
 pytz==2020.1
-PyYAML==5.3.1
+#PyYAML==5.3.1
+seaborn==0.10.0
 scikit-learn==0.22.2.post1
 scipy==1.4.1
 sklearn==0.0

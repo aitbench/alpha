@@ -23,8 +23,8 @@ class Chart(Basic):
 
     def viewNugget(self, nugget):
         # Read Nugget to DataFrame
-        nfile = self.nuggetDataPath + nugget + '.feather'
-        df = pd.read_feather(nfile)
+        nfile = self.nuggetDataPath + nugget + '.pkl'
+        df = pd.read_pickle(nfile)
         # Get info from Nugget filename
         info = self.nugInfo(nfile)
         w = self.tfToMS(info['timeframe'])
@@ -64,14 +64,14 @@ class Chart(Basic):
 
     def viewCorr(self, nugget):
         # Read Nugget to DataFrame
-        nfile = self.nuggetDataPath + nugget + '.feather'
-        df = pd.read_feather(nfile)
+        nfile = self.nuggetDataPath + nugget + '.pkl'
+        df = pd.read_pickle(nfile)
         # Get info from Nugget filename
         info = self.nugInfo(nfile)
         # Attach theme to current document
         curdoc().theme = self.bokehTheme  # light_minimal dark_minimal
         # Now we will create correlation matrix using pandas
-        df = df.iloc[:, 0:-7]
+        df = df.iloc[:, 0:-6]
         df = df.corr()
         # Rename index and columns
         df.index.name = 'AllColumns1'
@@ -113,8 +113,8 @@ class Chart(Basic):
 
     def viewFeat(self, nugget):
         # Read Nugget to DataFrame
-        nfile = self.nuggetDataPath + nugget + '.feather'
-        df = pd.read_feather(nfile)
+        nfile = self.nuggetDataPath + nugget + '.pkl'
+        df = pd.read_pickle(nfile)
         # Get info from Nugget filename
         info = self.nugInfo(nfile)
         # Attach theme to current document
@@ -157,7 +157,7 @@ class Chart(Basic):
         return featureScores.nlargest(10, 'Score')
 
     def exClass(self, data):
-        X = data.iloc[:, 0:-7]
+        X = data.iloc[:, 0:-6]
         y = data.iloc[:, -1]
         # Trees
         model = ExtraTreesClassifier()
