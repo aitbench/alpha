@@ -494,6 +494,8 @@ class Helper(Basic):
         # Save YAML config to file
         bYML = yaml.dump(bdata, default_flow_style=False, sort_keys=False)
         self.writeCfgFile('bt', id, bYML)
+        # Remove sample file
+        os.remove(self.sampleDataPath + sname + '.pkl')
 
     def turnBTon(self, id):
         adata = self.readCfgFile('bt', id + '.yml')
