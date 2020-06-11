@@ -21,7 +21,7 @@ class Basic():
         self.dataPath = appRoot + os.path.sep + 'data' + os.path.sep
         self.sampleDataPath = self.dataPath + 'samples' + os.path.sep
         self.nuggetDataPath = self.dataPath + 'nuggets' + os.path.sep
-        self.annDataPath = self.dataPath + 'ai-ann' + os.path.sep
+        self.annDataPath = self.dataPath + 'aiann' + os.path.sep
         self.btDataPath = self.dataPath + 'bt' + os.path.sep
         self.btplDataPath = self.dataPath + 'bt-tpl' + os.path.sep
         # Chart Path

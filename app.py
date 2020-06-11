@@ -1,4 +1,4 @@
-'ai-ann'  # ----------------------------------------------------------------------------#
+# ----------------------------------------------------------------------------#
 # Imports
 # ----------------------------------------------------------------------------#
 
@@ -513,23 +513,23 @@ def aiann():
             return redirect("/ai-ann")
         if act == 'delete':
             # Delete configuration files
-            os.remove(confPath + 'ai-ann' + os.path.sep + request.form['id'] + '.yml')
+            os.remove(confPath + 'aiann' + os.path.sep + request.form['id'] + '.yml')
             # Delete data files
-            os.remove(dataPath + 'ai-ann' + os.path.sep + request.form['id'] + '.tf')
-            os.remove(dataPath + 'ai-ann' + os.path.sep + request.form['id'] + '.pkl')
-            os.remove(dataPath + 'ai-ann' + os.path.sep + request.form['id'] + '_sorted.pkl')
+            os.remove(dataPath + 'aiann' + os.path.sep + request.form['id'] + '.tf')
+            os.remove(dataPath + 'aiann' + os.path.sep + request.form['id'] + '.pkl')
+            os.remove(dataPath + 'aiann' + os.path.sep + request.form['id'] + '_sorted.pkl')
             # Delete static files
             os.remove(statPath + 'charts' + os.path.sep + request.form['id'] + '_acc.png')
             os.remove(statPath + 'charts' + os.path.sep + request.form['id'] + '_loss.png')
             return redirect("/ai-ann")
     else:
         # List samples in folder ignoring .keep files
-        annfiles = do.listCfgFiles('ai-ann')
+        annfiles = do.listCfgFiles('aiann')
         # Pull nuggets info from above files
         anns = []
         # Iterate through each file
         for afile in annfiles:
-            adata = do.readCfgFile('ai-ann', afile)
+            adata = do.readCfgFile('aiann', afile)
             anns.append(adata)
         return render_template('pages/ai-ann.html', anns=anns)
 
@@ -549,7 +549,7 @@ def backt():
         if act == 'add':
             # List data in folder ignoring .keep files
             datafiles = do.listCfgFiles('data')
-            aifiles = do.listCfgFiles('ai-ann')
+            aifiles = do.listCfgFiles('aiann')
             enfiles = do.listCfgFiles('enrich')
             return render_template('pages/backtest-add.html', datas=datafiles, ais=aifiles, ens=enfiles)
         if act == 'fin':

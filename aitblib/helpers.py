@@ -402,14 +402,14 @@ class Helper(Basic):
         # Delete empty lines
         annYML = os.linesep.join([s for s in annYML.splitlines() if s])
         # Save to YAML file
-        self.writeCfgFile('ai-ann', id, annYML)
+        self.writeCfgFile('aiann', id, annYML)
 
     def turnANNon(self, id):
-        adata = self.readCfgFile('ai-ann', id + '.yml')
+        adata = self.readCfgFile('aiann', id + '.yml')
         adata['training'] = True
         aYML = yaml.dump(adata, default_flow_style=False, sort_keys=False)
         # Save to YAML file
-        self.writeCfgFile('ai-ann', id, aYML)
+        self.writeCfgFile('aiann', id, aYML)
 
     def createBacktest(self, bdata):
         # Create ID
@@ -472,7 +472,7 @@ class Helper(Basic):
         # Entry AI
         if bdata['entryai'] != 'NotUsed':
             # Get enrichment list from conf file for specific AI
-            tmpai = self.readCfgFile('ai-ann', bdata['entryai'] + '.yml')
+            tmpai = self.readCfgFile('aiann', bdata['entryai'] + '.yml')
             # Create list from config comma seperated
             riches = tmpai['indi'].split(', ')
             # Create nugget with list
@@ -482,7 +482,7 @@ class Helper(Basic):
         # Exit AI
         if bdata['exitai'] != 'NotUsed':
             # Get enrichment list from conf file for specific AI
-            tmpai = self.readCfgFile('ai-ann', bdata['exitai'] + '.yml')
+            tmpai = self.readCfgFile('aiann', bdata['exitai'] + '.yml')
             # Create list from config comma seperated
             riches = tmpai['indi'].split(', ')
             # Create nugget with list

@@ -43,9 +43,9 @@ class AI(Basic):
         with open(tname, 'w') as file:
             file.write(str(datetime.datetime.now()))
         # Get list of data files
-        annCfgs = self.listCfgFiles('ai-ann')
+        annCfgs = self.listCfgFiles('aiann')
         for file in annCfgs:
-            aConf = self.readCfgFile('ai-ann', file)
+            aConf = self.readCfgFile('aiann', file)
             if aConf['training']:
                 # Read Nugget to DataFrame
                 nfile = self.nuggetDataPath + aConf['nugget'] + '.pkl'
@@ -213,6 +213,6 @@ class AI(Basic):
                 # Save config
                 aYML = yaml.dump(aConf, default_flow_style=False, sort_keys=False)
                 # print(aYML,file=sys.stderr)
-                self.writeCfgFile('ai-ann', aConf['id'], aYML)
+                self.writeCfgFile('aiann', aConf['id'], aYML)
         # Remove File Lock
         os.remove(tname)

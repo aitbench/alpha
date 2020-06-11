@@ -134,12 +134,12 @@ dmypy.json
 !/conf/conn/.keep
 /conf/data/*
 !/conf/data/.keep
-/conf/ai-ann/*
-!/conf/ai-ann/.keep
-/conf/ai-cnn/*
-!/conf/ai-cnn/.keep
-/conf/ai-rnn/*
-!/conf/ai-rnn/.keep
+/conf/aiann/*
+!/conf/aiann/.keep
+/conf/aicnn/*
+!/conf/aicnn/.keep
+/conf/airnn/*
+!/conf/airnn/.keep
 /conf/bt/*
 !/conf/bt/.keep
 
@@ -159,12 +159,12 @@ dmypy.json
 !/data/samples/.keep
 /data/nuggets/*
 !/data/nuggets/.keep
-/data/ai-ann/*
-!/data/ai-ann/.keep
-/data/ai-cnn/*
-!/data/ai-cnn/.keep
-/data/ai-rnn/*
-!/data/ai-rnn/.keep
+/data/aiann/*
+!/data/aiann/.keep
+/data/aicnn/*
+!/data/aicnn/.keep
+/data/airnn/*
+!/data/airnn/.keep
 /data/bt/*
 !/data/bt/.keep
 
