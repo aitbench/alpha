@@ -402,14 +402,14 @@ class Helper(Basic):
         # Delete empty lines
         annYML = os.linesep.join([s for s in annYML.splitlines() if s])
         # Save to YAML file
-        self.writeCfgFile('ann', id, annYML)
+        self.writeCfgFile('ai-ann', id, annYML)
 
     def turnANNon(self, id):
-        adata = self.readCfgFile('ann', id + '.yml')
+        adata = self.readCfgFile('ai-ann', id + '.yml')
         adata['training'] = True
         aYML = yaml.dump(adata, default_flow_style=False, sort_keys=False)
         # Save to YAML file
-        self.writeCfgFile('ann', id, aYML)
+        self.writeCfgFile('ai-ann', id, aYML)
 
     def createBacktest(self, bdata):
         # Create ID
@@ -440,7 +440,7 @@ class Helper(Basic):
             # Make template only changes
             fdata = fdata.replace('XXXEXDFXXX', re.escape(self.btDataPath + id + '_exit') + '.pkl')
             # Models
-            fdata = fdata.replace('XXXEXMODELXXX', re.escape(self.annDataPath + bdata['exitai']) + '.h5')
+            fdata = fdata.replace('XXXEXMODELXXX', re.escape(self.annDataPath + bdata['exitai']) + '.tf')
             fdata = fdata.replace('XXXEXSCLRXXX', re.escape(self.annDataPath + bdata['exitai']) + '.pkl')
         if bdata['type'] == 'trailing':
             # Read in the template
@@ -462,7 +462,7 @@ class Helper(Basic):
         fdata = fdata.replace('XXXNATDFXXX', re.escape(self.btDataPath + id + '_native') + '.pkl')
         fdata = fdata.replace('XXXENDFXXX', re.escape(self.btDataPath + id + '_entry') + '.pkl')
         # Models
-        fdata = fdata.replace('XXXENTMODELXXX', re.escape(self.annDataPath + bdata['entryai']) + '.h5')
+        fdata = fdata.replace('XXXENTMODELXXX', re.escape(self.annDataPath + bdata['entryai']) + '.tf')
         fdata = fdata.replace('XXXENTSCLRXXX', re.escape(self.annDataPath + bdata['entryai']) + '.pkl')
         # Results
         fdata = fdata.replace('XXXRESULTXXXX', re.escape(self.btDataPath + id + '_results') + '.csv')
@@ -472,7 +472,7 @@ class Helper(Basic):
         # Entry AI
         if bdata['entryai'] != 'NotUsed':
             # Get enrichment list from conf file for specific AI
-            tmpai = self.readCfgFile('ann', bdata['entryai'] + '.yml')
+            tmpai = self.readCfgFile('ai-ann', bdata['entryai'] + '.yml')
             # Create list from config comma seperated
             riches = tmpai['indi'].split(', ')
             # Create nugget with list
@@ -482,7 +482,7 @@ class Helper(Basic):
         # Exit AI
         if bdata['exitai'] != 'NotUsed':
             # Get enrichment list from conf file for specific AI
-            tmpai = self.readCfgFile('ann', bdata['exitai'] + '.yml')
+            tmpai = self.readCfgFile('ai-ann', bdata['exitai'] + '.yml')
             # Create list from config comma seperated
             riches = tmpai['indi'].split(', ')
             # Create nugget with list

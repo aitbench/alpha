@@ -16,23 +16,26 @@ class XXXNAMEXXX(TrailingStrategy):
 
     def init(self):
         super().init()
-        # StopLoss and TakeProfit
-        self.slpc = 0.01 * self.SL * -1
-        # Pull Native DF
-        self.mydf = self.data.getDF
-        ## AI Setup
-        # Load Entry DF
+        # Imports
         import pickle as pkl
-        self.endf = pkl.load(open('XXXENDFXXX', 'rb'))
-        # Load the scaler
-        self.ensclr = pkl.load(open('XXXENTSCLRXXX', 'rb'))
-        # Load the model
         import keras
         # Keras threading fix - DO NOT REMOVE :P
         import keras.backend.tensorflow_backend as tb
         tb._SYMBOLIC_SCOPE.value = True
+        # StopLoss and TakeProfit
+        self.slpc = 0.01 * self.SL * -1
+        # Pull Native DF
+        self.mydf = self.data.getDF
+
+        ## AI Setup
+        # Load Entry DF
+        self.endf = pkl.load(open('XXXENDFXXX', 'rb'))
+        # Load the scaler
+        self.ensclr = pkl.load(open('XXXENTSCLRXXX', 'rb'))
+        # Load the model
         self.enmodel = keras.models.load_model('XXXENTMODELXXX')
-        # Trailing Stuffs
+
+        ## Trailing Stuffs
         # def set_atr_periods(self, periods=100)
         # def set_trailing_sl(self, n_atr=6)
         self.set_atr_periods(self.TATR)
@@ -70,8 +73,6 @@ class XXXNAMEXXX(TrailingStrategy):
         pred = (rawPred > 0.9)
         # Return prediction in boolean
         return pred
-
-
 
 # Load dataframes
 natdf = pkl.load(open('XXXNATDFXXX', 'rb'))

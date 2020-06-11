@@ -56,7 +56,8 @@ class Runner(Basic):
                     else:
                         if tmpex.has['fetchOHLCV']:
                             # Check for recent additions
-                            result = self.db.session.execute('SELECT * from ' + tmpDataConf['id']).fetchall()
+                            result = self.db.session.execute('SELECT * from ' + tmpDataConf['id'] + ' ORDER BY Date DESC LIMIT 1').fetchall()
+                            self.db.session.commit()
                             # Drop results to dataFrame
                             datadf = pd.DataFrame(result, columns=['Date', 'Open', 'High', 'Low', 'Close', 'Volume'])
                             ldate = datetime.utcfromtimestamp(datadf['Date'].iloc[-1] / 1000).strftime('%Y-%m-%d %H:%M')
@@ -66,8 +67,8 @@ class Runner(Basic):
                     # Write results to database
                     for datarow in data:
                         self.db.session.execute(sqlpre + tmpDataConf['id'] + ' VALUES (' + str(datarow[0]) + ',' + str(datarow[1]) + ',' + str(datarow[2]) + ',' + str(datarow[3]) + ',' + str(datarow[4]) + ',' + str(datarow[5]) + ')')
-                    # Commit database entries
-                    self.db.session.commit()
+                        # Commit database entries
+                        self.db.session.commit()
                 except (ccxt.ExchangeError, ccxt.NetworkError) as error:
                     # Catch most common errors
                     with open(dlog, 'a') as file:
@@ -89,6 +90,7 @@ class Runner(Basic):
                 self.writeCfgFile('data', id, saveConf)
         # Remove File Lock
         os.remove(dname)
+        # Close DB Connection
 
     def backTest(self):
         # Create file and path

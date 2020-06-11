@@ -43,63 +43,75 @@ class AI(Basic):
         with open(tname, 'w') as file:
             file.write(str(datetime.datetime.now()))
         # Get list of data files
-        annCfgs = self.listCfgFiles('ann')
+        annCfgs = self.listCfgFiles('ai-ann')
         for file in annCfgs:
-            aConf = self.readCfgFile('ann', file)
+            aConf = self.readCfgFile('ai-ann', file)
             if aConf['training']:
                 # Read Nugget to DataFrame
                 nfile = self.nuggetDataPath + aConf['nugget'] + '.pkl'
                 df = pd.read_pickle(nfile)
                 # Starting log entry
-                with open(tlog, 'w') as file:
-                    file.write(str(datetime.datetime.now()) + " -- Training " + aConf['id'] + " ...")
+                with open(tlog, 'w+') as file:
+                    file.write(str(datetime.datetime.now()) + " -- Training " + aConf['id'] + " ...\n")
                 # Check scarcity
                 if aConf['scarcity']:
-                    with open(tlog, 'w') as file:
-                        file.write(str(datetime.datetime.now()) + " -- Starting Scarcity measures...")
+                    with open(tlog, 'a+') as file:
+                        file.write(str(datetime.datetime.now()) + " -- Starting Scarcity measures...\n")
                     sfile = self.annDataPath + aConf['id'] + '_sorted.pkl'
                     if os.path.exists(sfile):
                         with open(sfile, 'rb') as fin:
                             df = pkl.load(fin)
                     else:
                         depen = aConf['depen']
-                        # Itterate to find number of positives
+                        # Itterate to find positives
                         county = 0
-                        for index, row in df.iterrows():
-                            if row[depen] > 0:
+                        posdf = pd.DataFrame(columns=df.columns)
+                        for row in range(len(df)):
+                            if df[depen].iloc[row] > 0:
                                 county += 1
-                        with open(tlog, 'w') as file:
-                            file.write(str(datetime.datetime.now()) + " -- Number of Positive Dependants: " + str(county))
-                        with open(tlog, 'w') as file:
-                            file.write(str(datetime.datetime.now()) + " -- Number of Total Rows in Dataset: " + str(len(df)))
+                                posdf = posdf.append(df.iloc[row], ignore_index=True)
+                        with open(tlog, 'a+') as file:
+                            file.write(str(datetime.datetime.now()) + " -- Number of Positive Dependants: " + str(county) + "\n")
+                        with open(tlog, 'a+') as file:
+                            file.write(str(datetime.datetime.now()) + " -- Number of Total Rows in Dataset: " + str(len(df)) + "\n")
                         # Create percentage
                         TWOPLACES = Decimal(10) ** -2
                         perc = Decimal((county / len(df)) * 100).quantize(TWOPLACES)
-                        with open(tlog, 'w') as file:
-                            file.write(str(datetime.datetime.now()) + " -- Percentage of Positives: " + str(perc) + "%")
-                        # Itterate and drop rows
+                        with open(tlog, 'a+') as file:
+                            file.write(str(datetime.datetime.now()) + " -- Percentage of Positives: " + str(perc) + "%" + "\n")
+                        # Itterate to find negatives in reverse order on DF
                         posit = 0
-                        for index, row in df[::-1].iterrows():
-                            print(index)
-                            if row[depen] == 0 and posit > county:
-                                df.drop(index, inplace=True)
-                            posit += 1
-                        with open(tlog, 'w') as file:
-                            file.write(str(datetime.datetime.now()) + " -- Number of Positive Dependants: " + str(county))
-                        with open(tlog, 'w') as file:
-                            file.write(str(datetime.datetime.now()) + " -- Number of Total Rows in Dataset: " + str(len(df)))
+                        negdf = pd.DataFrame(columns=df.columns)
+                        for row in range(len(df) - 1, 0, -1):
+                            self.ll(df.index[row])
+                            if df[depen].iloc[row] == 0:
+                                posit += 1
+                                negdf = negdf.append(df.iloc[row], ignore_index=True)
+                            if posit > (1.25 * county):
+                                break
+                        # Create final dataframe choosing from each side
+                        fidf = pd.DataFrame(columns=df.columns)
+                        for row in range(len(posdf)):
+                            fidf = fidf.append(posdf.iloc[row], ignore_index=True)
+                            fidf = fidf.append(negdf.iloc[row], ignore_index=True)
+                        # Flip df to new slotted DF
+                        df = fidf
+                        with open(tlog, 'a+') as file:
+                            file.write(str(datetime.datetime.now()) + " -- Number of Positive Dependants: " + str(county) + "\n")
+                        with open(tlog, 'a+') as file:
+                            file.write(str(datetime.datetime.now()) + " -- Number of Total Rows in Dataset: " + str(len(df)) + "\n")
                         # Create percentage
                         perc = Decimal((county / len(df)) * 100).quantize(TWOPLACES)
-                        with open(tlog, 'w') as file:
-                            file.write(str(datetime.datetime.now()) + " -- Percentage of Positives: " + str(perc) + "%")
+                        with open(tlog, 'a+') as file:
+                            file.write(str(datetime.datetime.now()) + " -- Percentage of Positives: " + str(perc) + "%" + "\n")
 
                         # Save Sorted file
                         with open(sfile, 'wb') as fout:
                             pkl.dump(df, fout)
 
                         # Scarcity finalization
-                        with open(tlog, 'w') as file:
-                            file.write(str(datetime.datetime.now()) + " -- Scarcity Finalized")
+                        with open(tlog, 'a+') as file:
+                            file.write(str(datetime.datetime.now()) + " -- Scarcity Finalized \n")
 
                 # Create Independants X and Dependant y series
                 X = df.iloc[:, 0:-6].values
@@ -164,7 +176,7 @@ class AI(Basic):
                 history = classifier.fit(X_train, y_train, validation_data=(X_test, y_test), batch_size=aConf['batchsize'], epochs=aConf['epoch'], callbacks=[csv_logger])
                 # , verbose=0
                 # Save the model
-                classifier.save(self.annDataPath + aConf['id'] + '.h5')
+                classifier.save(self.annDataPath + aConf['id'] + '.tf')
 
                 # Accuracy
                 aConf['testaccuracy'] = str(round(history.history['val_accuracy'][-1], 2))
@@ -179,7 +191,7 @@ class AI(Basic):
                 plt.plot(history.history['loss'], label='train')
                 plt.plot(history.history['val_loss'], label='test')
                 plt.legend()
-                plt.savefig(lChart, pad_inches=0.01, dpi=60)
+                plt.savefig(lChart, pad_inches=0.01, dpi=90)
                 plt.close()
 
                 # Wipe previous files as they do not overwrite
@@ -191,7 +203,7 @@ class AI(Basic):
                 plt.plot(history.history['accuracy'], label='train')
                 plt.plot(history.history['val_accuracy'], label='test')
                 plt.legend()
-                plt.savefig(aChart, pad_inches=0.01, dpi=60)
+                plt.savefig(aChart, pad_inches=0.01, dpi=90)
                 plt.close()
 
                 # Remove training and add timestamp
@@ -201,6 +213,6 @@ class AI(Basic):
                 # Save config
                 aYML = yaml.dump(aConf, default_flow_style=False, sort_keys=False)
                 # print(aYML,file=sys.stderr)
-                self.writeCfgFile('ann', aConf['id'], aYML)
+                self.writeCfgFile('ai-ann', aConf['id'], aYML)
         # Remove File Lock
         os.remove(tname)

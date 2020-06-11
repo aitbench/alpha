@@ -1,4 +1,4 @@
-# ----------------------------------------------------------------------------#
+'ai-ann'  # ----------------------------------------------------------------------------#
 # Imports
 # ----------------------------------------------------------------------------#
 
@@ -123,7 +123,7 @@ class ConfigAPS(object):
     SCHEDULER_API_ENABLED = True
     SCHEDULER_JOB_DEFAULTS = {
         'coalesce': True,
-        'misfire_grace_time': 2,
+        'misfire_grace_time': 5,
         'max_instances': 1
     }
 
@@ -513,20 +513,23 @@ def aiann():
             return redirect("/ai-ann")
         if act == 'delete':
             # Delete configuration files
-            os.remove(confPath + 'ann' + os.path.sep + request.form['id'] + '.yml')
+            os.remove(confPath + 'ai-ann' + os.path.sep + request.form['id'] + '.yml')
             # Delete data files
-            os.remove(dataPath + 'ann' + os.path.sep + request.form['id'] + '.h5')
-            os.remove(dataPath + 'ann' + os.path.sep + request.form['id'] + '.pkl')
-            os.remove(dataPath + 'ann' + os.path.sep + request.form['id'] + '_sorted.pkl')
+            os.remove(dataPath + 'ai-ann' + os.path.sep + request.form['id'] + '.tf')
+            os.remove(dataPath + 'ai-ann' + os.path.sep + request.form['id'] + '.pkl')
+            os.remove(dataPath + 'ai-ann' + os.path.sep + request.form['id'] + '_sorted.pkl')
+            # Delete static files
+            os.remove(statPath + 'charts' + os.path.sep + request.form['id'] + '_acc.png')
+            os.remove(statPath + 'charts' + os.path.sep + request.form['id'] + '_loss.png')
             return redirect("/ai-ann")
     else:
         # List samples in folder ignoring .keep files
-        annfiles = do.listCfgFiles('ann')
+        annfiles = do.listCfgFiles('ai-ann')
         # Pull nuggets info from above files
         anns = []
         # Iterate through each file
         for afile in annfiles:
-            adata = do.readCfgFile('ann', afile)
+            adata = do.readCfgFile('ai-ann', afile)
             anns.append(adata)
         return render_template('pages/ai-ann.html', anns=anns)
 
@@ -546,7 +549,7 @@ def backt():
         if act == 'add':
             # List data in folder ignoring .keep files
             datafiles = do.listCfgFiles('data')
-            aifiles = do.listCfgFiles('ann')
+            aifiles = do.listCfgFiles('ai-ann')
             enfiles = do.listCfgFiles('enrich')
             return render_template('pages/backtest-add.html', datas=datafiles, ais=aifiles, ens=enfiles)
         if act == 'fin':
@@ -566,6 +569,7 @@ def backt():
             os.remove(dataPath + 'bt' + os.path.sep + request.form['id'] + '_results.csv')
             if os.path.exists(dataPath + 'bt' + os.path.sep + request.form['id'] + '_exit.pkl'):
                 os.remove(dataPath + 'bt' + os.path.sep + request.form['id'] + '_exit.pkl')
+            # Delete static files
             os.remove(statPath + 'bt' + os.path.sep + request.form['id'] + '_chart.html')
             os.remove(statPath + 'bt' + os.path.sep + request.form['id'] + '_report.html')
             return redirect("/backtest")

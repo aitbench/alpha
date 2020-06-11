@@ -14,22 +14,24 @@ class XXXNAMEXXX(Strategy):
 
     def init(self):
         super().init()
+        # Imports
+        import pickle as pkl
+        import keras
+        # Keras threading fix - DO NOT REMOVE :P
+        import keras.backend.tensorflow_backend as tb
+        tb._SYMBOLIC_SCOPE.value = True
         # StopLoss and TakeProfit
         self.sl = 1 - (0.01 * self.SL)
         self.tp = 1 + (0.01 * self.TP)
         # Pull Native DF
         self.mydf = self.data.getDF
+
         ## AI Setup
         # Load Entry DF
-        import pickle as pkl
         self.endf = pkl.load(open('XXXENDFXXX', 'rb'))
         # Load the scaler
         self.ensclr = pkl.load(open('XXXENTSCLRXXX', 'rb'))
         # Load the model
-        import keras
-        # Keras threading fix - DO NOT REMOVE :P
-        import keras.backend.tensorflow_backend as tb
-        tb._SYMBOLIC_SCOPE.value = True
         self.enmodel = keras.models.load_model('XXXENTMODELXXX')
 
     def next(self):

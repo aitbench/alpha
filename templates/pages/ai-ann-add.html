@@ -37,7 +37,7 @@
                             <label>Scaler <a href="https://scikit-learn.org/stable/auto_examples/preprocessing/plot_all_scaling.html">Info</a></label><br>
                             <select name="scaler" class="form-control" style="width:fit-content">
                               <option value='standard'>Standard Scaler</option>
-                              <option value='minmax'>MinMax Scaler</option>
+                              <option value='minmax' selected>MinMax Scaler</option>
                               <option value='maxabs'>MaxAbs Scaler</option>
                               <option value='robust'>Robust Scaler</option>
                               <option value='poweryeo'>Power Transformer (Yeo-Johnson)</option>
@@ -60,7 +60,7 @@
                       <label>Test Split</label>
                       <div class="input-group spinner" data-trigger="spinner">
                           <div class="form-line">
-                              <input name="testsplit" type="text" class="form-control text-center" value="0.1" data-rule="currency">
+                              <input name="testsplit" type="text" class="form-control text-center" value="0.25" data-rule="currency">
                           </div>
                           <span class="input-group-addon">
                               <a href="javascript:;" class="spin-up" data-spin="up"><i class="glyphicon glyphicon-chevron-up"></i></a>
@@ -72,7 +72,7 @@
                       <label>Input Layer Units</label>
                       <div class="input-group spinner" data-trigger="spinner">
                           <div class="form-line">
-                              <input name="inputlayerunits" type="text" class="form-control text-center" value="1" data-rule="currency">
+                              <input name="inputlayerunits" type="text" class="form-control text-center" value="6" data-rule="currency">
                           </div>
                           <span class="input-group-addon">
                               <a href="javascript:;" class="spin-up" data-spin="up"><i class="glyphicon glyphicon-chevron-up"></i></a>
@@ -96,7 +96,7 @@
                       <label>Hidden Layer Units</label>
                       <div class="input-group spinner" data-trigger="spinner">
                           <div class="form-line">
-                              <input name="hiddenlayerunits" type="text" class="form-control text-center" value="1" data-rule="currency">
+                              <input name="hiddenlayerunits" type="text" class="form-control text-center" value="6" data-rule="currency">
                           </div>
                           <span class="input-group-addon">
                               <a href="javascript:;" class="spin-up" data-spin="up"><i class="glyphicon glyphicon-chevron-up"></i></a>
@@ -149,7 +149,7 @@
                       <label>Epoch</label>
                       <div class="input-group spinner" data-trigger="spinner">
                           <div class="form-line">
-                              <input name="epoch" type="text" class="form-control text-center" value="500" data-rule="currency">
+                              <input name="epoch" type="text" class="form-control text-center" value="300" data-rule="currency">
                           </div>
                           <span class="input-group-addon">
                               <a href="javascript:;" class="spin-up" data-spin="up"><i class="glyphicon glyphicon-chevron-up"></i></a>
