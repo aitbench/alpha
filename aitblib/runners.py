@@ -118,8 +118,6 @@ class Runner(Basic):
                     file.write(str(datetime.now()) + " -- Backtest of " + btConf['name'] + " finished!\n")
                 # Move reports
                 os.replace('Report.html', self.stBtPath + btConf['id'] + '_report.html')
-                # Move Charts
-                os.replace(btConf['name'] + '.html', self.stBtPath + btConf['id'] + '_chart.html')
                 # Read results
                 results = pd.read_csv(self.btDataPath + btConf['id'] + '_results.csv')
                 # Turn off Running
@@ -135,5 +133,7 @@ class Runner(Basic):
                 saveConf = yaml.dump(btConf, default_flow_style=False, sort_keys=False)
                 # Save new config file
                 self.writeCfgFile('bt', btConf['id'], saveConf)
+                # Move Charts
+                os.replace(btConf['name'] + '.html', self.stBtPath + btConf['id'] + '_chart.html')
         # Remove File Lock
         os.remove(bname)

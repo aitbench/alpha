@@ -41,8 +41,8 @@ class Chart(Basic):
         # Create title from nugget info
         title = info['symb'] + ' ' + info['timeframe'] + ' From:' + info['from'] + ' To:' + info['to']
         # Create first figure of OHLC
-        TOOLS = "pan,wheel_zoom,reset,save"
-        p = figure(x_axis_type="datetime", sizing_mode='scale_width', tools=TOOLS, height=200, title=title)
+        TOOLS = "xpan,xwheel_zoom,box_zoom,reset,save"
+        p = figure(x_axis_type="datetime", active_scroll='xwheel_zoom', active_drag='xpan', sizing_mode='scale_width', tools=TOOLS, height=200, title=title)
         p.grid.grid_line_alpha = 0.3
         p.segment(df.index, df.High, df.index, df.Low, color="black")
         # Add in
@@ -59,7 +59,7 @@ class Chart(Basic):
             d.line(df.index, df[col])
             plots.append(d)
         # Create Bokeh Grid
-        grid = gridplot(plots, ncols=1, sizing_mode='scale_width', toolbar_location="right")
+        grid = gridplot(plots, ncols=1, sizing_mode='scale_width', toolbar_location="right", toolbar_options=dict(logo=None))
         # Return components in the following form
         # script, div = components(grid)
         return components(grid)

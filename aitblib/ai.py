@@ -16,6 +16,8 @@ from keras.callbacks import CSVLogger
 from decimal import Decimal
 # Accuracy and Loss Plots
 import matplotlib.pyplot as plt
+import matplotlib
+matplotlib.use('Agg')
 
 
 class AI(Basic):
@@ -191,7 +193,7 @@ class AI(Basic):
                 plt.plot(history.history['loss'], label='train')
                 plt.plot(history.history['val_loss'], label='test')
                 plt.legend()
-                plt.savefig(lChart, pad_inches=0.01, dpi=90)
+                plt.savefig(lChart, pad_inches=0.01, dpi=60)
                 plt.close()
 
                 # Wipe previous files as they do not overwrite

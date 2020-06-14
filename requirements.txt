@@ -9,6 +9,7 @@ Flask-APScheduler==1.11.0
 Flask-Login==0.5.0
 Flask-SQLAlchemy==2.4.1
 Flask-WTF==0.14.3
+h5py==2.10.0
 matplotlib==3.2.1
 mysqlclient==1.4.6
 numpy==1.18.4

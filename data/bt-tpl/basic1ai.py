@@ -82,6 +82,10 @@ bt = Backtest(natdf.tail(max), XXXNAMEXXX, cash=XXXCASHXXX, commission=comm, mar
 sts = bt.run()
 sts.to_csv('XXXRESULTXXXX')
 
+# Optimization based on Strategy class variables
+# optstats = bt.optimize(SL=range(1,5,1),TP=range(1,5,1))
+# print(optstats)
+
 # Quantstats report https://github.com/ranaroussi/quantstats
 # Create up Buy and Hold returns
 hodler = natdf['Close'].tail(max).pct_change()
