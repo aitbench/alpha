@@ -5,11 +5,15 @@ import pandas as pd
 import pickle as pkl
 from datetime import datetime
 from backtesting import Backtest, Strategy
+from backtesting.lib import TrailingStrategy
 import quantstats as qs
 
-class XXXNAMEXXX(Strategy):
+class XXXNAMEXXX(TrailingStrategy):
     # Any variables in here can be used for optimization
     SL = XXXSTOPLOSSXXX
+    TATR = XXXTATRXXX
+    TSL = XXXTSLXXX
+    SMAPER = 20
 
     def init(self):
         super().init()
@@ -19,6 +23,7 @@ class XXXNAMEXXX(Strategy):
         # Keras threading fix - DO NOT REMOVE :P
         import keras.backend.tensorflow_backend as tb
         tb._SYMBOLIC_SCOPE.value = True
+        import talib as ta
 
         # StopLoss and TakeProfit
         self.slpc = 0.01 * self.SL * -1
@@ -28,16 +33,19 @@ class XXXNAMEXXX(Strategy):
         ## AI Setup
         # Load Entry DF
         self.endf = pkl.load(open('XXXENDFXXX', 'rb'))
-        # Load the Entry scaler
+        # Load the scaler
         self.ensclr = pkl.load(open('XXXENTSCLRXXX', 'rb'))
-        # Load the Entry model
+        # Load the model
         self.enmodel = keras.models.load_model('XXXENTMODELXXX')
-        # Load Exit DF
-        self.exdf = pkl.load(open('XXXEXDFXXX', 'rb'))
-        # Load the Exit scaler
-        self.exsclr = pkl.load(open('XXXEXSCLRXXX', 'rb'))
-        # Load the Exit Model
-        self.exmodel = keras.models.load_model('XXXEXMODELXXX')
+
+        ## Trailing Stuffs
+        # def set_atr_periods(self, periods=100)
+        # def set_trailing_sl(self, n_atr=6)
+        self.set_atr_periods(self.TATR)
+        self.set_trailing_sl(self.TSL)
+
+        ## SMA setup
+        self.sma = self.I(ta.SMA, self.data.Close, self.SMAPER)
 
     def next(self):
         super().next()
@@ -45,29 +53,25 @@ class XXXNAMEXXX(Strategy):
         price = self.data.Close[-1]
 
         # Test AI with values at idx
-        if self.predEnt(idx) and not self.position:
+        if self.predEnt(idx) and not self.position and price < self.sma:
             self.buy()
 
         # Print equity to show progress
-        #print(self.equity)
+        # print(self.equity)
 
         # Manual override of stoploss
         if self.position and self.position.pl_pct < self.slpc:
             self.position.close()
 
-        # Test AI with values at idx
-        if self.predEx(idx) and self.position and self.position.pl_pct > 0.002 :
-            self.position.close()
-
     # Prediction entry from model
     def predEnt(self,idx):
         # Get independants at idx
-        X = self.endf.loc[idx].values[0:-6]
+        enX = self.endf.loc[idx].values[0:-6]
         # Reshape ndarray for Scaler
         import numpy as np
-        X = np.reshape(X,(1,-1))
+        enX = np.reshape(enX,(1,-1))
         # Transform via preloaded scaler
-        XScaled = self.ensclr.transform(X)
+        XScaled = self.ensclr.transform(enX)
         # Make raw and class predictions
         rawPred = self.enmodel.predict(XScaled)
         classPred = self.enmodel.predict_classes(XScaled)
@@ -76,34 +80,14 @@ class XXXNAMEXXX(Strategy):
         # Return prediction in boolean
         return pred
 
-    # Prediction entry from model
-    def predEx(self,idx):
-        # Get independants at idx
-        exX = self.exdf.loc[idx].values[0:-6]
-        # Reshape ndarray for Scaler
-        import numpy as np
-        exX = np.reshape(exX,(1,-1))
-        # Transform via preloaded scaler
-        XScaled = self.exsclr.transform(exX)
-        # Make raw and class predictions
-        rawPred = self.exmodel.predict(XScaled)
-        classPred = self.exmodel.predict_classes(XScaled)
-        # Flip to boolean classPred flips at 0.5
-        pred = (rawPred > 0.9)
-        # Return prediction in boolean
-        return pred
-
 # Load dataframes
 natdf = pkl.load(open('XXXNATDFXXX', 'rb'))
 endf = pkl.load(open('XXXENDFXXX', 'rb'))
-exdf = pkl.load(open('XXXEXDFXXX', 'rb'))
 
 # Find max length of df
 max = natdf.shape[0]
 if max > endf.shape[0]:
     max = endf.shape[0]
-if max > exdf.shape[0]:
-    max = exdf.shape[0]
 
 # Create backtest based on df data
 comm = XXXCOMMXXX * 0.01
@@ -114,7 +98,8 @@ sts = bt.run()
 sts.to_csv('XXXRESULTXXXX')
 
 # Optimization based on Strategy class variables
-# optstats = bt.optimize(SL=range(1,5,1))
+# optstats = bt.optimize(TATR=range(12,108,12), TSL=range(1,12,1))
+# optstats = bt.optimize(SMAPER=range(7,98,7))
 # print(optstats)
 
 # Quantstats report https://github.com/ranaroussi/quantstats

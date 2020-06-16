@@ -134,6 +134,6 @@ class Runner(Basic):
                 # Save new config file
                 self.writeCfgFile('bt', btConf['id'], saveConf)
                 # Move Charts
-                os.replace(btConf['name'] + '.html', self.stBtPath + btConf['id'] + '_chart.html')
+                os.replace(btConf['id'] + '.html', self.stBtPath + btConf['id'] + '_chart.html')
         # Remove File Lock
         os.remove(bname)

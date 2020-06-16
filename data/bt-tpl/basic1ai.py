@@ -20,6 +20,7 @@ class XXXNAMEXXX(Strategy):
         # Keras threading fix - DO NOT REMOVE :P
         import keras.backend.tensorflow_backend as tb
         tb._SYMBOLIC_SCOPE.value = True
+
         # StopLoss and TakeProfit
         self.sl = 1 - (0.01 * self.SL)
         self.tp = 1 + (0.01 * self.TP)
@@ -40,10 +41,8 @@ class XXXNAMEXXX(Strategy):
         price = self.data.Close[-1]
 
         # Test AI with values at idx
-        if self.predEnt(idx):
-            # Buy if not in a current position
-            if not self.position:
-                self.buy(sl=self.sl*price, tp=self.tp*price)
+        if not self.position and self.predEnt(idx):
+            self.buy(sl=self.sl*price, tp=self.tp*price)
 
         # Print equity to show progress
         #print(self.equity)

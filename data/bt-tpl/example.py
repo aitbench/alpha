@@ -48,6 +48,10 @@ class XXXNAMEXXX(Strategy):
         # Print equity to show progress
         # print(self.equity)
 
+        # # Buy/Sell
+        # self.buy(price=None, sl=None, tp=None)
+        # self.sell(price=None, sl=None, tp=None)
+
         # # Position Vars
         # self.position.is_long
         # self.position.is_short

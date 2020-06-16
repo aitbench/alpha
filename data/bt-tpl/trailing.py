@@ -22,6 +22,7 @@ class XXXNAMEXXX(TrailingStrategy):
         # Keras threading fix - DO NOT REMOVE :P
         import keras.backend.tensorflow_backend as tb
         tb._SYMBOLIC_SCOPE.value = True
+
         # StopLoss and TakeProfit
         self.slpc = 0.01 * self.SL * -1
         # Pull Native DF

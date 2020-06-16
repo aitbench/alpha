@@ -566,12 +566,15 @@ def backt():
             os.remove(dataPath + 'bt' + os.path.sep + request.form['id'] + '.py')
             os.remove(dataPath + 'bt' + os.path.sep + request.form['id'] + '_entry.pkl')
             os.remove(dataPath + 'bt' + os.path.sep + request.form['id'] + '_native.pkl')
-            os.remove(dataPath + 'bt' + os.path.sep + request.form['id'] + '_results.csv')
+            if os.path.exists(dataPath + 'bt' + os.path.sep + request.form['id'] + '_results.csv'):
+                os.remove(dataPath + 'bt' + os.path.sep + request.form['id'] + '_results.csv')
             if os.path.exists(dataPath + 'bt' + os.path.sep + request.form['id'] + '_exit.pkl'):
                 os.remove(dataPath + 'bt' + os.path.sep + request.form['id'] + '_exit.pkl')
             # Delete static files
-            os.remove(statPath + 'bt' + os.path.sep + request.form['id'] + '_chart.html')
-            os.remove(statPath + 'bt' + os.path.sep + request.form['id'] + '_report.html')
+            if os.path.exists(statPath + 'bt' + os.path.sep + request.form['id'] + '_chart.html'):
+                os.remove(statPath + 'bt' + os.path.sep + request.form['id'] + '_chart.html')
+            if os.path.exists(statPath + 'bt' + os.path.sep + request.form['id'] + '_report.html'):
+                os.remove(statPath + 'bt' + os.path.sep + request.form['id'] + '_report.html')
             return redirect("/backtest")
     else:
         # List backtests in folder ignoring .keep files

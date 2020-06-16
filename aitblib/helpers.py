@@ -413,7 +413,7 @@ class Helper(Basic):
 
     def createBacktest(self, bdata):
         # Create ID
-        id = bdata['name'].lower()
+        id = bdata['name'].replace(' ', '_').lower()
         bdata['id'] = id
         # Time
         bdata['from'] = self.getFrom(bdata['period'])
@@ -428,6 +428,14 @@ class Helper(Basic):
         if bdata['type'] == 'basic1ai':
             # Read in the template
             with open(self.btplDataPath + 'basic1ai.py', 'r') as file:
+                fdata = file.read()
+            # Make template only changes
+            fdata = fdata.replace('XXXTAKEPROFITXXX', bdata['tp'])
+            # Turn off exit
+            bdata['exitai'] = 'NotUsed'
+        if bdata['type'] == 'basic1ai-sma':
+            # Read in the template
+            with open(self.btplDataPath + 'basic1ai-sma.py', 'r') as file:
                 fdata = file.read()
             # Make template only changes
             fdata = fdata.replace('XXXTAKEPROFITXXX', bdata['tp'])
@@ -451,8 +459,17 @@ class Helper(Basic):
             fdata = fdata.replace('XXXTSLXXX', bdata['tsl'])
             # Turn off exit
             bdata['exitai'] = 'NotUsed'
+        if bdata['type'] == 'trailing-sma':
+            # Read in the template
+            with open(self.btplDataPath + 'trailing-sma.py', 'r') as file:
+                fdata = file.read()
+            # Make template only changes
+            fdata = fdata.replace('XXXTATRXXX', bdata['tatr'])
+            fdata = fdata.replace('XXXTSLXXX', bdata['tsl'])
+            # Turn off exit
+            bdata['exitai'] = 'NotUsed'
         # Replace the target string
-        fdata = fdata.replace('XXXNAMEXXX', bdata['name'])
+        fdata = fdata.replace('XXXNAMEXXX', bdata['id'])
         fdata = fdata.replace('XXXCASHXXX', bdata['cash'])
         fdata = fdata.replace('XXXCOMMXXX', bdata['commission'])
         fdata = fdata.replace('XXXMARGINXXX', bdata['margin'])
