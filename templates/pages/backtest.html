@@ -84,7 +84,7 @@
                         {% endif %}
                         <b>TakeProfit:</b> {{bktest['tp']}}%<br>
                         <b>StopLoss:</b> {{bktest['sl']}}%<br>
-                        {% if bktest['type'] == 'trailing'%}
+                        {% if 'trailing' in bktest['type'] %}
                           <b>Trailing SL:</b> {{bktest['tsl']}}<br>
                           <b>ATR for TSL:</b> {{bktest['tatr']}}<br>
                         {% endif %}

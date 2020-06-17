@@ -425,17 +425,9 @@ class Helper(Basic):
         # Copy native nugget to backtest dir
         os.replace(self.nuggetDataPath + natnug + '.pkl', self.btDataPath + id + '_native.pkl')
         # Create Backtest Python
-        if bdata['type'] == 'basic1ai':
+        if 'basic1ai' in bdata['type']:
             # Read in the template
-            with open(self.btplDataPath + 'basic1ai.py', 'r') as file:
-                fdata = file.read()
-            # Make template only changes
-            fdata = fdata.replace('XXXTAKEPROFITXXX', bdata['tp'])
-            # Turn off exit
-            bdata['exitai'] = 'NotUsed'
-        if bdata['type'] == 'basic1ai-sma':
-            # Read in the template
-            with open(self.btplDataPath + 'basic1ai-sma.py', 'r') as file:
+            with open(self.btplDataPath + bdata['type'] + '.py', 'r') as file:
                 fdata = file.read()
             # Make template only changes
             fdata = fdata.replace('XXXTAKEPROFITXXX', bdata['tp'])
@@ -450,18 +442,9 @@ class Helper(Basic):
             # Models
             fdata = fdata.replace('XXXEXMODELXXX', re.escape(self.annDataPath + bdata['exitai']) + '.tf')
             fdata = fdata.replace('XXXEXSCLRXXX', re.escape(self.annDataPath + bdata['exitai']) + '.pkl')
-        if bdata['type'] == 'trailing':
+        if 'trailing' in bdata['type']:
             # Read in the template
-            with open(self.btplDataPath + 'trailing.py', 'r') as file:
-                fdata = file.read()
-            # Make template only changes
-            fdata = fdata.replace('XXXTATRXXX', bdata['tatr'])
-            fdata = fdata.replace('XXXTSLXXX', bdata['tsl'])
-            # Turn off exit
-            bdata['exitai'] = 'NotUsed'
-        if bdata['type'] == 'trailing-sma':
-            # Read in the template
-            with open(self.btplDataPath + 'trailing-sma.py', 'r') as file:
+            with open(self.btplDataPath + bdata['type'] + '.py', 'r') as file:
                 fdata = file.read()
             # Make template only changes
             fdata = fdata.replace('XXXTATRXXX', bdata['tatr'])
