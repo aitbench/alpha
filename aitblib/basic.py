@@ -1,6 +1,6 @@
 import os.path
 import yaml
-import datetime
+from datetime import datetime
 import sys
 
 
@@ -12,6 +12,7 @@ class Basic():
         self.tmpPath = appRoot + os.path.sep + 'tmp' + os.path.sep
         self.runPath = self.tmpPath + os.path.sep + 'run' + os.path.sep
         self.logPath = appRoot + os.path.sep + 'logs' + os.path.sep
+        self.upPath = self.tmpPath + os.path.sep + 'uploads' + os.path.sep
         # Configuration Paths
         self.confPath = appRoot + os.path.sep + 'conf' + os.path.sep
         self.dataConfPath = self.confPath + 'data' + os.path.sep
@@ -54,6 +55,10 @@ class Basic():
     def listDataFiles(self, oftype):
         return [f for f in os.listdir(self.dataPath + oftype) if os.path.isfile(os.path.join(self.dataPath + oftype, f)) and f != '.keep']
 
+    # List of Upload Files
+    def listUpFiles(self):
+        return [f for f in os.listdir(self.upPath) if os.path.isfile(os.path.join(self.upPath, f)) and f != '.keep']
+
     # Write Config File
     def writeCfgFile(self, oftype, nom, input):
         fname = self.confPath + oftype + os.path.sep + nom + '.yml'
@@ -64,11 +69,22 @@ class Basic():
     def readCfgFile(self, oftype, nom):
         fname = self.confPath + oftype + os.path.sep + nom
         with open(fname, 'r') as file:
-            output = yaml.full_load(file)
+            output = yaml.load(file)
         return output
 
+    def allCfgs(self, conffolder):
+        # List configs in folder ignoring .keep files
+        cfgfiles = self.listCfgFiles(conffolder)
+        # Create data array
+        cfgfull = []
+        # Iterate through each file and pull data
+        for cfgfile in cfgfiles:
+            cfgdata = self.readCfgFile(conffolder, cfgfile)
+            cfgfull.append(cfgdata)
+        return cfgfull
+
     # Get info on all nuggets
-    def nuggetsInfo(self, filelist):
+    def nuggetsInfo(self, filelist,):
         tmpnuggets = []
         tmpinfo = {}
         # Iterate through each file
@@ -81,14 +97,11 @@ class Basic():
             # Create temp info from filename
             tmpinfo = {'id': dstr, 'con': parts[0], 'symb': parts[1] + '/' + parts[2], 'timeframe': parts[3],
                        'from': int(parts[4]), 'to': int(parts[5]), 'indi': parts[6], 'depen': parts[7]}
-            # Convert ms date to human readable format
-            tmpinfo['from'] = datetime.datetime.utcfromtimestamp(tmpinfo['from'] / 1000).strftime(self.timeform)
-            tmpinfo['to'] = datetime.datetime.utcfromtimestamp(tmpinfo['to'] / 1000).strftime(self.timeform)
             # Add temp info to array of nuggets
             tmpnuggets.append(tmpinfo)
         return tmpnuggets
 
-    # Get info on single nugget
+    # Get info on single nugget used in AI Creation
     def nugInfo(self, nfile):
         ntmpinfo = {}
         # Remove extension from filename
@@ -98,9 +111,6 @@ class Basic():
         # Create temp info from filename
         ntmpinfo = {'id': nfile, 'con': parts[0], 'symb': parts[1] + '/' + parts[2], 'timeframe': parts[3],
                     'from': int(parts[4]), 'to': int(parts[5]), 'indi': parts[6], 'depen': parts[7]}
-        # Convert ms date to human readable format
-        ntmpinfo['from'] = datetime.datetime.utcfromtimestamp(ntmpinfo['from'] / 1000).strftime(self.timeform)
-        ntmpinfo['to'] = datetime.datetime.utcfromtimestamp(ntmpinfo['to'] / 1000).strftime(self.timeform)
         # Add temp info to array of nuggets
         return ntmpinfo
 
@@ -118,8 +128,8 @@ class Basic():
             # Create temp info from filename
             tmpinfo = {'id': sstr, 'con': parts[0], 'symb': parts[1] + '/' + parts[2], 'timeframe': parts[3], 'from': int(parts[4]), 'to': int(parts[5])}
             # Convert ms date to human readable format
-            tmpinfo['from'] = datetime.datetime.utcfromtimestamp(tmpinfo['from'] / 1000).strftime(self.timeform)
-            tmpinfo['to'] = datetime.datetime.utcfromtimestamp(tmpinfo['to'] / 1000).strftime(self.timeform)
+            tmpinfo['from'] = datetime.utcfromtimestamp(tmpinfo['from'] / 1000).strftime(self.timeform)
+            tmpinfo['to'] = datetime.utcfromtimestamp(tmpinfo['to'] / 1000).strftime(self.timeform)
             # Add temp info to array of samples
             tmpsamples.append(tmpinfo)
         return tmpsamples

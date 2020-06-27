@@ -201,11 +201,25 @@
                 </li>
             </ul>
         	</li>
-					<li {% if request.endpoint == 'sentiment' %} class="active" {% endif %}>
-						<a href="/sentiment">
+					<li {% if request.endpoint == 'sentrss' or  request.endpoint == 'senttrend' or request.endpoint == 'senttwit' or request.endpoint=='sentnlp' %} class="active" {% endif %}>
+						<a href="javascript:void(0);" class="menu-toggle waves-effect waves-block">
 							<i class="material-icons">sentiment_satisfied</i>
 							<span>Sentiment</span>
 						</a>
+            <ul class="ml-menu">
+                <li {% if request.endpoint == 'sentrss' %} class="active" {% endif %}>
+                    <a href="/sent-rss" class="waves-effect waves-block">RSS Feeds</a>
+                </li>
+                <li {% if request.endpoint == 'senttrend' %} class="active" {% endif %}>
+                    <a href="/sent-trend" class="waves-effect waves-block">Google Trends</a>
+                </li>
+                <li {% if request.endpoint == 'senttwit' %} class="active" {% endif %}>
+                    <a href="/sent-twit" class="waves-effect waves-block">Twitter Feeds</a>
+                </li>
+                <li {% if request.endpoint == 'sentnlp' %} class="active" {% endif %}>
+                    <a href="/sent-nlp" class="waves-effect waves-block">NLP</a>
+                </li>
+            </ul>
 					</li>
 					<li {% if request.endpoint == 'backt' %} class="active" {% endif %}>
 						<a href="/backtest">

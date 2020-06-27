@@ -2,6 +2,7 @@
 from .basic import Basic
 # Standard imports
 import pandas as pd
+from datetime import datetime
 # import sys
 # Bokeh imports
 from bokeh.layouts import gridplot
@@ -37,9 +38,9 @@ class Chart(Basic):
         inc = df.Close > df.Open
         dec = df.Open > df.Close
         # Drop index
-        self.ll(df.info)
+        # self.ll(df.info)
         # Create title from nugget info
-        title = info['symb'] + ' ' + info['timeframe'] + ' From:' + info['from'] + ' To:' + info['to']
+        title = info['symb'] + ' ' + info['timeframe'] + ' From:' + datetime.utcfromtimestamp(info['from'] / 1000).strftime('%Y-%m-%d') + ' To:' + datetime.utcfromtimestamp(info['to'] / 1000).strftime('%Y-%m-%d')
         # Create first figure of OHLC
         TOOLS = "xpan,xwheel_zoom,box_zoom,reset,save"
         p = figure(x_axis_type="datetime", active_scroll='xwheel_zoom', active_drag='xpan', sizing_mode='scale_width', tools=TOOLS, height=200, title=title)

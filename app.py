@@ -27,7 +27,7 @@ from aitblib import ai
 from aitblib.Flask_forms import LoginForm, RegisterForm, ForgotForm, SetupForm
 # System
 import os
-import yaml
+import oyaml as yaml
 import ccxt
 from datetime import datetime
 # Testing only
@@ -52,6 +52,7 @@ confPath = app.root_path + os.path.sep + 'conf' + os.path.sep
 dataPath = app.root_path + os.path.sep + 'data' + os.path.sep
 logPath = app.root_path + os.path.sep + 'logs' + os.path.sep
 statPath = app.root_path + os.path.sep + 'static' + os.path.sep
+upPath = app.root_path + os.path.sep + 'tmp' + os.path.sep + 'uploads' + os.path.sep
 
 # Add custom Jinja2-filter
 
@@ -61,7 +62,10 @@ def ffname(text):
 
 
 def u2d(utc):
-    return datetime.utcfromtimestamp(utc / 1000).strftime('%Y-%m-%d')
+    try:
+        return datetime.utcfromtimestamp(int(utc) / 1000).strftime('%Y-%m-%d')
+    except BaseException:
+        return ''
 
 
 app.add_template_filter(ffname)
@@ -110,15 +114,8 @@ def unauthorized_callback():
     return redirect('/login')
 
 
-# Automatically tear down SQLAlchemy.
-@app.teardown_request
-def shutdown_session(exception=None):
-    db.session.remove()
-
 # APScheduler
 # Configuration Object
-
-
 class ConfigAPS(object):
     SCHEDULER_API_ENABLED = True
     SCHEDULER_JOB_DEFAULTS = {
@@ -142,9 +139,14 @@ AI = ai.AI(app.root_path, db)
 # Data Download
 
 
-@scheduler.task('interval', id='dataJob', seconds=30)
-def dataJob():
+@scheduler.task('interval', id='downData', seconds=30)
+def downData():
     RunThe.dataDownload(True)
+
+
+@scheduler.task('interval', id='upData', seconds=5)
+def upData():
+    RunThe.dataUpload()
 
 
 @scheduler.task('interval', id='bkTest', seconds=5)
@@ -177,6 +179,14 @@ def minuteJob():
 # def weeklyjob():
 #     print('Weekly', file=sys.stdout)
 scheduler.start()
+
+# Automatically tear down SQLAlchemy.
+
+
+@app.teardown_request
+def shutdown_session(exception=None):
+    db.session.remove()
+
 
 # Init Helper Class
 do = helpers.Helper(app.root_path, db)
@@ -233,7 +243,7 @@ def connections():
             # Create pathname and load connection config
             cfname = confPath + 'conn' + os.path.sep + con + '.yml'
             with open(cfname, 'r') as file:
-                cfdata = yaml.full_load(file)
+                cfdata = yaml.load(file)
             # Create table in html
             cftable = "<table>"
             for key in cfdata:
@@ -249,16 +259,7 @@ def connections():
             return redirect("/connections")
 
     else:
-        # List connections in folder ignoring .keep files
-        confiles = do.listCfgFiles('conn')
-        # Create a connections array
-        connections = []
-        # Iterate through each file
-        for cfile in confiles:
-            cfname = confPath + 'conn' + os.path.sep + cfile
-            # Open each file and load YAML dicts into connections array
-            with open(cfname, 'r') as file:
-                connections.append(yaml.full_load(file))
+        connections = do.allCfgs('conn')
         return render_template('pages/connections.html', connections=connections)
 
 
@@ -335,29 +336,16 @@ def data():
             if file.filename == '':
                 flash('No selected file')
                 return redirect(request.url)
+            # Test secure filename
             filename = secure_filename(file.filename)
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            dataResult = do.uploadData(filename, id)
-            print(dataResult, file=sys.stderr)
-            # return render_template('pages/data-upload.html', cols=cols)
-            if dataResult:
-                return 'Success'
-            else:
-                return 'Could not find Open/open', 404
+            # Split into filename and extension
+            nom, ext = os.path.splitext(filename)
+            # Save file
+            file.save(upPath + id + ext)
+            return 'Success'
 
     else:
-        # List data in folder ignoring .keep files
-        dataCfgfiles = do.listCfgFiles('data')
-        # Create data info array
-        data = []
-        # Iterate through each file
-        for dfile in dataCfgfiles:
-            tempData = do.readCfgFile('data', dfile)
-            tempData['first'] = datetime.utcfromtimestamp(tempData['first'] / 1000).strftime('%Y-%m-%d')
-            tempData['start'] = datetime.utcfromtimestamp(tempData['start'] / 1000).strftime('%Y-%m-%d')
-            if tempData['end'] > 0:
-                tempData['end'] = datetime.utcfromtimestamp(tempData['end'] / 1000).strftime('%Y-%m-%d')
-            data.append(tempData)
+        data = do.allCfgs('data')
 
         # List samples in folder ignoring .keep files
         samDatafiles = do.listDataFiles('samples')
@@ -370,8 +358,6 @@ def data():
             parts = dstr.split('_')
             # print(parts,file=sys.stderr)
             info = {'id': dstr, 'con': parts[0], 'symb': parts[1] + '/' + parts[2], 'timeframe': parts[3], 'from': int(parts[4]), 'to': int(parts[5])}
-            info['from'] = datetime.utcfromtimestamp(info['from'] / 1000).strftime('%Y-%m-%d')
-            info['to'] = datetime.utcfromtimestamp(info['to'] / 1000).strftime('%Y-%m-%d')
             samples.append(info)
         return render_template('pages/data.html', data=data, samples=samples)
 
@@ -403,14 +389,7 @@ def alchemyenrich():
             os.remove(delfile)
             return redirect("/alchemy-enrich")
     else:
-        # List enrichments in folder ignoring .keep files
-        enCfgFiles = do.listCfgFiles('enrich')
-        # Create enrich info array
-        enriches = []
-        # Iterate through each file
-        for enfile in enCfgFiles:
-            endata = do.readCfgFile('enrich', enfile)
-            enriches.append(endata)
+        enriches = do.allCfgs('enrich')
         return render_template('pages/alchemy-enrich.html', enriches=enriches)
 
 
@@ -523,21 +502,81 @@ def aiann():
             os.remove(statPath + 'charts' + os.path.sep + request.form['id'] + '_loss.png')
             return redirect("/ai-ann")
     else:
-        # List samples in folder ignoring .keep files
-        annfiles = do.listCfgFiles('aiann')
-        # Pull nuggets info from above files
-        anns = []
-        # Iterate through each file
-        for afile in annfiles:
-            adata = do.readCfgFile('aiann', afile)
-            anns.append(adata)
+        anns = do.allCfgs('aiann')
         return render_template('pages/ai-ann.html', anns=anns)
 
 
-@app.route('/sentiment')
+@app.route('/sent-rss', methods=['GET', 'POST'])
 @login_required
-def sentiment():
-    return render_template('pages/sentiment.html')
+def sentrss():
+    if request.method == 'POST':
+        # Sent RSS page wants something
+        act = request.form['action']
+        if act == 'add':
+            return render_template('pages/sent-rss-add.html')
+        if act == 'fin':
+            do.createRSSFeed(request.form.to_dict())
+            return redirect("/sent-rss")
+        if act == 'delete':
+            # Delete configuration file
+            os.remove(confPath + 'sentrss' + os.path.sep + request.form['id'] + '.yml')
+            return redirect("/sent-rss")
+    else:
+        rssfeeds = do.allCfgs('sentrss')
+        return render_template('pages/sent-rss.html', rssfeeds=rssfeeds)
+
+
+@app.route('/sent-trend', methods=['GET', 'POST'])
+@login_required
+def senttrend():
+    if request.method == 'POST':
+        # Sent RSS page wants something
+        act = request.form['action']
+        if act == 'add':
+            return render_template('pages/sent-trend-add.html')
+        if act == 'fin':
+            do.createGoogleTrend(request.form.to_dict())
+            return redirect("/sent-trend")
+        if act == 'delete':
+            # Delete configuration file
+            os.remove(confPath + 'senttrend' + os.path.sep + request.form['id'] + '.yml')
+            return redirect("/sent-trend")
+    else:
+        trends = do.allCfgs('senttrend')
+        return render_template('pages/sent-trend.html', trends=trends)
+
+
+@app.route('/sent-twit', methods=['GET', 'POST'])
+@login_required
+def senttwit():
+    if request.method == 'POST':
+        # Sent RSS page wants something
+        act = request.form['action']
+        if act == 'add':
+            return render_template('pages/sent-twit-add.html')
+        if act == 'fin':
+            do.createTwitterFeed(request.form.to_dict())
+            return redirect("/sent-twit")
+        if act == 'delete':
+            # Delete configuration file
+            os.remove(confPath + 'senttwit' + os.path.sep + request.form['id'] + '.yml')
+            return redirect("/sent-twit")
+    else:
+        twitfeeds = do.allCfgs('senttwit')
+        return render_template('pages/sent-twit.html', twitfeeds=twitfeeds)
+
+
+@app.route('/sent-nlp', methods=['GET', 'POST'])
+@login_required
+def sentnlp():
+    if request.method == 'POST':
+        # Sent NLP page wants something
+        act = request.form['action']
+        if act == 'edit-trans':
+            do.editTrans(request.form.to_dict())
+            return redirect("/sent-nlp")
+    else:
+        return render_template('pages/sent-nlp.html')
 
 
 @app.route('/backtest', methods=['GET', 'POST'])
@@ -577,14 +616,7 @@ def backt():
                 os.remove(statPath + 'bt' + os.path.sep + request.form['id'] + '_report.html')
             return redirect("/backtest")
     else:
-        # List backtests in folder ignoring .keep files
-        bkfiles = do.listCfgFiles('bt')
-        # Pull info from above files
-        bktests = []
-        # Iterate through each file
-        for bkfile in bkfiles:
-            bkdata = do.readCfgFile('bt', bkfile)
-            bktests.append(bkdata)
+        bktests = do.allCfgs('bt')
         return render_template('pages/backtest.html', bktests=bktests)
 
 
@@ -604,6 +636,7 @@ def opsdb():
 @login_required
 def opsrun():
     runners = {'Data Downloader (Aggressive)': 'dataDownloadAggro.log',
+               'Data Uploader': 'dataUpload.log',
                'ANN Training': 'trainANN.log'}
     return render_template('pages/ops-run.html', runners=runners)
 
@@ -757,8 +790,12 @@ if __name__ == '__main__':
     app.config['UPLOAD_FOLDER'] = 'tmp'
     # Clear down all current run locks
     do.clearRunLocks()
+    # Logging options DEBUG INFO WARNING ERROR CRITICAL
+    # app.logger.setLevel(logging.CRITICAL)
+    logging.getLogger('apscheduler').setLevel(logging.ERROR)
     # Run App
-    app.run(use_reloader=False)  # threaded=False breaks APScheduler
+    # app.run(use_reloader=False) # threaded=False breaks APScheduler
+    app.run()
 
 # Or specify port manually:
 '''

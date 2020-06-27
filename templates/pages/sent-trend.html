@@ -1,14 +1,12 @@
 {% extends 'layouts/main.html' %}
-{% block title %}Sentiment - RSS Feeds{% endblock %}
+{% block title %}Sentiment - Google Trends{% endblock %}
 {% block content %}
 
 <div class="block-header block-header-wit-add">
   <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6" style="padding-left:0px">
   <h2>
-    RSS Feeds
-    <small>RSS Feeds from sources such as
-      <a href="https://blog.feedspot.com/cryptocurrency_rss_feeds/">Crypto</a> or
-      <a href="https://www.reddit.com/r/CryptoCurrency/top/.rss?format=xml">Reddit</a></small>
+    Google Trends
+    <small>Google Trends show public interest over time in percent</small>
   </h2>
   </div>
   <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
@@ -25,23 +23,23 @@
   </div>
 </div>
 <div class="row">
-  {% for feed in rssfeeds %}
+  {% for trend in trends %}
   <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
     <div class="card">
       <div class="header bg-orange">
         <h2>
-          {{ feed['name'] }}
+          {{ trend['name'] }}
         </h2>
         <ul class="header-dropdown m-r--5">
-          <form class="inform" method="post" id="{{feed['id']}}">
+          <form class="inform" method="post" id="{{trend['id']}}">
             <li class="dropdown">
               <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
                 <i class="material-icons">more_vert</i>
               </a>
               <ul class="dropdown-menu pull-right">
                 <input type="hidden" name="action" value="delete"/>
-                <input type="hidden" name="id" value="{{feed['id']}}"/>
-                <li><a href="javascript:void(0);" onClick="document.forms['{{feed['id']}}'].submit();" class=" waves-effect waves-block">
+                <input type="hidden" name="id" value="{{trend['id']}}"/>
+                <li><a href="javascript:void(0);" onClick="document.forms['{{trend['id']}}'].submit();" class=" waves-effect waves-block">
                   <i class="material-icons" style="color:red !important">delete_forever</i>Delete</a></li>
                 </ul>
               </li>
@@ -49,10 +47,14 @@
           </ul>
         </div>
         <div class="body">
-            <b>Id: </b> {{feed['id']}}<br>
-            <b>Name: </b> {{feed['name']}}<br>
-            <b>URL: </b> {{feed['url']}}<br>
-            <b>Group: </b> {{feed['group']}}<br>
+            <b>Id: </b> {{ trend['id'] }}<br>
+            <b>Keyword: </b> {{ trend['keyword'] }}<br>
+            <b>Geo: </b> {{ trend['geo'] }}
+            <a href="https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2">?</a><br>
+            <b>Period: </b> {{ trend['period'] }}<br>
+            <b>Category: </b> {{ trend['cat'] }}
+            <a href="https://github.com/pat310/google-trends-api/wiki/Google-Trends-Categories">?</a><br>
+            <b>Prop: </b> {{ trend['prop'] }}<br>
         </div>
       </div>
     </div>

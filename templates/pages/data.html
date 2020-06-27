@@ -91,16 +91,16 @@
               <b>Connection:</b> {{da['con']}}<br>
               <b>MaxBars:</b> {{da['maxbars']}}<br>
               <b>Aggressive Download:</b> {{da['aggro']}}<br>
-              <b>First Date on Exchange:</b> {{ da['first'] }}<br>
-              <b>Requested Start Date:</b> {{ da['start'] }}<br>
-              <b>Available Last Date:</b> {{ da['end'] }}<br>
+              <b>First Date on Exchange:</b> {{ da['first'] | u2d}}<br>
+              <b>Requested Start Date:</b> {{ da['start'] | u2d}}<br>
+              <b>Available Last Date:</b> {{ da['end'] | u2d}}<br>
               <b>Count:</b> {{da['count']}}<br>
             </div>
             <div role="tabpanel" class="tab-pane fade" id="view_only_icon_title_{{da['id']}}">
               <label> Head</label>
               <table class="table table-striped">
                 <tr>
-                  <td>Date:</td><td>{{ da['head'][0] }}</td>
+                  <td>Date:</td><td>{{ da['head'][0] | u2d }}</td>
                 </tr>
                 <tr>
                   <td>Open:</td><td>{{ da['head'][1] }}</td>
@@ -121,7 +121,7 @@
               <label> Tail</label>
               <table class="table table-striped">
                 <tr>
-                  <td>Date:</td><td>{{ da['tail'][0] }}</td>
+                  <td>Date:</td><td>{{ da['tail'][0] | u2d}}</td>
                 </tr>
                 <tr>
                   <td>Open:</td><td>{{ da['tail'][1] }}</td>
@@ -251,8 +251,8 @@
           </ul>
         </div>
         <div class="body">
-            <b>From: </b> {{sample['from']}}<br>
-            <b>To: </b> {{sample['to']}}<br>
+            <b>From: </b> {{sample['from'] | u2d}}<br>
+            <b>To: </b> {{sample['to'] | u2d }}<br>
             <b>Timeframe: </b> {{sample['timeframe']}}<br>
         </div>
       </div>

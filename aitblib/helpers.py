@@ -1,9 +1,9 @@
 import sys
 import ccxt
-import yaml
+import oyaml as yaml
 import os
 import re
-import datetime
+from datetime import datetime
 import pytz
 import time
 # Import base class
@@ -161,7 +161,7 @@ class Helper(Basic):
     def createCryptoData(self, con, quote, symb, start):
         # Start time to UnixTimestamp in UTC
         format = '%A %d %B %Y'
-        d = datetime.datetime.strptime(start, format)  # 3.2+
+        d = datetime.strptime(start, format)  # 3.2+
         d = pytz.utc.localize(d)
         start = time.mktime(d.timetuple())
         start = int(start * 1000)
@@ -228,13 +228,13 @@ class Helper(Basic):
         else:
             # From date in UnixTimestamp in UTC
             format = '%A %d %B %Y'
-            d = datetime.datetime.strptime(fromdate, format)  # 3.2+
+            d = datetime.strptime(fromdate, format)  # 3.2+
             d = pytz.utc.localize(d)
             fromdate = time.mktime(d.timetuple())
             fromdate = int(fromdate * 1000)
             # To Date in UnixTimestamp in UTC
             format = '%A %d %B %Y'
-            d = datetime.datetime.strptime(todate, format)  # 3.2+
+            d = datetime.strptime(todate, format)  # 3.2+
             d = pytz.utc.localize(d)
             todate = time.mktime(d.timetuple())
             todate = int(todate * 1000)
@@ -291,56 +291,6 @@ class Helper(Basic):
         nname = sample + '_' + indie + '_' + depen
         df.to_pickle(self.nuggetDataPath + nname + '.pkl')
         return nname
-
-    def uploadData(self, fname, id):
-        # Split file into extension and filename
-        nada, ext = os.path.splitext(fname)
-        ffname = os.path.join(self.tmpPath, fname)
-        updf = pd.DataFrame()
-        if ext == '.csv':
-            updf = pd.read_csv(ffname)
-        if ext == '.feather':
-            updf = pd.read_feather(ffname)
-        if ext == '.parquet':
-            updf = pd.read_parquet(ffname, engine='fastparquet')
-        if ext == '.pickle':
-            updf = pd.read_pickle(ffname)
-        # Test for created index
-        if updf.index[0] == 0:
-            for col in updf.columns:
-                # Test column automatically for date
-                if type(updf[col][0]) is pd.Timestamp:
-                    # Set column as datetime and make it an index
-                    updf[col] = pd.to_datetime(updf[col])
-                    updf.set_index(col, inplace=True)
-                    break
-                elif self.is_date(updf[col][0]):
-                    # Set column as datetime and make it an index
-                    updf[col] = pd.to_datetime(updf[col])
-                    updf.set_index(col, inplace=True)
-                    break
-        # print(updf.index.astype(int)/1000000,file=sys.stderr)
-        if 'sqlite' in str(self.db.engine.url):
-            sqlpre = 'INSERT OR IGNORE INTO '
-        else:
-            sqlpre = 'INSERT IGNORE INTO '
-        success = False
-        if 'open' in updf.columns:
-            success = True
-            for index, dr in updf.iterrows():
-                sqlins = sqlpre + id + ' VALUES (' + str(int(index.value / 1000000)) + ',' + str(dr['open']) + ',' + str(dr['high']) + ',' + str(dr['low']) + ',' + str(dr['close']) + ',' + str(dr['volume']) + ')'
-                # print(sqlins,file=sys.stderr)
-                self.db.session.execute(sqlins)
-            self.db.session.commit()
-        if 'Open' in updf.columns:
-            success = True
-            for index, dr in updf.iterrows():
-                sqlins = sqlpre + id + ' VALUES (' + str(int(index.value / 1000000)) + ',' + str(dr['Open']) + ',' + str(dr['High']) + ',' + str(dr['Low']) + ',' + str(dr['Close']) + ',' + str(dr['Volume']) + ')'
-                # print(sqlins,file=sys.stderr)
-                self.db.session.execute(sqlins)
-            self.db.session.commit()
-        os.remove(ffname)
-        return success
 
     def is_date(string, fuzzy=True):
         """
@@ -410,6 +360,48 @@ class Helper(Basic):
         aYML = yaml.dump(adata, default_flow_style=False, sort_keys=False)
         # Save to YAML file
         self.writeCfgFile('aiann', id, aYML)
+
+    def removekey(self, d, key):
+        r = dict(d)
+        del r[key]
+        return r
+
+    def createRSSFeed(self, rdata):
+        # Create ID
+        id = rdata['name'].replace(' ', '_').lower()
+        rdata['id'] = id
+        self.removekey(rdata, 'action')
+        # Save YAML config to file
+        rYML = yaml.dump(rdata, default_flow_style=False, sort_keys=False)
+        self.writeCfgFile('sentrss', id, rYML)
+        # self.ll(rdata)
+
+    def createGoogleTrend(self, gdata):
+        # Create ID
+        id = gdata['name'].replace(' ', '_').lower()
+        gdata['id'] = id
+        # Save YAML config to file
+        gYML = yaml.dump(gdata, default_flow_style=False, sort_keys=False)
+        self.writeCfgFile('senttrend', id, gYML)
+        # self.ll(gdata)
+
+    def createTwitterFeed(self, tdata):
+        # Create ID
+        id = tdata['name'].replace(' ', '_').lower()
+        tdata['id'] = id
+        # Save YAML config to file
+        tYML = yaml.dump(tdata, default_flow_style=False, sort_keys=False)
+        self.writeCfgFile('senttwit', id, tYML)
+        self.ll(tdata)
+
+    def editTrans(self, edata):
+        # Create ID
+        id = edata['name'].replace(' ', '_').lower()
+        edata['id'] = id
+        # Save YAML config to file
+        eYML = yaml.dump(edata, default_flow_style=False, sort_keys=False)
+        self.writeCfgFile('sentnlp', 'tran', eYML)
+        self.ll(edata)
 
     def createBacktest(self, bdata):
         # Create ID

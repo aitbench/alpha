@@ -140,6 +140,14 @@ dmypy.json
 !/conf/aicnn/.keep
 /conf/airnn/*
 !/conf/airnn/.keep
+/conf/sentrss/*
+!/conf/sentrss/.keep
+/conf/senttrend/*
+!/conf/senttrend/.keep
+/conf/senttwit/*
+!/conf/senttwit/.keep
+/conf/sentnlp/*
+!/conf/sentnlp/tran-def.yml
 /conf/bt/*
 !/conf/bt/.keep
 
@@ -170,8 +178,8 @@ dmypy.json
 
 # AI-TB temp
 /tmp/*
-/tmp/import/*
-!/tmp/import/.keep
+/tmp/uploads/*
+!/tmp/uploads/.keep
 /tmp/run/*
 !/tmp/run/.keep
 

@@ -84,6 +84,7 @@ class Runner(Basic):
                 tmpDataConf['end'] = datadf.values.tolist()[-1][0]
                 tmpDataConf['count'] = str(datadf.shape[0])
                 id = tmpDataConf['id']
+                self.ll(tmpDataConf)
                 # Convert Dict to YAML
                 saveConf = yaml.dump(tmpDataConf, default_flow_style=False, sort_keys=False)
                 # Cfg File
@@ -91,6 +92,79 @@ class Runner(Basic):
         # Remove File Lock
         os.remove(dname)
         # Close DB Connection
+
+    def dataUpload(self):
+        # Create file and path
+        uname = self.runPath + 'dataUpload.run'
+        ulog = self.logPath + 'dataUpload.log'
+        # Test if already running
+        if os.path.exists(uname):
+            return
+        # Write lock file
+        with open(uname, 'w') as file:
+            file.write(str(datetime.now()))
+        # Get list of data files
+        upFiles = self.listUpFiles()
+        for fname in upFiles:
+            # Split file into extension and filename
+            nom, ext = os.path.splitext(fname)
+            ffname = os.path.join(self.upPath, fname)
+            updf = pd.DataFrame()
+            if ext == '.csv':
+                updf = pd.read_csv(ffname)
+            if ext == '.feather':
+                updf = pd.read_feather(ffname)
+            if ext == '.parquet':
+                updf = pd.read_parquet(ffname, engine='fastparquet')
+            if ext == '.pickle':
+                updf = pd.read_pickle(ffname)
+            # Test for created index
+            if updf.index[0] == 0:
+                for col in updf.columns:
+                    # Test column automatically for date
+                    if type(updf[col][0]) is pd.Timestamp:
+                        # Set column as datetime and make it an index
+                        updf[col] = pd.to_datetime(updf[col])
+                        updf.set_index(col, inplace=True)
+                        break
+                    elif self.is_date(updf[col][0]):
+                        # Set column as datetime and make it an index
+                        updf[col] = pd.to_datetime(updf[col])
+                        updf.set_index(col, inplace=True)
+                        break
+            with open(ulog, 'w') as file:
+                file.write(str(datetime.now()) + ' -- Starting upload of ' + str(nom) + "...\n")
+            # print(updf.index.astype(int)/1000000,file=sys.stderr)
+            if 'sqlite' in str(self.db.engine.url):
+                sqlpre = 'INSERT OR IGNORE INTO '
+            else:
+                sqlpre = 'INSERT IGNORE INTO '
+            rcount = 0
+            everyXrows = 5000
+            if 'open' in updf.columns:
+                for index, dr in updf.iterrows():
+                    rcount += 1
+                    sqlins = sqlpre + nom + ' VALUES (' + str(int(index.value / 1000000)) + ',' + str(dr['open']) + ',' + str(dr['high']) + ',' + str(dr['low']) + ',' + str(dr['close']) + ',' + str(dr['volume']) + ')'
+                    # print(sqlins,file=sys.stderr)
+                    self.db.session.execute(sqlins)
+                    if rcount % everyXrows == 0:
+                        with open(ulog, 'a+') as file:
+                            file.write(str(datetime.now()) + ' -- Inserting to ' + str(nom) + ' up to ' + str(index) + "\n")
+                        self.db.session.commit()
+                self.db.session.commit()
+            if 'Open' in updf.columns:
+                for index, dr in updf.iterrows():
+                    rcount += 1
+                    sqlins = sqlpre + nom + ' VALUES (' + str(int(index.value / 1000000)) + ',' + str(dr['Open']) + ',' + str(dr['High']) + ',' + str(dr['Low']) + ',' + str(dr['Close']) + ',' + str(dr['Volume']) + ')'
+                    # print(sqlins,file=sys.stderr)
+                    self.db.session.execute(sqlins)
+                    if rcount % everyXrows == 0:
+                        with open(ulog, 'a+') as file:
+                            file.write(str(datetime.now()) + ' -- Inserting to ' + str(nom) + ' up to ' + str(index) + "\n")
+                        self.db.session.commit()
+                self.db.session.commit()
+            os.remove(ffname)
+        os.remove(uname)
 
     def backTest(self):
         # Create file and path

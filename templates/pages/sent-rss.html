@@ -33,15 +33,15 @@
           {{ feed['name'] }}
         </h2>
         <ul class="header-dropdown m-r--5">
-          <form class="inform" method="post" id="{{feed['id']}}">
+          <form class="inform" method="post" id="{{ feed['id'] }}">
             <li class="dropdown">
               <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
                 <i class="material-icons">more_vert</i>
               </a>
               <ul class="dropdown-menu pull-right">
                 <input type="hidden" name="action" value="delete"/>
-                <input type="hidden" name="id" value="{{feed['id']}}"/>
-                <li><a href="javascript:void(0);" onClick="document.forms['{{feed['id']}}'].submit();" class=" waves-effect waves-block">
+                <input type="hidden" name="id" value="{{ feed['id'] }}"/>
+                <li><a href="javascript:void(0);" onClick="document.forms['{{ feed['id'] }}'].submit();" class=" waves-effect waves-block">
                   <i class="material-icons" style="color:red !important">delete_forever</i>Delete</a></li>
                 </ul>
               </li>
@@ -49,10 +49,9 @@
           </ul>
         </div>
         <div class="body">
-            <b>Id: </b> {{feed['id']}}<br>
-            <b>Name: </b> {{feed['name']}}<br>
-            <b>URL: </b> {{feed['url']}}<br>
-            <b>Group: </b> {{feed['group']}}<br>
+            <b>Id: </b> {{ feed['id'] }}<br>
+            <b>URL: </b> {{ feed['url'] }}<br>
+            <b>Group: </b> {{ feed['group'] }}<br>
         </div>
       </div>
     </div>
