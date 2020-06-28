@@ -177,7 +177,7 @@ dmypy.json
 !/data/bt/.keep
 
 # AI-TB temp
-/tmp/*
+
 /tmp/uploads/*
 !/tmp/uploads/.keep
 /tmp/run/*
