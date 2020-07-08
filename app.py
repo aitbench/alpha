@@ -27,6 +27,7 @@ from aitblib import ai
 from aitblib.Flask_forms import LoginForm, RegisterForm, ForgotForm, SetupForm
 # System
 import os
+from shutil import copyfile
 import oyaml as yaml
 import ccxt
 from datetime import datetime
@@ -243,7 +244,7 @@ def connections():
             # Create pathname and load connection config
             cfname = confPath + 'conn' + os.path.sep + con + '.yml'
             with open(cfname, 'r') as file:
-                cfdata = yaml.load(file)
+                cfdata = yaml.full_load(file)
             # Create table in html
             cftable = "<table>"
             for key in cfdata:
@@ -308,16 +309,14 @@ def data():
             os.remove(delfile)
             return redirect("/data")
         if act == 'enable':
-            status = request.form['status']
             id = request.form['id']
-            # print('ID:'+id+'Status:'+status,file=sys.stderr)
+            # Read Config file
             dCfgFile = do.readCfgFile('data', id + '.yml')
-            if status == 'true':
+            # Flip enabled if needed
+            if request.form['status'] == 'true':
                 dCfgFile['enabled'] = True
             else:
                 dCfgFile['enabled'] = False
-            # print(dCfgFile,file=sys.stderr)
-            dCfgFile = yaml.dump(dCfgFile)
             do.writeCfgFile('data', id, dCfgFile)
             return redirect("/data")
         if act == 'delete-sample':
@@ -521,6 +520,17 @@ def sentrss():
             # Delete configuration file
             os.remove(confPath + 'sentrss' + os.path.sep + request.form['id'] + '.yml')
             return redirect("/sent-rss")
+        if act == 'enable':
+            id = request.form['id']
+            # Read Config file
+            dCfgFile = do.readCfgFile('sentrss', id + '.yml')
+            # Flip enabled if needed
+            if request.form['status'] == 'true':
+                dCfgFile['enabled'] = True
+            else:
+                dCfgFile['enabled'] = False
+            do.writeCfgFile('sentrss', id, dCfgFile)
+            return redirect("/sent-rss")
     else:
         rssfeeds = do.allCfgs('sentrss')
         return render_template('pages/sent-rss.html', rssfeeds=rssfeeds)
@@ -540,6 +550,17 @@ def senttrend():
         if act == 'delete':
             # Delete configuration file
             os.remove(confPath + 'senttrend' + os.path.sep + request.form['id'] + '.yml')
+            return redirect("/sent-trend")
+        if act == 'enable':
+            id = request.form['id']
+            # Read Config file
+            dCfgFile = do.readCfgFile('senttrend', id + '.yml')
+            # Flip enabled if needed
+            if request.form['status'] == 'true':
+                dCfgFile['enabled'] = True
+            else:
+                dCfgFile['enabled'] = False
+            do.writeCfgFile('senttrend', id, dCfgFile)
             return redirect("/sent-trend")
     else:
         trends = do.allCfgs('senttrend')
@@ -572,11 +593,14 @@ def sentnlp():
     if request.method == 'POST':
         # Sent NLP page wants something
         act = request.form['action']
-        if act == 'edit-trans':
-            do.editTrans(request.form.to_dict())
+        if act == 'changeAI':
+            sentai = do.readCfgFile('sentnlp', 'sent-ai.yml')
+            sentai['ai'] = request.form['ai']
+            do.writeCfgFile('sentnlp', 'sent-ai', sentai)
             return redirect("/sent-nlp")
     else:
-        return render_template('pages/sent-nlp.html')
+        sentai = do.readCfgFile('sentnlp', 'sent-ai.yml')
+        return render_template('pages/sent-nlp.html', ai=sentai)
 
 
 @app.route('/backtest', methods=['GET', 'POST'])
@@ -793,8 +817,12 @@ if __name__ == '__main__':
     # Logging options DEBUG INFO WARNING ERROR CRITICAL
     # app.logger.setLevel(logging.CRITICAL)
     logging.getLogger('apscheduler').setLevel(logging.ERROR)
+    # Create NLP configs if they don't exist
+    if not os.path.exists(confPath + 'sentnlp' + os.path.sep + 'sent-ai.yml'):
+        copyfile(confPath + 'sentnlp' + os.path.sep + 'sent-ai-def.yml', confPath + 'sentnlp' + os.path.sep + 'sent-ai.yml')
     # Run App
     # app.run(use_reloader=False) # threaded=False breaks APScheduler
+
     app.run()
 
 # Or specify port manually:

@@ -1,11 +1,12 @@
 import os
 from datetime import datetime
 import sys
-import yaml
 import ccxt
 import pandas as pd
 # AITB Basic base class
 from .basic import Basic
+# Trends
+from pytrends.request import TrendReq
 
 
 class Runner(Basic):
@@ -25,9 +26,6 @@ class Runner(Basic):
             dpre = 'dataDownload'
         dname = self.runPath + dpre + '.run'
         dlog = self.logPath + dpre + '.log'
-        # Testing logging
-        # with open(dlog, 'a') as file:
-        # file.write(str(datetime.now())+" --Testing\n")
         # Test if already running
         if os.path.exists(dname):
             return
@@ -84,11 +82,8 @@ class Runner(Basic):
                 tmpDataConf['end'] = datadf.values.tolist()[-1][0]
                 tmpDataConf['count'] = str(datadf.shape[0])
                 id = tmpDataConf['id']
-                self.ll(tmpDataConf)
-                # Convert Dict to YAML
-                saveConf = yaml.dump(tmpDataConf, default_flow_style=False, sort_keys=False)
                 # Cfg File
-                self.writeCfgFile('data', id, saveConf)
+                self.writeCfgFile('data', id, tmpDataConf)
         # Remove File Lock
         os.remove(dname)
         # Close DB Connection
@@ -196,6 +191,7 @@ class Runner(Basic):
                 results = pd.read_csv(self.btDataPath + btConf['id'] + '_results.csv')
                 # Turn off Running
                 btConf['run'] = False
+                # Update info
                 btConf['lastrun'] = str(datetime.now())
                 fPerc = round(float(results['0'][6]), 2)
                 btConf['fperc'] = str(fPerc)
@@ -203,11 +199,48 @@ class Runner(Basic):
                 btConf['hperc'] = str(hPerc)
                 DD = round(float(results['0'][8]), 2)
                 btConf['dd'] = str(DD)
-                # Convert Dict to YAML
-                saveConf = yaml.dump(btConf, default_flow_style=False, sort_keys=False)
                 # Save new config file
-                self.writeCfgFile('bt', btConf['id'], saveConf)
+                self.writeCfgFile('bt', btConf['id'], btConf)
                 # Move Charts
                 os.replace(btConf['id'] + '.html', self.stBtPath + btConf['id'] + '_chart.html')
         # Remove File Lock
         os.remove(bname)
+
+    def googleTrends(self):
+        # Create file and path
+        gname = self.runPath + 'googleTrends.run'
+        glog = self.logPath + 'googleTrends.log'
+        # Test if already running
+        if os.path.exists(gname):
+            return
+        # Write lock file
+        with open(gname, 'w') as file:
+            file.write(str(datetime.now()))
+        # Get list of data files
+        gCfgs = self.listCfgFiles('senttrends')
+        for gfile in gCfgs:
+            gConf = self.readCfgFile('senttrends', gfile)
+            if gConf['enabled']:
+                # Log starting point of backtest
+                with open(glog, 'a') as file:
+                    file.write(str(datetime.now()) + " -- Trending of " + gConf['keyword'] + " started...\n")
+                    # Create ID
+                # Create ID
+                # id = gConf['keyword'].replace(' ','_').lower()+ '_' + gConf['period'] + '_' + gConf['cat']
+                # Create period name
+                if gConf['period'] == '4h':
+                    per = 'today 4-H'
+                if gConf['period'] == '1D':
+                    per = 'today 1-d'
+                if gConf['period'] == '1W':
+                    per = 'today 7-d'
+                # Initialize pyTrend
+                pytrend = TrendReq(hl='en-US', tz=0, timeout=(10, 25))
+                # Get trends
+                pytrend.build_payload(gConf['keyword'], cat=gConf['cat'], timeframe=per, geo=gConf['geo'], gprop=gConf['type'])
+                # Create Dataframe
+                tdf = pytrend.interest_over_time()
+                # Echo df
+                self.ll(tdf.head())
+        # Remove File Lock
+        os.remove(gname)

@@ -13,36 +13,31 @@
             <div class="body">
                 <div class="row clearfix">
                     <div class="col-lg-2 col-md-2 col-sm-12 col-xs-12">
-                            <input name="id" type="hidden" value="0"/>
-                            <label>Name</label><br>
-                            <div class="form-line">
-                                <input name="name" type="text" class="form-control" placeholder="Name of Feed">
-                            </div>
+                      <input name="id" type="hidden" value="0"/>
+                      <input name="enabled" type="hidden" value="True"/>
+                      <label>Name</label><br>
+                      <div class="form-line">
+                          <input name="name" type="text" class="form-control" placeholder="Name of Feed">
+                      </div>
                     </div>
                     <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
-                        <div>
-                            <label>URL</label><br>
-                            <div class="form-line">
-                                <input name="url" type="text" class="form-control" placeholder="URL to Feed">
-                            </div>
-                        </div>
+                      <label>URL</label><br>
+                      <div class="form-line">
+                          <input name="url" type="text" class="form-control" placeholder="URL to Feed">
+                      </div>
                     </div>
                     <div class="col-lg-2 col-md-2 col-sm-12 col-xs-12">
-                        <div>
-                            <label>Using</label><br>
-                              <select name="using" class="form-control" style="width:fit-content">
-                                <option value='title'>Title</option>
-                                <option value='summary' selected>Summary</option>
-                              </select>
-                        </div>
+                      <label>Using</label><br>
+                      <select name="using" class="form-control" style="width:fit-content">
+                        <option value='title'>Title</option>
+                        <option value='summary' selected>Summary</option>
+                      </select>
                     </div>
                     <div class="col-lg-2 col-md-2 col-sm-12 col-xs-12">
-                        <div>
-                            <label>Group</label><br>
-                            <div class="form-line">
-                                <input name="group" type="text" class="form-control" placeholder="Group">
-                            </div>
-                        </div>
+                      <label>Group</label><br>
+                      <div class="form-line">
+                          <input name="group" type="text" class="form-control" placeholder="Group">
+                      </div>
                     </div>
                     <div class="col-lg-1 col-md-1 col-sm-6 col-xs-6" style="margin-top:20px">
                         <button type="submit" name="action" value="fin" class="btn bg-green btn-lg waves-effect waves-float">Create</button>

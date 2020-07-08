@@ -1,0 +1,72 @@
+{% extends 'layouts/main.html' %}
+{% block title %}Sentiment - Twitter Feeds{% endblock %}
+{% block content %}
+
+<div class="block-header block-header-wit-add">
+  <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6" style="padding-left:0px">
+  <h2>
+    Natural Language Processing
+    <small>AI and filters for live feeds</a></small>
+  </h2>
+  </div>
+</div>
+<div class="row">
+  <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+    <div class="card">
+      <div class="header bg-green">
+        <h2>
+          Filters
+        </h2>
+        </div>
+        <div class="body">
+          <form>
+            TODO
+          </form>
+        </div>
+      </div>
+    </div>
+  <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+    <div class="card">
+      <div class="header bg-red">
+        <h2>
+          Stop Words
+        </h2>
+        </div>
+        <div class="body">
+          <form>
+            TODO
+          </form>
+        </div>
+      </div>
+    </div>
+  <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+    <div class="card">
+      <div class="header bg-orange">
+        <h2>
+          Sentiment AI
+        </h2>
+        </div>
+        <div class="body">
+          <form>
+            <select name="ai" id="ai" class="form-control" onChange="onAIChange()" style="width:fit-content">
+              <option value='text' {% if ai['ai'] == 'text'%}selected{%endif%}>TextBlob</option>
+              <option value='vader' {% if ai['ai'] == 'vader'%}selected{%endif%}>Vader</option>
+              <option value='distilbert' {% if ai['ai'] == 'distilbert'%}selected{%endif%}>Distil Bert</option>
+            </select>
+          </form>
+        </div>
+        <script>
+          function onAIChange() {
+              d = document.getElementById('ai');
+              var xhr = new XMLHttpRequest();
+              //console.log(d)
+              xhr.open("POST", '/sent-nlp', true);
+              //Send the proper header information along with the request
+              xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+              xhr.send('action=changeAI&ai='+d.options[d.selectedIndex].value)
+          }
+        </script>
+      </div>
+    </div>
+</div>
+{% endblock %}

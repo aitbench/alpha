@@ -13,54 +13,44 @@
             <div class="body">
                 <div class="row clearfix">
                     <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
-                            <input name="id" type="hidden" value="0"/>
-                            <label>Keyword</label><br>
-                            <div class="form-line">
-                                <input name="keyword" type="text" class="form-control" placeholder="Google Keyword">
-                            </div>
-                    </div>
-                    <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
-                        <div>
-                            <label>Geo</label><a href="https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2">?</a><br>
-                            <div class="form-line">
-                                <input name="url" type="text" class="form-control" placeholder="Country Code">
-                            </div>
+                        <input name="id" type="hidden" value="0"/>
+                        <input name="enabled" type="hidden" value="True"/>
+                        <label>Keyword</label><br>
+                        <div class="form-line">
+                            <input name="keyword" type="text" class="form-control" placeholder="Google Keyword">
                         </div>
                     </div>
-                    <div class="col-lg-2 col-md-2 col-sm-12 col-xs-12">
-                        <div>
-                            <label>Period</label><br>
-                              <select name="period" class="form-control" style="width:fit-content">
-                                <option value='4h'>4 Hour</option>
-                                <option value='1D'>1 Day</option>
-                                <option value='1W'>1 Week</option>
-                                <option value='1M' selected>1 Month</option>
-                                <option value='2M'>2 Month</option>
-                                <option value='3M'>3 Month</option>
-                              </select>
+                    <div class="col-lg-1 col-md-1 col-sm-6 col-xs-6">
+                        <label>Geo <a href="https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2">Info</a></label><br>
+                        <div class="form-line">
+                            <input name="geo" type="text" class="form-control" placeholder="Code">
                         </div>
                     </div>
-                    <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
-                        <div>
-                            <label>Category</label><a href="https://github.com/pat310/google-trends-api/wiki/Google-Trends-Categories">?</a><br>
-                            <div class="form-line">
-                                <input name="cat" type="text" class="form-control" placeholder=Google Category Code>
-                            </div>
+                    <div class="col-lg-2 col-md-2 col-sm-6 col-xs-6">
+                        <label>Period</label><br>
+                        <select name="period" class="form-control" style="width:fit-content">
+                          <option value='4h'>4 Hour</option>
+                          <option value='1D'>1 Day</option>
+                          <option value='1W' selected>1 Week</option>
+                        </select>
+                    </div>
+                    <div class="col-lg-2 col-md-2 col-sm-6 col-xs-6">
+                        <label>Category <a href="https://github.com/pat310/google-trends-api/wiki/Google-Trends-Categories">Info</a></label><br>
+                        <div class="form-line">
+                            <input name="cat" type="text" class="form-control" placeholder="Code" value="0">
                         </div>
                     </div>
-                    <div class="col-lg-2 col-md-2 col-sm-12 col-xs-12">
-                        <div>
-                            <label>Type</label><br>
-                              <select name="type" class="form-control" style="width:fit-content">
-                                <option value='' selected>Web</option>
-                                <option value='images'>Images</option>
-                                <option value='news'>News</option>
-                                <option value='youtube'>YouTube</option>
-                                <option value='froogle'>Froogle</option>
-                              </select>
-                        </div>
+                    <div class="col-lg-2 col-md-2 col-sm-6 col-xs-6">
+                        <label>Type</label><br>
+                        <select name="type" class="form-control" style="width:fit-content">
+                          <option value='' selected>Web</option>
+                          <option value='images'>Images</option>
+                          <option value='news'>News</option>
+                          <option value='youtube'>YouTube</option>
+                          <option value='froogle'>Froogle</option>
+                        </select>
                     </div>
-                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-6" style="margin-top:20px">
+                    <div class="col-lg-1 col-md-1 col-sm-6 col-xs-6" style="margin-top:20px">
                         <button type="submit" name="action" value="fin" class="btn bg-green btn-lg waves-effect waves-float">Create</button>
                     </div>
                 </div>

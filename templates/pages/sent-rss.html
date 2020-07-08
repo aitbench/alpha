@@ -14,9 +14,6 @@
   <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
   <div class="align-right" >
     <form method="post">
-      <button type="button" class="btn btn-xs btn-secondary btn-toggle active" data-toggle="button" aria-pressed="true" autocomplete="off">
-<div class="handle"></div>
-</button>
       <button name="action" value="add" type="submit" class="btn bg-green waves-effect waves-float">
         <i class="material-icons">add</i>
       </button>
@@ -29,10 +26,31 @@
   <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
     <div class="card">
       <div class="header bg-orange">
-        <h2>
+        <h1>
           {{ feed['name'] }}
-        </h2>
+        </h1>
         <ul class="header-dropdown m-r--5">
+          <li>
+            <input type="checkbox" checked data-toggle="toggle" data-size="xs">
+            <div class="switch">
+              <label>
+                <input id="{{ feed['id'] }}_rssSwitch" onChange="onFlip('{{ feed['id'] }}')"
+                type="checkbox" {% if feed['enabled'] %} checked {% endif %}>
+                <span class="lever switch-col-red"></span>
+              </label>
+            </div>
+          </li>
+          <script>
+            function onFlip(id) {
+                d = document.getElementById(id.concat("_rssSwitch")).checked;
+                var xhr = new XMLHttpRequest();
+                //console.log(d)
+                xhr.open("POST", '/sent-rss', true);
+                //Send the proper header information along with the request
+                xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+                xhr.send('action=enable&status='+d+'&id='+id)
+            }
+          </script>
           <form class="inform" method="post" id="{{ feed['id'] }}">
             <li class="dropdown">
               <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
@@ -51,6 +69,7 @@
         <div class="body">
             <b>Id: </b> {{ feed['id'] }}<br>
             <b>URL: </b> {{ feed['url'] }}<br>
+            <b>Using: </b> {{ feed['using'] }}<br>
             <b>Group: </b> {{ feed['group'] }}<br>
         </div>
       </div>

@@ -78,7 +78,7 @@ class Helper(Basic):
         # Remove empty lines
         conYML = os.linesep.join([s for s in conYML.splitlines() if s])
         # Save to YAML file
-        self.writeCfgFile('conn', ex, conYML)
+        self.writeRawCfgFile('conn', ex, conYML)
 
     def createCryptoInfo(self, ex):
         ex_class = getattr(ccxt, ex)
@@ -198,7 +198,7 @@ class Helper(Basic):
         dataYML = dataYML + 'maxbars: ' + str(tmpmaxbars) + "\n"
         dataYML = os.linesep.join([s for s in dataYML.splitlines() if s])
         # Save to YAML file
-        self.writeCfgFile('data', id, dataYML)
+        self.writeRawCfgFile('data', id, dataYML)
 
     # def gitRunners(self):
         # print("last modified: %s" % time.ctime(os.path.getmtime(file)))
@@ -341,8 +341,8 @@ class Helper(Basic):
         # Add info from nuggetinfo and enrichments
         annYML = annYML + 'symb: ' + info['symb'] + "\n"
         annYML = annYML + 'timeframe: ' + info['timeframe'] + "\n"
-        annYML = annYML + 'from: ' + info['from'] + "\n"
-        annYML = annYML + 'to: ' + info['to'] + "\n"
+        annYML = annYML + 'from: ' + str(info['from']) + "\n"
+        annYML = annYML + 'to: ' + str(info['to']) + "\n"
         annYML = annYML + 'depen: ' + info['depen'] + "\n"
         # indis = list(df.columns[0].values.tolist())
         with open(self.enConfPath + info['indi'] + '.yml', 'r') as afile:
@@ -352,14 +352,13 @@ class Helper(Basic):
         # Delete empty lines
         annYML = os.linesep.join([s for s in annYML.splitlines() if s])
         # Save to YAML file
-        self.writeCfgFile('aiann', id, annYML)
+        self.writeRawCfgFile('aiann', id, annYML)
 
     def turnANNon(self, id):
         adata = self.readCfgFile('aiann', id + '.yml')
         adata['training'] = True
-        aYML = yaml.dump(adata, default_flow_style=False, sort_keys=False)
-        # Save to YAML file
-        self.writeCfgFile('aiann', id, aYML)
+        # YAML and write to file
+        self.writeCfgFile('aiann', id, adata)
 
     def removekey(self, d, key):
         r = dict(d)
@@ -371,37 +370,27 @@ class Helper(Basic):
         id = rdata['name'].replace(' ', '_').lower()
         rdata['id'] = id
         self.removekey(rdata, 'action')
-        # Save YAML config to file
-        rYML = yaml.dump(rdata, default_flow_style=False, sort_keys=False)
-        self.writeCfgFile('sentrss', id, rYML)
+        # YAML and write to file
+        self.writeCfgFile('sentrss', id, rdata)
         # self.ll(rdata)
 
     def createGoogleTrend(self, gdata):
         # Create ID
-        id = gdata['name'].replace(' ', '_').lower()
+        id = gdata['keyword'].replace(' ', '_').lower() + '_' + gdata['period'] + '_' + gdata['cat']
         gdata['id'] = id
-        # Save YAML config to file
-        gYML = yaml.dump(gdata, default_flow_style=False, sort_keys=False)
-        self.writeCfgFile('senttrend', id, gYML)
+        self.removekey(gdata, 'action')
+        # YAML and write to file
+        self.writeCfgFile('senttrend', id, gdata)
         # self.ll(gdata)
 
     def createTwitterFeed(self, tdata):
         # Create ID
         id = tdata['name'].replace(' ', '_').lower()
+        self.removekey(tdata, 'action')
         tdata['id'] = id
-        # Save YAML config to file
-        tYML = yaml.dump(tdata, default_flow_style=False, sort_keys=False)
-        self.writeCfgFile('senttwit', id, tYML)
+        # YAML and write to file
+        self.writeCfgFile('senttwit', id, tdata)
         self.ll(tdata)
-
-    def editTrans(self, edata):
-        # Create ID
-        id = edata['name'].replace(' ', '_').lower()
-        edata['id'] = id
-        # Save YAML config to file
-        eYML = yaml.dump(edata, default_flow_style=False, sort_keys=False)
-        self.writeCfgFile('sentnlp', 'tran', eYML)
-        self.ll(edata)
 
     def createBacktest(self, bdata):
         # Create ID
@@ -484,15 +473,13 @@ class Helper(Basic):
         # Final settings
         bdata.pop('action', None)
         bdata['run'] = True
-        # Save YAML config to file
-        bYML = yaml.dump(bdata, default_flow_style=False, sort_keys=False)
-        self.writeCfgFile('bt', id, bYML)
+        # YAML and write to file
+        self.writeCfgFile('bt', id, bdata)
         # Remove sample file
         os.remove(self.sampleDataPath + sname + '.pkl')
 
     def turnBTon(self, id):
         adata = self.readCfgFile('bt', id + '.yml')
         adata['run'] = True
-        aYML = yaml.dump(adata, default_flow_style=False, sort_keys=False)
-        # Save to YAML file
-        self.writeCfgFile('bt', id, aYML)
+        # YAML and write to file
+        self.writeCfgFile('bt', id, adata)

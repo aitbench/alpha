@@ -1,5 +1,5 @@
 import os.path
-import yaml
+import oyaml as yaml
 from datetime import datetime
 import sys
 
@@ -59,8 +59,15 @@ class Basic():
     def listUpFiles(self):
         return [f for f in os.listdir(self.upPath) if os.path.isfile(os.path.join(self.upPath, f)) and f != '.keep']
 
-    # Write Config File
+    # Write Config File using Dict
     def writeCfgFile(self, oftype, nom, input):
+        fname = self.confPath + oftype + os.path.sep + nom + '.yml'
+        iYML = yaml.dump(input, default_flow_style=False, sort_keys=False)
+        with open(fname, 'w') as file:
+            file.write(iYML)
+
+    # Write Config File using Raw data
+    def writeRawCfgFile(self, oftype, nom, input):
         fname = self.confPath + oftype + os.path.sep + nom + '.yml'
         with open(fname, 'w') as file:
             file.write(input)
@@ -69,7 +76,7 @@ class Basic():
     def readCfgFile(self, oftype, nom):
         fname = self.confPath + oftype + os.path.sep + nom
         with open(fname, 'r') as file:
-            output = yaml.load(file)
+            output = yaml.full_load(file)
         return output
 
     def allCfgs(self, conffolder):

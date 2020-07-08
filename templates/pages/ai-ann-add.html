@@ -26,8 +26,8 @@
                             <select name="nugget" class="form-control" style="width:100%">
                               {% for nugget in nuggets %}
                               <option {% if selected == nugget['id'] %} selected {% endif %}
-                              value='{{nugget['id']}}'>{{nugget['con']}} {{nugget['timeframe']}}
-                                {{nugget['symb']}} {{nugget['from']}} - {{nugget['to']}} I(X):{{nugget['indi']}} D(y):{{nugget['depen']}}</option>
+                              value='{{nugget['id']}}'>{{ nugget['con'] }} {{ nugget['timeframe'] }}
+                                {{ nugget['symb'] }} {{ nugget['from']|u2d }} - {{ nugget['to']|u2d }} I(X):{{ nugget['indi'] }} D(y):{{ nugget['depen'] }}</option>
                               {% endfor %}
                             </select>
                         </div>

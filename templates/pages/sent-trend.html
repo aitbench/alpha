@@ -12,9 +12,6 @@
   <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
   <div class="align-right" >
     <form method="post">
-      <button type="button" class="btn btn-xs btn-secondary btn-toggle active" data-toggle="button" aria-pressed="true" autocomplete="off">
-<div class="handle"></div>
-</button>
       <button name="action" value="add" type="submit" class="btn bg-green waves-effect waves-float">
         <i class="material-icons">add</i>
       </button>
@@ -28,10 +25,30 @@
     <div class="card">
       <div class="header bg-orange">
         <h2>
-          {{ trend['name'] }}
+          {{ trend['keyword'] }}
         </h2>
         <ul class="header-dropdown m-r--5">
-          <form class="inform" method="post" id="{{trend['id']}}">
+            <form class="inform" method="post" id="{{trend['id']}}">
+            <li>
+              <div class="switch">
+                <label>
+                  <input id="{{ trend['id'] }}_trendSwitch" onChange="onFlip('{{ trend['id'] }}')"
+                  type="checkbox" {% if trend['enabled'] %} checked {% endif %}>
+                  <span class="lever switch-col-red"></span>
+                </label>
+              </div>
+            </li>
+            <script>
+              function onFlip(id) {
+                  d = document.getElementById(id.concat("_trendSwitch")).checked;
+                  var xhr = new XMLHttpRequest();
+                  //console.log(d)
+                  xhr.open("POST", '/sent-rss', true);
+                  //Send the proper header information along with the request
+                  xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+                  xhr.send('action=enable&status='+d+'&id='+id)
+              }
+            </script>
             <li class="dropdown">
               <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
                 <i class="material-icons">more_vert</i>
@@ -49,11 +66,10 @@
         <div class="body">
             <b>Id: </b> {{ trend['id'] }}<br>
             <b>Keyword: </b> {{ trend['keyword'] }}<br>
-            <b>Geo: </b> {{ trend['geo'] }}
-            <a href="https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2">?</a><br>
+            <b>Geo <a href="https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2">?</a>: </b> {{ trend['geo'] }}
+            <br>
             <b>Period: </b> {{ trend['period'] }}<br>
-            <b>Category: </b> {{ trend['cat'] }}
-            <a href="https://github.com/pat310/google-trends-api/wiki/Google-Trends-Categories">?</a><br>
+            <b>Category <a href="https://github.com/pat310/google-trends-api/wiki/Google-Trends-Categories">?</a>: </b> {{ trend['cat'] }}<br>
             <b>Prop: </b> {{ trend['prop'] }}<br>
         </div>
       </div>
