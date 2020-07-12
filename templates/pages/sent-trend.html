@@ -43,7 +43,7 @@
                   d = document.getElementById(id.concat("_trendSwitch")).checked;
                   var xhr = new XMLHttpRequest();
                   //console.log(d)
-                  xhr.open("POST", '/sent-rss', true);
+                  xhr.open("POST", '/sent-trend', true);
                   //Send the proper header information along with the request
                   xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
                   xhr.send('action=enable&status='+d+'&id='+id)

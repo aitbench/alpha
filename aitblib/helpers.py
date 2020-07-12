@@ -369,7 +369,7 @@ class Helper(Basic):
         # Create ID
         id = rdata['name'].replace(' ', '_').lower()
         rdata['id'] = id
-        self.removekey(rdata, 'action')
+        rdata = self.removekey(rdata, 'action')
         # YAML and write to file
         self.writeCfgFile('sentrss', id, rdata)
         # self.ll(rdata)
@@ -378,7 +378,7 @@ class Helper(Basic):
         # Create ID
         id = gdata['keyword'].replace(' ', '_').lower() + '_' + gdata['period'] + '_' + gdata['cat']
         gdata['id'] = id
-        self.removekey(gdata, 'action')
+        gdata = self.removekey(gdata, 'action')
         # YAML and write to file
         self.writeCfgFile('senttrend', id, gdata)
         # self.ll(gdata)
@@ -386,7 +386,7 @@ class Helper(Basic):
     def createTwitterFeed(self, tdata):
         # Create ID
         id = tdata['name'].replace(' ', '_').lower()
-        self.removekey(tdata, 'action')
+        tdata = self.removekey(tdata, 'action')
         tdata['id'] = id
         # YAML and write to file
         self.writeCfgFile('senttwit', id, tdata)

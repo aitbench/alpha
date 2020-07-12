@@ -137,6 +137,7 @@ scheduler.init_app(app)
 # Init used libraries
 RunThe = runners.Runner(app.root_path, db)
 AI = ai.AI(app.root_path, db)
+
 # Data Download
 
 
@@ -154,10 +155,25 @@ def upData():
 def bkTest():
     RunThe.backTest()
 
+# Sentiment
+
+
+@scheduler.task('cron', id='gTrend', hour='*')
+def gTrend():
+    RunThe.googleTrends()
+
+
+@scheduler.task('cron', id='sentiRSS', hour='*')
+def sentiRSS():
+    RunThe.sentiRSS()
+
+# Train AIs
+
 
 @scheduler.task('interval', id='trainAI', seconds=15)
 def trainAI():
     AI.trainANN()
+
 # Minute by minute
 
 

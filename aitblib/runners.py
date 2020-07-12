@@ -1,12 +1,21 @@
 import os
 from datetime import datetime
+import time
 import sys
 import ccxt
 import pandas as pd
+import pickle as pkl
 # AITB Basic base class
 from .basic import Basic
 # Trends
 from pytrends.request import TrendReq
+# Feed reader
+import feedparser
+# Textblob
+from textblob import TextBlob
+from textblob.sentiments import NaiveBayesAnalyzer
+# Vader
+from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 
 
 class Runner(Basic):
@@ -217,9 +226,9 @@ class Runner(Basic):
         with open(gname, 'w') as file:
             file.write(str(datetime.now()))
         # Get list of data files
-        gCfgs = self.listCfgFiles('senttrends')
+        gCfgs = self.listCfgFiles('senttrend')
         for gfile in gCfgs:
-            gConf = self.readCfgFile('senttrends', gfile)
+            gConf = self.readCfgFile('senttrend', gfile)
             if gConf['enabled']:
                 # Log starting point of backtest
                 with open(glog, 'a') as file:
@@ -229,18 +238,130 @@ class Runner(Basic):
                 # id = gConf['keyword'].replace(' ','_').lower()+ '_' + gConf['period'] + '_' + gConf['cat']
                 # Create period name
                 if gConf['period'] == '4h':
-                    per = 'today 4-H'
+                    per = 'now 4-H'
                 if gConf['period'] == '1D':
-                    per = 'today 1-d'
+                    per = 'now 1-d'
                 if gConf['period'] == '1W':
-                    per = 'today 7-d'
+                    per = 'now 7-d'
                 # Initialize pyTrend
                 pytrend = TrendReq(hl='en-US', tz=0, timeout=(10, 25))
                 # Get trends
-                pytrend.build_payload(gConf['keyword'], cat=gConf['cat'], timeframe=per, geo=gConf['geo'], gprop=gConf['type'])
+                pytrend.build_payload([gConf['keyword']], cat=gConf['cat'], timeframe=per, geo=gConf['geo'], gprop=gConf['type'])
                 # Create Dataframe
                 tdf = pytrend.interest_over_time()
+                # Insert into database
+                tinms = int(round(time.time() * 1000))
+                lastval = tdf[gConf['keyword']].tail(1)[0]
+                sqlinstrend = 'INSERT into trend_' + gConf['id'] + ' VALUES (' + str(tinms) + ',' + str(lastval) + ')'
+                try:
+                    self.db.session.execute(sqlinstrend)
+                except BaseException:
+                    # Create Database table class
+                    table_creation_sql = 'CREATE TABLE IF NOT EXISTS trend_' + gConf['id'] + ' (Date BIGINT NOT NULL, PercVal INT, PRIMARY KEY(Date))'
+                    # Create SQL table
+                    self.db.session.execute(table_creation_sql)
+                    self.db.session.commit()
+                    self.db.session.execute(sqlinstrend)
+                self.db.session.commit()
                 # Echo df
-                self.ll(tdf.head())
+                # self.ll(tdf.tail(1))
+                # self.ll(tdf[gConf['keyword']].tail(1)[0])
         # Remove File Lock
         os.remove(gname)
+
+    def sentiRSS(self):
+        # Create file and path
+        rname = self.runPath + 'sentiRSS.run'
+        # rlog = self.logPath+'sentiRSS.log'
+        # Test if already running
+        if os.path.exists(rname):
+            return
+        # Write lock file
+        with open(rname, 'w') as file:
+            file.write(str(datetime.now()))
+        # Get list of data files and nlp setup
+        rCfgs = self.listCfgFiles('sentrss')
+        nlp = self.readCfgFile('sentnlp', 'sent-ai.yml')
+        # Itterate through files
+        for rfile in rCfgs:
+            rConf = self.readCfgFile('sentrss', rfile)
+            # Check if enabled and ready to parse
+            if rConf['enabled']:
+                # Parse RSS via FeedParser
+                raw = feedparser.parse(rConf['url'])
+                pos = neg = neu = comp = 0
+                postcount = 0
+                for post in raw.entries:
+                    postcount = + 1
+                    # Select data from parse
+                    if rConf['using'] == 'summary':
+                        rssdata = post.summary
+                    if rConf['using'] == 'title':
+                        rssdata = post.title
+                    # Check which AI to use for sentiment
+                    if nlp['ai'] == 'text':
+                        # Train and save Analyser
+                        nbFile = self.dataPath + "textBlobNB.pkl"
+                        if os.path.exists(nbFile):
+                            load_nb = open(nbFile, "rb")
+                            nbAnalyse = pkl.load(load_nb)
+                            load_nb.close()
+                        else:
+                            nbAnalyse = NaiveBayesAnalyzer()
+                            nbAnalyse.train()
+                            save_nb = open(nbFile, "wb")
+                            pkl.dump(nbAnalyse, save_nb)
+                            save_nb.close()
+                        tb = TextBlob(rssdata, analyzer=nbAnalyse)
+                        pos = pos + tb.sentiment[1]
+                        neg = neg + tb.sentiment[2]
+                    if nlp['ai'] == 'vader':
+                        vader = SentimentIntensityAnalyzer()
+                        v = vader.polarity_scores(rssdata)
+                        pos = pos + v['pos']
+                        neg = neg + v['neg']
+                        neu = neu + v['neu']
+                        comp = comp + v['compound']
+                    if nlp['ai'] == 'distilbert':
+                        # Huggingface
+                        from transformers import pipeline
+                        # Create Huggingface transformers pipeline
+                        huggy = pipeline('sentiment-analysis')
+                        hugresp = huggy(rssdata)
+                        # Workout if positive or negative
+                        label = hugresp[0]['label'][0:3]
+                        if label == "NEG":
+                            hugneg = hugresp[0]['score']
+                            hugpos = 0
+                        if label == "POS":
+                            hugneg = 0
+                            hugpos = hugresp[0]['score']
+                        pos = pos + hugpos
+                        neg = neg + hugneg
+                # Workout all totals
+                pos = float("{:.2f}".format(pos / postcount))
+                neg = float("{:.2f}".format(neg / postcount))
+                neu = float("{:.2f}".format(neu / postcount))
+                comp = float("{:.2f}".format(comp / postcount))
+                if pos > neg:
+                    overall = 1
+                else:
+                    overall = 0
+                # Check results
+                # self.ll('Pos:'+str(pos))
+                # self.ll('Neg:'+str(neg))
+                # self.ll('Comp:'+str(comp))
+                # Insert to DB
+                tinms = int(round(time.time() * 1000))
+                sqlinsrss = 'INSERT into rss_' + rConf['id'] + ' VALUES (' + str(tinms) + ',' + str(overall) + ',' + str(pos) + ',' + str(neg) + ',' + str(neu) + ',' + str(comp) + ')'
+                try:
+                    self.db.session.execute(sqlinsrss)
+                except BaseException:
+                    # Create Database table class
+                    table_creation_sql = 'CREATE TABLE IF NOT EXISTS rss_' + rConf['id'] + ' (Date BIGINT NOT NULL, Overall INT, Pos FLOAT, Neg FLOAT, Neu FLOAT, Comp FLOAT, PRIMARY KEY(Date))'
+                    # Create SQL table
+                    self.db.session.execute(table_creation_sql)
+                    self.db.session.commit()
+                    self.db.session.execute(sqlinsrss)
+                self.db.session.commit()
+        os.remove(rname)

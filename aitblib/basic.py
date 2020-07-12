@@ -10,9 +10,9 @@ class Basic():
         self.appRoot = appRoot
         # Runner Paths
         self.tmpPath = appRoot + os.path.sep + 'tmp' + os.path.sep
-        self.runPath = self.tmpPath + os.path.sep + 'run' + os.path.sep
+        self.runPath = self.tmpPath + 'run' + os.path.sep
+        self.upPath = self.tmpPath + 'uploads' + os.path.sep
         self.logPath = appRoot + os.path.sep + 'logs' + os.path.sep
-        self.upPath = self.tmpPath + os.path.sep + 'uploads' + os.path.sep
         # Configuration Paths
         self.confPath = appRoot + os.path.sep + 'conf' + os.path.sep
         self.dataConfPath = self.confPath + 'data' + os.path.sep
