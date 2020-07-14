@@ -3,6 +3,7 @@ bokeh==2.0.2
 ccxt==1.27.20
 cx-Oracle==7.3.0
 Keras==2.3.1
+feedparser==5.2.1
 Flask==1.1.2
 Flask-APScheduler==1.11.0
 Flask-Login==0.5.0
@@ -25,7 +26,10 @@ sklearn==0.0
 SQLAlchemy==1.3.16
 tabulate==0.8.7
 tensorflow==2.2.0
+textblob==0.15.3
+transformers==2.11.0
 tzlocal==2.0.0
+vaderSentiment==3.3.2
 Werkzeug==1.0.1
 WTForms==2.3.1
 
