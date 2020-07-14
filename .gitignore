@@ -147,7 +147,7 @@ dmypy.json
 /conf/senttwit/*
 !/conf/senttwit/.keep
 /conf/sentnlp/*
-!/conf/sentnlp/tran-def.yml
+!/conf/sentnlp/sent-ai-def.yml
 /conf/bt/*
 !/conf/bt/.keep
 
