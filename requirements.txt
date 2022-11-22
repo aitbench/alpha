@@ -15,7 +15,7 @@ mysqlclient==1.4.6
 numpy==1.18.4
 oyaml==0.9
 pandas==1.0.3
-Pillow==7.1.2
+Pillow==9.3.0
 psycopg2-binary==2.8.5
 pyarrow==0.17.0
 pytz==2020.1
